@@ -383,7 +383,7 @@ export default function AboutPage() {
             </div>
 
             {/* Testimonial Section - Add before CTA */}
-            <div className="py-20 px-4 bg-white dark:bg-black border-y border-neutral-200 dark:border-neutral-800">
+            {/* <div className="py-20 px-4 bg-white dark:bg-black border-y border-neutral-200 dark:border-neutral-800">
                 <motion.div 
                     className="container max-w-5xl mx-auto space-y-12"
                     initial={{ opacity: 0, y: 20 }}
@@ -427,7 +427,7 @@ export default function AboutPage() {
                         </div>
                     </div>
                 </motion.div>
-            </div>
+            </div> */}
 
             {/* Features Section */}
             <div className="py-24 px-4">
