@@ -1,3 +1,4 @@
+
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import 'katex/dist/katex.min.css';
@@ -35,7 +36,17 @@ import {
 import WeatherChart from '@/components/weather-chart';
 import { cn, getUserId, SearchGroupId } from '@/lib/utils';
 import { Wave } from "@foobar404/wave";
-import { CheckCircle, CurrencyDollar, Flag, Info, Memory, RoadHorizon, SoccerBall, TennisBall, XLogo } from '@phosphor-icons/react';
+import {
+    CheckCircle,
+    CurrencyDollar,
+    Flag,
+    Info,
+    Memory,
+    RoadHorizon,
+    SoccerBall,
+    TennisBall,
+    XLogo
+} from '@phosphor-icons/react';
 import { TextIcon } from '@radix-ui/react-icons';
 import { ToolInvocation } from 'ai';
 import { useChat, UseChatOptions } from '@ai-sdk/react';
@@ -594,9 +605,9 @@ const YouTubeCard: React.FC<YouTubeCardProps> = ({ video, index }) => {
                                                             <Link
                                                                 key={i}
                                                                 href={`${video.url}&t=${time.split(':').reduce((acc, time, i, arr) => {
-                                                                    if (arr.length === 2) { // MM:SS format
+                                                                    if (arr.length === 2) {
                                                                         return i === 0 ? acc + parseInt(time) * 60 : acc + parseInt(time);
-                                                                    } else { // HH:MM:SS format
+                                                                    } else {
                                                                         return i === 0 ? acc + parseInt(time) * 3600 :
                                                                             i === 1 ? acc + parseInt(time) * 60 :
                                                                                 acc + parseInt(time);
@@ -640,7 +651,6 @@ const YouTubeCard: React.FC<YouTubeCardProps> = ({ video, index }) => {
 
 // Memoize the YouTubeCard component with a more comprehensive equality function
 const MemoizedYouTubeCard = React.memo(YouTubeCard, (prevProps, nextProps) => {
-    // Deep comparison of video properties that matter for rendering
     return (
         prevProps.video.videoId === nextProps.video.videoId &&
         prevProps.index === nextProps.index &&
@@ -1168,10 +1178,8 @@ const HomeContent = () => {
     }, [messages]);
 
     useEffect(() => {
-        // Reset manual scroll when streaming starts
         if (status === 'streaming') {
             setHasManuallyScrolled(false);
-            // Initial scroll to bottom when streaming starts
             if (bottomRef.current) {
                 isAutoScrollingRef.current = true;
                 bottomRef.current.scrollIntoView({ behavior: "smooth" });
@@ -1183,12 +1191,10 @@ const HomeContent = () => {
         let scrollTimeout: NodeJS.Timeout;
 
         const handleScroll = () => {
-            // Clear any pending timeout
             if (scrollTimeout) {
                 clearTimeout(scrollTimeout);
             }
 
-            // If we're not auto-scrolling and we're streaming, it must be a user scroll
             if (!isAutoScrollingRef.current && status === 'streaming') {
                 const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
                 if (!isAtBottom) {
@@ -1199,12 +1205,10 @@ const HomeContent = () => {
 
         window.addEventListener('scroll', handleScroll);
 
-        // Auto-scroll on new content if we haven't manually scrolled
         if (status === 'streaming' && !hasManuallyScrolled && bottomRef.current) {
             scrollTimeout = setTimeout(() => {
                 isAutoScrollingRef.current = true;
                 bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-                // Reset auto-scroll flag after animation
                 setTimeout(() => {
                     isAutoScrollingRef.current = false;
                 }, 100);
@@ -1237,22 +1241,14 @@ const HomeContent = () => {
     const handleMessageUpdate = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (input.trim()) {
-            // Create new messages array up to the edited message
             const newMessages = messages.slice(0, editingMessageIndex + 1);
-            // Update the edited message
             newMessages[editingMessageIndex] = { ...newMessages[editingMessageIndex], content: input.trim() };
-            // Set the new messages array
             setMessages(newMessages);
-            // Reset editing state
             setIsEditingMessage(false);
             setEditingMessageIndex(-1);
-            // Store the edited message for reference
             lastSubmittedQueryRef.current = input.trim();
-            // Clear input
             setInput('');
-            // Reset suggested questions
             setSuggestedQuestions([]);
-            // Trigger a new chat completion without appending
             reload();
         } else {
             toast.error("Please enter a valid message.");
@@ -1275,11 +1271,11 @@ const HomeContent = () => {
 
     interface NavbarProps { }
 
+    // Modified Navbar: Removed Deploy with Vercel button and added "deep search" at top center
     const Navbar: React.FC<NavbarProps> = () => {
         return (
             <div className={cn(
                 "fixed top-0 left-0 right-0 z-[60] flex justify-between items-center p-4",
-                // Add opaque background only after submit
                 status === 'ready' ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" : "bg-background",
             )}>
                 <div className="flex items-center gap-4">
@@ -1296,19 +1292,11 @@ const HomeContent = () => {
                         </Button>
                     </Link>
                 </div>
+                {/* Center app name */}
+                <div className="absolute inset-x-0 flex justify-center pointer-events-none">
+                    <span className="text-xl font-bold text-neutral-900 dark:text-neutral-100">deep search</span>
+                </div>
                 <div className='flex items-center space-x-4'>
-                    <Link
-                        target="_blank"
-                        href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzaidmukaddam%2Fscira&env=XAI_API_KEY,ANTHROPIC_API_KEY,CEREBRAS_API_KEY,GROQ_API_KEY,E2B_API_KEY,ELEVENLABS_API_KEY,TAVILY_API_KEY,EXA_API_KEY,TMDB_API_KEY,YT_ENDPOINT,FIRECRAWL_API_KEY,OPENWEATHER_API_KEY,SANDBOX_TEMPLATE_ID,GOOGLE_MAPS_API_KEY,MAPBOX_ACCESS_TOKEN,TRIPADVISOR_API_KEY,AVIATION_STACK_API_KEY,CRON_SECRET,BLOB_READ_WRITE_TOKEN,NEXT_PUBLIC_MAPBOX_TOKEN,NEXT_PUBLIC_POSTHOG_KEY,NEXT_PUBLIC_POSTHOG_HOST,NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,MEM0_API_KEY,MEM0_ORG_NAME,MEM0_PROJECT_NAME&envDescription=API%20keys%20and%20configuration%20required%20for%20Scira%20to%20function"
-                        className="flex flex-row gap-2 items-center py-1.5 px-2 rounded-md 
-                            bg-accent hover:bg-accent/80
-                            backdrop-blur-sm text-foreground shadow-sm text-sm
-                            transition-all duration-200"
-                    >
-                        <VercelIcon size={14} />
-                        <span className='hidden sm:block'>Deploy with Vercel</span>
-                        <span className='sm:hidden block'>Deploy</span>
-                    </Link>
                     <AboutButton />
                     <ThemeToggle />
                 </div>
@@ -1327,20 +1315,15 @@ const HomeContent = () => {
 
 
     const memoizedMessages = useMemo(() => {
-        // Create a shallow copy
         const msgs = [...messages];
 
         return msgs.filter((message) => {
-            // Keep all user messages
             if (message.role === 'user') return true;
 
-            // For assistant messages
             if (message.role === 'assistant') {
-                // Keep messages that have tool invocations
                 if (message.parts?.some(part => part.type === 'tool-invocation')) {
                     return true;
                 }
-                // Keep messages that have text parts but no tool invocations
                 if (message.parts?.some(part => part.type === 'text') ||
                     !message.parts?.some(part => part.type === 'tool-invocation')) {
                     return true;
@@ -1351,7 +1334,6 @@ const HomeContent = () => {
         });
     }, [messages]);
 
-    // Track visibility state for each reasoning section using messageIndex-partIndex as key
     const [reasoningVisibilityMap, setReasoningVisibilityMap] = useState<Record<string, boolean>>({});
 
     const handleRegenerate = useCallback(async () => {
@@ -1363,19 +1345,15 @@ const HomeContent = () => {
         const lastUserMessage = messages.findLast(m => m.role === 'user');
         if (!lastUserMessage) return;
 
-        // Remove the last assistant message
         const newMessages = messages.slice(0, -1);
         setMessages(newMessages);
         setSuggestedQuestions([]);
 
-        // Resubmit the last user message
         await reload();
     }, [status, messages, setMessages, reload]);
 
-    // Add this type at the top with other interfaces
     type MessagePart = TextUIPart | ReasoningUIPart | ToolInvocationUIPart | SourceUIPart;
 
-    // Update the renderPart function signature
     const renderPart = (
         part: MessagePart,
         messageIndex: number,
@@ -1562,18 +1540,14 @@ const HomeContent = () => {
         }
     };
 
-    // Add near other state declarations in HomeContent
     interface ReasoningTiming {
         startTime: number;
         endTime?: number;
     }
 
     const [reasoningTimings, setReasoningTimings] = useState<Record<string, ReasoningTiming>>({});
-
-    // Add state for tracking live elapsed time
     const [liveElapsedTimes, setLiveElapsedTimes] = useState<Record<string, number>>({});
 
-    // Update live elapsed time for active reasoning sections
     useEffect(() => {
         const activeReasoningSections = Object.entries(reasoningTimings)
             .filter(([_, timing]) => !timing.endTime);
@@ -1628,15 +1602,11 @@ const HomeContent = () => {
         const timerRef = useRef<NodeJS.Timeout>();
 
         useEffect(() => {
-            // Sync with the nearest second
             const now = new Date();
             const delay = 1000 - now.getMilliseconds();
 
-            // Initial sync
             const timeout = setTimeout(() => {
                 setCurrentTime(new Date());
-
-                // Then start the interval
                 timerRef.current = setInterval(() => {
                     setCurrentTime(new Date());
                 }, 1000);
@@ -1650,10 +1620,8 @@ const HomeContent = () => {
             };
         }, []);
 
-        // Get user's timezone
         const timezone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-        // Format date and time with timezone
         const dateFormatter = new Intl.DateTimeFormat('en-US', {
             weekday: 'short',
             month: 'short',
@@ -1686,7 +1654,6 @@ const HomeContent = () => {
         return (
             <div className="mt-8 w-full">
                 <div className="flex flex-wrap gap-3 justify-center">
-                    {/* Time Widget */}
                     <Button
                         variant="outline"
                         className="group flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all h-auto"
@@ -1698,7 +1665,6 @@ const HomeContent = () => {
                         </span>
                     </Button>
 
-                    {/* Date Widget */}
                     <Button
                         variant="outline"
                         className="group flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all h-auto"
@@ -1721,8 +1687,8 @@ const HomeContent = () => {
             <Navbar />
 
             <div className={`w-full p-2 sm:p-4 ${status === 'ready' && messages.length === 0
-                ? 'min-h-screen flex flex-col items-center justify-center' // Center everything when no messages
-                : 'mt-20 sm:mt-16' // Add top margin when showing messages
+                ? 'min-h-screen flex flex-col items-center justify-center'
+                : 'mt-20 sm:mt-16'
                 }`}>
                 <div className={`w-full max-w-[90%] !font-sans sm:max-w-2xl space-y-6 p-0 mx-auto transition-all duration-300`}>
                     {status === 'ready' && messages.length === 0 && (
@@ -1765,7 +1731,6 @@ const HomeContent = () => {
                         )}
                     </AnimatePresence>
 
-                    {/* Add the widget section below form when no messages */}
                     {messages.length === 0 && (
                         <div>
                             <WidgetSection />
@@ -1775,7 +1740,6 @@ const HomeContent = () => {
                     <div className="space-y-4 sm:space-y-6 mb-32">
                         {memoizedMessages.map((message, index) => (
                             <div key={index} className={`${
-                                // Add border only if this is an assistant message AND there's a next message
                                 message.role === 'assistant' && index < memoizedMessages.length - 1 
                                     ? '!mb-12 border-b border-neutral-200 dark:border-neutral-800' 
                                     : ''
@@ -1810,7 +1774,7 @@ const HomeContent = () => {
                                                                 >
                                                                     <X className="h-4 w-4" />
                                                                 </Button>
-                                                                <Separator orientation="vertical" className="h-7 bg-neutral-200 dark:bg-neutral-700" />
+                                                                <Separator orientation="vertical" className="h-7" />
                                                                 <Button
                                                                     type="submit"
                                                                     variant="ghost"
@@ -1898,48 +1862,6 @@ const HomeContent = () => {
                                             )}
                                         </div>
                                     </motion.div>
-                                )}
-
-                                {message.role === 'assistant' && (
-                                    <>
-                                        {message.parts?.map((part, partIndex) =>
-                                            renderPart(
-                                                part as MessagePart,
-                                                index,
-                                                partIndex,
-                                                message.parts as MessagePart[],
-                                                message,
-                                            )
-                                        )}
-                                        
-                                        {/* Add suggested questions if this is the last message and it's from the assistant */}
-                                        {index === memoizedMessages.length - 1 && suggestedQuestions.length > 0 && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: 20 }}
-                                                transition={{ duration: 0.5 }}
-                                                className="w-full max-w-xl sm:max-w-2xl mt-6"
-                                            >
-                                                <div className="flex items-center gap-2 mb-4">
-                                                    <AlignLeft className="w-5 h-5 text-primary" />
-                                                    <h2 className="font-semibold text-base text-neutral-800 dark:text-neutral-200">Suggested questions</h2>
-                                                </div>
-                                                <div className="space-y-2 flex flex-col">
-                                                    {suggestedQuestions.map((question, index) => (
-                                                        <Button
-                                                            key={index}
-                                                            variant="ghost"
-                                                            className="w-fit font-medium rounded-2xl p-1 justify-start text-left h-auto py-2 px-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-700 whitespace-normal"
-                                                            onClick={() => handleSuggestedQuestionClick(question)}
-                                                        >
-                                                            {question}
-                                                        </Button>
-                                                    ))}
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </>
                                 )}
                             </div>
                         ))}
@@ -2292,15 +2214,12 @@ const ToolInvocationListView = memo(
                     }
 
                     const youtubeResult = result as YouTubeSearchResponse;
-
-                    // Filter out videos with no meaningful content
                     const filteredVideos = youtubeResult.results.filter(video =>
                         (video.timestamps && video.timestamps.length > 0) ||
                         video.captions ||
                         video.summary
                     );
 
-                    // If no videos with content, show a message instead
                     if (filteredVideos.length === 0) {
                         return (
                             <div className="rounded-xl overflow-hidden border dark:border-neutral-800 border-neutral-200 bg-white dark:bg-neutral-900 shadow-sm p-4 text-center">
@@ -2675,7 +2594,7 @@ const ToolInvocationListView = memo(
                                         <div className="absolute inset-0 rounded-full bg-primary/10 animate-pulse" />
                                         <Globe className="h-5 w-5 text-primary/70 absolute inset-0 m-auto" />
                                     </div>
-                                    <div className="space-y-2 flex-1">
+                                    <div className="space-y-2">
                                         <div className="h-4 w-36 bg-neutral-200 dark:bg-neutral-800 animate-pulse rounded-md" />
                                         <div className="space-y-1.5">
                                             <div className="h-3 w-full bg-neutral-100 dark:bg-neutral-800/50 animate-pulse rounded-md" />
@@ -2687,7 +2606,6 @@ const ToolInvocationListView = memo(
                         );
                     }
 
-                    // Update the error message UI with better dark mode border visibility
                     if (result.error || (result.results && result.results[0] && result.results[0].error)) {
                         const errorMessage = result.error || (result.results && result.results[0] && result.results[0].error);
                         return (
@@ -2709,7 +2627,6 @@ const ToolInvocationListView = memo(
                         );
                     }
 
-                    // Update the "no content" message UI with better dark mode border visibility
                     if (!result.results || result.results.length === 0) {
                         return (
                             <div className="border border-amber-200 dark:border-amber-500 rounded-xl my-4 p-4 bg-amber-50 dark:bg-amber-950/50">
@@ -2725,7 +2642,6 @@ const ToolInvocationListView = memo(
                         );
                     }
 
-                    // Existing rendering for successful retrieval:
                     return (
                         <div className="border border-neutral-200 rounded-xl my-4 overflow-hidden dark:border-neutral-800 bg-gradient-to-b from-white to-neutral-50 dark:from-neutral-900 dark:to-neutral-900/90">
                             <div className="p-4">
@@ -2846,21 +2762,16 @@ const ToolInvocationListView = memo(
                         );
                     }
 
-                    // Live Clock component that updates every second
                     const LiveClock = memo(() => {
                         const [time, setTime] = useState(() => new Date());
                         const timerRef = useRef<NodeJS.Timeout>();
 
                         useEffect(() => {
-                            // Sync with the nearest second
                             const now = new Date();
                             const delay = 1000 - now.getMilliseconds();
 
-                            // Initial sync
                             const timeout = setTimeout(() => {
                                 setTime(new Date());
-
-                                // Then start the interval
                                 timerRef.current = setInterval(() => {
                                     setTime(new Date());
                                 }, 1000);
@@ -2874,7 +2785,6 @@ const ToolInvocationListView = memo(
                             };
                         }, []);
 
-                        // Format the time according to the specified timezone
                         const timezone = result.timezone || new Intl.DateTimeFormat().resolvedOptions().timeZone;
                         const formatter = new Intl.DateTimeFormat('en-US', {
                             hour: 'numeric',
@@ -3009,7 +2919,6 @@ const ToolInvocationListView = memo(
                         const { audio } = await generateSpeech(result.translatedText);
                         setAudioUrl(audio);
                         setIsGeneratingAudio(false);
-                        // Autoplay after a short delay to ensure audio is loaded
                         setTimeout(() => {
                             if (audioRef.current) {
                                 audioRef.current.play();
@@ -3057,7 +2966,7 @@ const ToolInvocationListView = memo(
                         <div className="space-y-4 sm:space-y-6">
                             <div>
                                 <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                                    The phrase <span className="font-medium text-neutral-900 dark:text-neutral-100">{toolInvocation.args.text}</span> translates from <span className="font-medium text-neutral-900 dark:text-neutral-100">{result.detectedLanguage}</span> to <span className="font-medium text-neutral-900 dark:text-neutral-100">{toolInvocation.args.to}</span> as <span className="font-medium text-primary">{result.translatedText}</span>
+                                    The phrase <span className="font-medium text-neutral-900 dark:text-neutral-100">{toolInvocation.args.text}</span> translates from <span className="font-medium text-neutral-900 dark:text-neutral-100">{result.detectedLanguage}</span> to <span className="font-medium text-primary">{toolInvocation.args.to}</span> as <span className="font-medium text-primary">{result.translatedText}</span>
                                 </p>
                             </div>
 
