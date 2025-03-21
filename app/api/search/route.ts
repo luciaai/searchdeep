@@ -39,7 +39,7 @@ const scira = customProvider({
 })
 
 // Allow streaming responses up to 600 seconds
-export const maxDuration = 600;
+export const maxDuration = 300;
 
 interface XResult {
     id: string;
