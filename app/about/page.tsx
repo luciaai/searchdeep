@@ -142,18 +142,18 @@ export default function AboutPage() {
 
                         <motion.div variants={item} className="text-center space-y-6">
                             <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-                                A minimalistic AI-powered search engine with RAG and search grounding capabilities. Open source and built for everyone.
+                                A minimalistic AI-powered search engine with RAG and search grounding capabilities - built for everyone.
                             </p>
                         </motion.div>
 
                         <motion.div variants={item} className="flex flex-wrap items-center justify-center gap-4">
-                            <Link
+                            {/* <Link
                                 href="#"
                                 className="group relative inline-flex h-12 items-center gap-2 px-6 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:opacity-90 transition-all duration-300"
                             >
                                 <GithubLogo weight="fill" className="h-5 w-5" />
                                 <span className="font-medium">View Source</span>
-                            </Link>
+                            </Link> */}
                             <Link
                                 href="/"
                                 className="group relative inline-flex h-12 items-center gap-2 px-6 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all duration-300"
@@ -312,7 +312,7 @@ export default function AboutPage() {
             </div>
 
             {/* Highlight Section */}
-            <div className="py-24 px-4 bg-white dark:bg-neutral-900/50">
+            {/* <div className="py-24 px-4 bg-white dark:bg-neutral-900/50">
                 <motion.div 
                     className="container max-w-5xl mx-auto"
                     initial={{ opacity: 0, y: 20 }}
@@ -344,7 +344,7 @@ export default function AboutPage() {
                         </div>
                     </div>
                 </motion.div>
-            </div>
+            </div> */}
 
             {/* Integration Section - Add before Use Cases */}
             <div className="py-24 px-4">
