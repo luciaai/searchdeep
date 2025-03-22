@@ -1,8 +1,8 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 // This example protects all routes including api/trpc routes
-// Make sure to include the clerkMiddleware() call without options
-// to ensure Clerk's auth() function works properly
 export default clerkMiddleware();
 
 export const config = {

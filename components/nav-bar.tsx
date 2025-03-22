@@ -31,68 +31,57 @@ export function NavBar() {
     }
   }, []);
 
+  const navItems = [
+    { name: 'Home', href: '/' },
+    { name: 'Pricing', href: '/pricing' },
+    { name: 'About', href: '/about' },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold text-xl">Ziq</span>
           </Link>
         </div>
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <nav className="flex items-center space-x-4">
+        <nav className="flex items-center space-x-6 text-sm font-medium">
+          {navItems.map((item) => (
             <Link
-              href="/"
+              key={item.href}
+              href={item.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                pathname === "/" ? "text-primary" : "text-neutral-600 dark:text-neutral-400"
+                "transition-colors hover:text-foreground/80",
+                pathname === item.href ? "text-foreground" : "text-foreground/60"
               )}
             >
-              Home
+              {item.name}
             </Link>
-            <Link
-              href="/pricing"
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                pathname === "/pricing" ? "text-primary" : "text-neutral-600 dark:text-neutral-400"
-              )}
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/about"
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                pathname === "/about" ? "text-primary" : "text-neutral-600 dark:text-neutral-400"
-              )}
-            >
-              About
-            </Link>
-          </nav>
-          
-          <div className="flex items-center space-x-4">
-            <SignedIn>
-              {credits !== null && (
-                <div className="flex items-center text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                  <Coins className="h-4 w-4 mr-1" />
-                  <span>{credits} credits</span>
-                </div>
-              )}
-              <UserButton afterSignOutUrl="/" />
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button variant="outline" size="sm">
-                  Sign In
-                </Button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <Button size="sm">
-                  Sign Up
-                </Button>
-              </SignUpButton>
-            </SignedOut>
-          </div>
+          ))}
+        </nav>
+        <div className="flex-1" />
+        <div className="flex items-center space-x-4">
+          <SignedIn>
+            {credits !== null && (
+              <div className="flex items-center mr-2">
+                <Coins className="h-4 w-4 mr-1 text-yellow-500" />
+                <span className="text-sm font-medium">{credits}</span>
+              </div>
+            )}
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <Button variant="ghost" size="sm">
+                Sign In
+              </Button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button size="sm">
+                Sign Up
+              </Button>
+            </SignUpButton>
+          </SignedOut>
         </div>
       </div>
     </header>
