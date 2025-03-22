@@ -1,12 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
+
 "use client";
-
 import 'katex/dist/katex.min.css';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 
-// Your component imports
 import { BorderTrail } from '@/components/core/border-trail';
 import { TextShimmer } from '@/components/core/text-shimmer';
 import { FlightTracker } from '@/components/flight-tracker';
@@ -18,24 +14,24 @@ import MultiSearch from '@/components/multi-search';
 import NearbySearchMapView from '@/components/nearby-search-map-view';
 import TrendingResults from '@/components/trending-tv-movies-results';
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
 } from "@/components/ui/tooltip";
 import WeatherChart from '@/components/weather-chart';
 import { cn, getUserId, SearchGroupId } from '@/lib/utils';
@@ -47,46 +43,46 @@ import { useChat, UseChatOptions } from '@ai-sdk/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { GeistMono } from 'geist/font/mono';
 import {
-  AlignLeft,
-  ArrowRight,
-  Book,
-  Brain,
-  Building,
-  Calculator,
-  Calendar,
-  Check,
-  ChevronDown,
-  Cloud,
-  Code,
-  Copy,
-  Download,
-  ExternalLink,
-  FileText,
-  Film,
-  Globe,
-  Heart,
-  Loader2,
-  LucideIcon,
-  MapPin,
-  Moon,
-  Pause,
-  Plane,
-  Play as PlayIcon,
-  Plus,
-  Sparkles,
-  Sun,
-  TrendingUp,
-  TrendingUpIcon,
-  Tv,
-  User2,
-  Users,
-  X,
-  YoutubeIcon,
-  RefreshCw,
-  Clock,
-  WrapText,
-  ArrowLeftRight,
-  Mountain
+    AlignLeft,
+    ArrowRight,
+    Book,
+    Brain,
+    Building,
+    Calculator,
+    Calendar,
+    Check,
+    ChevronDown,
+    Cloud,
+    Code,
+    Copy,
+    Download,
+    ExternalLink,
+    FileText,
+    Film,
+    Globe,
+    Heart,
+    Loader2,
+    LucideIcon,
+    MapPin,
+    Moon,
+    Pause,
+    Plane,
+    Play as PlayIcon,
+    Plus,
+    Sparkles,
+    Sun,
+    TrendingUp,
+    TrendingUpIcon,
+    Tv,
+    User2,
+    Users,
+    X,
+    YoutubeIcon,
+    RefreshCw,
+    Clock,
+    WrapText,
+    ArrowLeftRight,
+    Mountain
 } from 'lucide-react';
 import Marked, { ReactRenderer } from 'marked-react';
 import { useTheme } from 'next-themes';
@@ -94,13 +90,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { parseAsString, useQueryState } from 'nuqs';
 import React, {
-  memo,
-  Suspense,
-  useCallback,
-  useEffect as useReactEffect,
-  useMemo,
-  useRef,
-  useState
+    memo,
+    Suspense,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
 } from 'react';
 import Latex from 'react-latex-next';
 import ReactMarkdown from 'react-markdown';
@@ -109,25 +105,25 @@ import { atomDark, oneLight, oneDark } from 'react-syntax-highlighter/dist/esm/s
 import { Tweet } from 'react-tweet';
 import { toast } from 'sonner';
 import {
-  fetchMetadata,
-  generateSpeech,
-  suggestQuestions
+    fetchMetadata,
+    generateSpeech,
+    suggestQuestions
 } from './actions';
 import InteractiveStockChart from '@/components/interactive-stock-chart';
 import { CurrencyConverter } from '@/components/currency_conv';
 import { ReasoningUIPart, ToolInvocationUIPart, TextUIPart, SourceUIPart } from '@ai-sdk/ui-utils';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
 } from "@/components/ui/drawer";
 import FormComponent from '@/components/ui/form-component';
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -139,50 +135,30 @@ import MemoryManager from '@/components/memory-manager';
 export const maxDuration = 120;
 
 interface Attachment {
-  name: string;
-  contentType: string;
-  url: string;
-  size: number;
+    name: string;
+    contentType: string;
+    url: string;
+    size: number;
 }
 
 interface XResult {
-  id: string;
-  url: string;
-  title: string;
-  author?: string;
-  publishedDate?: string;
-  text: string;
-  highlights?: string[];
-  tweetId: string;
+    id: string;
+    url: string;
+    title: string;
+    author?: string;
+    publishedDate?: string;
+    text: string;
+    highlights?: string[];
+    tweetId: string;
 }
 
 interface AcademicResult {
-  title: string;
-  url: string;
-  author?: string | null;
-  publishedDate?: string;
-  summary: string;
+    title: string;
+    url: string;
+    author?: string | null;
+    publishedDate?: string;
+    summary: string;
 }
-
-// ------------------------------------------------------------
-// Begin Client Component that Requires Authentication
-// ------------------------------------------------------------
-
-export default function ProtectedClientComponent() {
-  const router = useRouter();
-  const { isLoaded, isSignedIn } = useUser();
-
-  useEffect(() => {
-    // After Clerk has loaded and if the user is not signed in, redirect them.
-    if (isLoaded && !isSignedIn) {
-      router.push('/sign-in'); // Adjust this path if you have a custom sign-in page.
-    }
-  }, [isLoaded, isSignedIn, router]);
-
-  // While Clerk is loading or if the user isn't signed in, you can render a loading spinner or return null.
-  if (!isLoaded || !isSignedIn) {
-    return <div>Loading...</div>;
-  }
 
 const SearchLoadingState = ({
     icon: Icon,
