@@ -134,7 +134,7 @@ function PricingContent() {
   };
 
   return (
-    <div className="container max-w-6xl py-12">
+    <div className="container max-w-6xl py-12 mt-16">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Pricing Plans</h1>
         <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">

@@ -137,7 +137,6 @@ import ReasonSearch from '@/components/reason-search';
 import he from 'he';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MemoryManager from '@/components/memory-manager';
-import { NavBar } from '@/components/nav-bar';
 
 export const maxDuration = 120;
 
@@ -1730,8 +1729,6 @@ const HomeContent = () => {
 
     return (
         <div className="flex flex-col !font-sans items-center min-h-screen bg-background text-foreground transition-all duration-500">
-            <NavBar />
-
             <div className={`w-full p-2 sm:p-4 ${status === 'ready' && messages.length === 0
                 ? 'min-h-screen flex flex-col items-center justify-center' // Center everything when no messages
                 : 'mt-20 sm:mt-16' // Add top margin when showing messages
