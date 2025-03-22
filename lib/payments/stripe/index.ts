@@ -33,6 +33,7 @@ export async function createCheckoutSession(tierId: string, clerkId: string) {
       // Create the user if they don't exist
       user = await prisma.user.create({
         data: {
+          id: clerkId, // Use clerkId as id to ensure uniqueness
           clerkId,
           credits: Number(process.env.STARTING_CREDITS || 3),
         },
@@ -74,8 +75,8 @@ export async function createCheckoutSession(tierId: string, clerkId: string) {
         userId: user.id,
       },
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/pricing?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/pricing?canceled=true`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://searchdeep.vercel.app'}/pricing?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://searchdeep.vercel.app'}/pricing?canceled=true`,
     });
 
     return { url: session.url };
@@ -102,7 +103,7 @@ export async function createCustomerPortalSession(clerkId: string) {
     // Create the portal session
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/pricing`,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://searchdeep.vercel.app'}/pricing`,
     });
 
     return { url: session.url };

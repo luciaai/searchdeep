@@ -1,10 +1,9 @@
 // This file is used to instantiate the Prisma client
-// Using require instead of import to avoid TypeScript errors
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit.
-const globalForPrisma = global as unknown as { prisma: any };
+const globalForPrisma = global as unknown as { prisma: PrismaClient | undefined };
 
 // Create a new PrismaClient instance
 export const prisma = globalForPrisma.prisma || new PrismaClient();

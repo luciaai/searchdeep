@@ -9,5 +9,8 @@
         "iad1",
         "sfo1",
         "bom1"
-    ]
+    ],
+    "buildCommand": "pnpm run build",
+    "installCommand": "pnpm install",
+    "outputDirectory": ".next"
 }
