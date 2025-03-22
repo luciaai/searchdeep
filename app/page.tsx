@@ -27,6 +27,12 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
@@ -82,7 +88,8 @@ import {
     WrapText,
     ArrowLeftRight,
     Mountain,
-    CreditCard
+    CreditCard,
+    History
 } from 'lucide-react';
 import Marked, { ReactRenderer } from 'marked-react';
 import { useTheme } from 'next-themes';
@@ -1196,128 +1203,149 @@ const HomeContent = () => {
 
     const AboutButton = () => {
         return (
-            <Link href="/about">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
-                    variant="outline"
-                    size="icon"
-                    className="rounded-full w-8 h-8 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all"
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full w-8 h-8 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all"
                 >
-                    <Info className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+                  <Info className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
                 </Button>
-            </Link>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[180px] mt-1" sideOffset={8}>
+                <DropdownMenuItem asChild>
+                  <Link href="/history" className="flex items-center cursor-pointer">
+                    <History className="mr-2 h-4 w-4" />
+                    <span>History</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/pricing" className="flex items-center cursor-pointer">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Pricing</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/about" className="flex items-center cursor-pointer">
+                    <Info className="mr-2 h-4 w-4" />
+                    <span>About</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
         );
     };
 
     interface NavbarProps { }
-const Navbar: React.FC<NavbarProps> = () => {
-  return (
-    <div
-      className={cn(
-        "fixed top-0 left-0 right-0 z-[60] flex justify-between items-center p-4",
-        status === "ready"
-          ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-          : "bg-background",
-        "animate-gradient-background"
-      )}
-    >
-      <div className="flex items-center gap-4">
-        <Link href="/new">
-          <Button
-            type="button"
-            variant={"secondary"}
-            className="rounded-full bg-accent hover:bg-accent/80 backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto"
-          >
-            <Plus size={18} className="group-hover:rotate-90 transition-all" />
-            <span className="text-sm ml-2 group-hover:block hidden animate-in fade-in duration-300">
-              New
-            </span>
-          </Button>
-        </Link>
-      </div>
-
-      {/* Logo positioned further to the right on mobile; centered on larger screens */}
-      <div className="absolute left-24 sm:left-1/2 sm:transform sm:-translate-x-1/2 font-semibold text-lg flex items-center">
-        <Image
-          src="/logo.png"
-          alt="Logo"
-          width={80} // adjust as needed
-          height={80}
-          className="mr-1 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
-        />
-      </div>
-
-      <div className="flex items-center space-x-4">
-        <SignedIn>
-          {/* Credits display */}
-          <div className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full text-sm flex items-center mr-2">
-            <CreditCard className="h-3.5 w-3.5 mr-1.5 text-blue-500 dark:text-blue-400" />
-            <span className="font-medium text-blue-600 dark:text-blue-300">
-              {isLoadingCredits ? (
-                <span className="animate-pulse">Loading...</span>
-              ) : (
-                `${userCredits} credit${userCredits !== 1 ? 's' : ''}`
-              )}
-            </span>
-          </div>
-          <UserButton afterSignOutUrl="/" />
-        </SignedIn>
-        <SignedOut>
-          <SignInButton mode="modal">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border-blue-500/20"
+    const Navbar: React.FC<NavbarProps> = () => {
+        return (
+            <div
+                className={cn(
+                    "fixed top-0 left-0 right-0 z-[60] flex justify-between items-center p-4 h-[72px]",
+                    status === "ready"
+                        ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+                        : "bg-background",
+                    "animate-gradient-background"
+                )}
             >
-              Sign In
-            </Button>
-          </SignInButton>
-          <SignUpButton mode="modal">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="rounded-md bg-green-500/10 hover:bg-green-500/20 text-green-500 border-green-500/20 ml-2"
-            >
-              Sign Up
-            </Button>
-          </SignUpButton>
-        </SignedOut>
-        <AboutButton />
-        <ThemeToggle />
-      </div>
+                <div className="flex items-center gap-4">
+                    <Link href="/new">
+                        <Button
+                            type="button"
+                            variant={"secondary"}
+                            className="rounded-full bg-accent hover:bg-accent/80 backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto"
+                        >
+                            <Plus size={18} className="group-hover:rotate-90 transition-all" />
+                            <span className="text-sm ml-2 group-hover:block hidden animate-in fade-in duration-300">
+                                New
+                            </span>
+                        </Button>
+                    </Link>
+                </div>
 
-      <style jsx global>{`
-        @keyframes gradient-animation {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-        
-        .animate-gradient-background {
-          background: linear-gradient(-45deg, #f3e7ff, #e7f5ff, #fff5e7, #e7ffef);
-          background-size: 400% 400%;
-          animation: gradient-animation 15s ease infinite;
-          animation-delay: 0.2s; /* slight delay to ensure initial render */
-        }
-        
-        .dark .animate-gradient-background {
-          background: linear-gradient(-45deg, #2a1a3a, #1a2a3a, #2a2a1a, #1a2a1a);
-          background-size: 400% 400%;
-          animation: gradient-animation 15s ease infinite;
-          animation-delay: 0.2s;
-        }
-      `}</style>
-    </div>
-  );
-};
+                {/* Logo positioned further to the right on mobile; centered on larger screens */}
+                <div className="absolute left-24 sm:left-1/2 sm:transform sm:-translate-x-1/2 font-semibold text-lg flex items-center">
+                    <Image
+                        src="/logo.png"
+                        alt="Logo"
+                        width={80} // adjust as needed
+                        height={80}
+                        className="mr-1 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
+                    />
+                </div>
 
+                <div className="flex items-center space-x-4">
+                    <SignedIn>
+                        {/* Credits display */}
+                        <div className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full text-sm flex items-center mr-2">
+                            <CreditCard className="h-3.5 w-3.5 mr-1.5 text-blue-500 dark:text-blue-400" />
+                            <span className="font-medium text-blue-600 dark:text-blue-300">
+                                {isLoadingCredits ? (
+                                    <span className="animate-pulse">Loading...</span>
+                                ) : (
+                                    `${userCredits} credit${userCredits !== 1 ? 's' : ''}`
+                                )}
+                            </span>
+                        </div>
+                        <UserButton afterSignOutUrl="/" />
+                    </SignedIn>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border-blue-500/20"
+                            >
+                                Sign In
+                            </Button>
+                        </SignInButton>
+                        <SignUpButton mode="modal">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="rounded-md bg-green-500/10 hover:bg-green-500/20 text-green-500 border-green-500/20 ml-2"
+                            >
+                                Sign Up
+                            </Button>
+                        </SignUpButton>
+                    </SignedOut>
+                    <AboutButton />
+                    <ThemeToggle />
+                </div>
+
+                <style jsx global>{`
+                    @keyframes gradient-animation {
+                        0% {
+                            background-position: 0% 50%;
+                        }
+                        50% {
+                            background-position: 100% 50%;
+                        }
+                        100% {
+                            background-position: 0% 50%;
+                        }
+                    }
+                    
+                    .animate-gradient-background {
+                        background: linear-gradient(-45deg, #f3e7ff, #e7f5ff, #fff5e7, #e7ffef);
+                        background-size: 400% 400%;
+                        animation: gradient-animation 15s ease infinite;
+                        animation-delay: 0.2s; /* slight delay to ensure initial render */
+                    }
+                    
+                    .dark .animate-gradient-background {
+                        background: linear-gradient(-45deg, #2a1a3a, #1a2a3a, #2a2a1a, #1a2a1a);
+                        background-size: 400% 400%;
+                        animation: gradient-animation 15s ease infinite;
+                        animation-delay: 0.2s;
+                    }
+                `}</style>
+            </div>
+        );
+    };
 
     const handleModelChange = useCallback((newModel: string) => {
         setSelectedModel(newModel);
@@ -1327,7 +1355,6 @@ const Navbar: React.FC<NavbarProps> = () => {
     const resetSuggestedQuestions = useCallback(() => {
         setSuggestedQuestions([]);
     }, []);
-
 
     const memoizedMessages = useMemo(() => {
         // Create a shallow copy

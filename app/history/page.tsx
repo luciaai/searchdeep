@@ -94,7 +94,7 @@ export default function HistoryPage() {
         </div>
       ) : searches.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">You haven't made any searches yet.</p>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">You haven&apos;t made any searches yet.</p>
           <Button onClick={() => router.push('/')}>Start Searching</Button>
         </div>
       ) : (
