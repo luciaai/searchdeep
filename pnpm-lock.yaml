@@ -104,6 +104,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.1.2
         version: 1.1.8(@types/react-dom@18.3.5(@types/react@18.3.19))(@types/react@18.3.19)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@swc/helpers':
+        specifier: ^0.5.15
+        version: 0.5.15
       '@t3-oss/env-nextjs':
         specifier: ^0.11.1
         version: 0.11.1(typescript@5.8.2)(zod@3.24.2)
@@ -146,6 +149,9 @@ importers:
       anthropic-vertex-ai:
         specifier: ^1.0.0
         version: 1.0.2(encoding@0.1.13)(zod@3.24.2)
+      caniuse-lite:
+        specifier: ^1.0.30001706
+        version: 1.0.30001706
       cheerio:
         specifier: ^1.0.0
         version: 1.0.0
@@ -269,6 +275,9 @@ importers:
       stripe:
         specifier: ^17.7.0
         version: 17.7.0
+      styled-jsx:
+        specifier: ^5.1.6
+        version: 5.1.6(react@18.3.1)
       tailwind-merge:
         specifier: ^2.4.0
         version: 2.6.0
@@ -4624,6 +4633,19 @@ packages:
       '@babel/core': '*'
       babel-plugin-macros: '*'
       react: '>= 16.8.0 || 17.x.x || ^18.0.0-0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      babel-plugin-macros:
+        optional: true
+
+  styled-jsx@5.1.6:
+    resolution: {integrity: sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==}
+    engines: {node: '>= 12.0.0'}
+    peerDependencies:
+      '@babel/core': '*'
+      babel-plugin-macros: '*'
+      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0'
     peerDependenciesMeta:
       '@babel/core':
         optional: true
@@ -9978,6 +10000,11 @@ snapshots:
       inline-style-parser: 0.2.4
 
   styled-jsx@5.1.1(react@18.3.1):
+    dependencies:
+      client-only: 0.0.1
+      react: 18.3.1
+
+  styled-jsx@5.1.6(react@18.3.1):
     dependencies:
       client-only: 0.0.1
       react: 18.3.1
