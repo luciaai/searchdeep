@@ -75,7 +75,7 @@ export default function AboutPage() {
                                 Warning
                             </DialogTitle>
                             <DialogDescription className="text-neutral-600 dark:text-neutral-400">
-                            🌠 Deep Search by Lucia is an AI search engine and is not associated with any cryptocurrency, memecoin, or token activities. Beware of impersonators.
+                            🌠 Ziq is an AI search engine and is not associated with any cryptocurrency, memecoin, or token activities. Beware of impersonators.
                             </DialogDescription>
                         </DialogHeader>
                     </div>
@@ -105,8 +105,8 @@ export default function AboutPage() {
                         {/* Company Name/Logo */}
                         <motion.div variants={item} className="text-center">
                             <Link href="/" className="inline-flex items-end gap-3 text-5xl font-syne font-bold">
-                                <NextImage src="/scira.png" alt="Scira Logo" className="h-16 w-16 invert" width={64} height={64} unoptimized quality={100}/>
-                                <span className=''>🌠 Deep Search by Lucia</span>
+                                <NextImage src="/logo.png" alt="Ziq Logo" className="h-16 w-16 invert" width={64} height={64} unoptimized quality={100}/>
+                                <span className=''>🌠 Ziq - AI Powered Search Engine</span>
                             </Link>
                         </motion.div>
 
@@ -135,7 +135,7 @@ export default function AboutPage() {
                                     type="submit"
                                     className="absolute right-2 top-2 h-10 px-4 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-medium hover:opacity-90 transition-opacity"
                                 >
-                                    Ask 🌠 Deep Search by Lucia
+                                    Ask 🌠 Ziq - AI Powered Search Engine
                                 </button>
                             </div>
                         </motion.form>
@@ -179,7 +179,7 @@ export default function AboutPage() {
                     <div className="text-center space-y-4 mb-16">
                         <h2 className="text-3xl font-bold">RAG & Search Grounding</h2>
                         <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-                            Watch how 🌠 Deep Search by Lucia combines RAG and search grounding to deliver accurate, up-to-date answers from reliable sources.
+                            Watch how 🌠 Ziq - AI Powered Search Engine combines RAG and search grounding to deliver accurate, up-to-date answers from reliable sources.
                         </p>
                     </div>
 
@@ -393,7 +393,7 @@ export default function AboutPage() {
                     <div className="text-center space-y-3">
                         <h2 className="text-3xl font-bold">Community Recognition</h2>
                         <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-                            Join the growing community of developers and researchers using 🌠 Deep Search by Lucia.
+                            Join the growing community of developers and researchers using 🌠 Ziq - AI Powered Search Engine.
                         </p>
                     </div>
 
@@ -503,7 +503,7 @@ export default function AboutPage() {
                     <div className="text-center space-y-4">
                         <h2 className="text-3xl font-bold">Built For Everyone</h2>
                         <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-                            Whether you need quick answers or in-depth research, 🌠 Deep Search by Lucia adapts to your search needs.
+                            Whether you need quick answers or in-depth research, 🌠 Ziq - AI Powered Search Engine adapts to your search needs.
                         </p>
                     </div>
 

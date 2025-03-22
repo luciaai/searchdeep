@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
  
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Deep Search by Lucia - AI-powered Search Engine",
-    short_name: "Deep Search - a product built by Lucia",
+    name: "Ziq - AI-powered Search Engine",
+    short_name: "Ziq - AI-powered Search Engine",
     description: "A minimalistic AI-powered search engine that helps you find information on the internet using advanced AI models like GPT-4, Claude, and Grok",
     start_url: "/",
     display: "standalone",

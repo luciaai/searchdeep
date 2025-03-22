@@ -98,9 +98,9 @@ export function InstallPrompt() {
           <Card className="p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-lg">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <h3 className="font-medium text-xl text-neutral-900 dark:text-neutral-100">
-                  Install Scira
-                </h3>
+              <h3 className="font-medium text-xl text-neutral-900 dark:text-neutral-100">
+  Install Ziq
+</h3>
                 {getInstructions()}
               </div>
               <Button
