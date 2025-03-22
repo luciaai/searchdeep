@@ -33,6 +33,7 @@ export function NavBar() {
 
   const navItems = [
     { name: 'Home', href: '/' },
+    { name: 'History', href: '/history' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'About', href: '/about' },
   ];

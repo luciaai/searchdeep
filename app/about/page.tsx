@@ -1,4 +1,3 @@
-
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
@@ -40,7 +39,7 @@ export default function AboutPage() {
         localStorage.setItem('hasSeenWarning', 'true');
     };
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const query = formData.get('query')?.toString();
@@ -101,7 +100,7 @@ export default function AboutPage() {
             </Dialog>
 
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+            {/* <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
                 <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16 md:h-20">
                         <div className="flex items-center">
@@ -141,7 +140,7 @@ export default function AboutPage() {
                         </div>
                     </div>
                 </div>
-            </header>
+            </header> */}
 
             {/* Hero Section */}
             <section className="relative pt-20 pb-32 overflow-hidden">
@@ -567,7 +566,7 @@ export default function AboutPage() {
                                 </div>
                                 
                                 <blockquote className="text-gray-700 dark:text-gray-300 mb-6">
-                                    "{testimonial.quote}"
+                                    &ldquo;{testimonial.quote}&rdquo;
                                 </blockquote>
                                 
                                 <div className="flex items-center gap-3">
@@ -768,7 +767,7 @@ export default function AboutPage() {
                     
                     <div className="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
                         <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 md:mb-0">
-                            © {new Date().getFullYear()} Ziq Research Assistant. All rights reserved.
+                            &copy; {new Date().getFullYear()} Ziq Research Assistant. All rights reserved.
                         </p>
                         <div className="flex space-x-6">
                             <Link href="#" className="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
@@ -787,4 +786,3 @@ export default function AboutPage() {
         </div>
     );
 }
-                                
