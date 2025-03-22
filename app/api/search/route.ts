@@ -24,6 +24,7 @@ import Exa from 'exa-js';
 import { z } from 'zod';
 import { geolocation } from '@vercel/functions';
 import MemoryClient from 'mem0ai';
+import { hasEnoughCredits, decrementCredit } from '@/lib/user-credits';
 
 const scira = customProvider({
     languageModels: {
@@ -169,6 +170,21 @@ export async function POST(req: Request) {
 
     console.log("Running with model: ", model.trim());
     console.log("Group: ", group);
+
+    // Check if user has enough credits
+    const { hasCredits } = await hasEnoughCredits();
+    if (!hasCredits) {
+        return new Response(
+            JSON.stringify({
+                error: "You don't have enough credits to perform this search.",
+                results: []
+            }),
+            { status: 403 }
+        );
+    }
+
+    // Decrement user credits for this search
+    await decrementCredit();
 
     if (group !== 'chat' && group !== 'buddy') {
         console.log("Running inside part 1");

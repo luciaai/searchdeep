@@ -61,7 +61,7 @@ export async function getOrCreateUser() {
 export async function hasEnoughCredits() {
   try {
     const user = await getOrCreateUser();
-    return { hasCredits: user.credits > 0 };
+    return { hasCredits: user.credits >= 1 };
   } catch (error) {
     console.error('Error checking credits:', error);
     return { hasCredits: false, error: 'Failed to check credits' };

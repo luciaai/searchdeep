@@ -137,6 +137,7 @@ import ReasonSearch from '@/components/reason-search';
 import he from 'he';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MemoryManager from '@/components/memory-manager';
+import { NavBar } from '@/components/nav-bar';
 
 export const maxDuration = 120;
 
@@ -678,7 +679,6 @@ const HomeContent = () => {
             </Button>
         );
     };
-
 
     const CopyButton = ({ text }: { text: string }) => {
         const [isCopied, setIsCopied] = useState(false);
@@ -1237,116 +1237,6 @@ const HomeContent = () => {
         );
     };
 
-    interface NavbarProps { }
-    const Navbar: React.FC<NavbarProps> = () => {
-        return (
-            <div
-                className={cn(
-                    "fixed top-0 left-0 right-0 z-[60] flex justify-between items-center p-4 h-[72px]",
-                    status === "ready"
-                        ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-                        : "bg-background",
-                    "animate-gradient-background"
-                )}
-            >
-                <div className="flex items-center gap-4">
-                    <Link href="/new">
-                        <Button
-                            type="button"
-                            variant={"secondary"}
-                            className="rounded-full bg-accent hover:bg-accent/80 backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto"
-                        >
-                            <Plus size={18} className="group-hover:rotate-90 transition-all" />
-                            <span className="text-sm ml-2 group-hover:block hidden animate-in fade-in duration-300">
-                                New
-                            </span>
-                        </Button>
-                    </Link>
-                </div>
-
-                {/* Logo positioned further to the right on mobile; centered on larger screens */}
-                <div className="absolute left-24 sm:left-1/2 sm:transform sm:-translate-x-1/2 font-semibold text-lg flex items-center">
-                    <Image
-                        src="/logo.png"
-                        alt="Logo"
-                        width={80} // adjust as needed
-                        height={80}
-                        className="mr-1 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
-                    />
-                </div>
-
-                <div className="flex items-center space-x-4">
-                    <SignedIn>
-                        {/* Credits display */}
-                        <div className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full text-sm flex items-center mr-2">
-                            <CreditCard className="h-3.5 w-3.5 mr-1.5 text-blue-500 dark:text-blue-400" />
-                            <span className="font-medium text-blue-600 dark:text-blue-300">
-                                {isLoadingCredits ? (
-                                    <span className="animate-pulse">Loading...</span>
-                                ) : (
-                                    `${userCredits} credit${userCredits !== 1 ? 's' : ''}`
-                                )}
-                            </span>
-                        </div>
-                        <UserButton afterSignOutUrl="/" />
-                    </SignedIn>
-                    <SignedOut>
-                        <SignInButton mode="modal">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border-blue-500/20"
-                            >
-                                Sign In
-                            </Button>
-                        </SignInButton>
-                        <SignUpButton mode="modal">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="rounded-md bg-green-500/10 hover:bg-green-500/20 text-green-500 border-green-500/20 ml-2"
-                            >
-                                Sign Up
-                            </Button>
-                        </SignUpButton>
-                    </SignedOut>
-                    <AboutButton />
-                    <ThemeToggle />
-                </div>
-
-                <style jsx global>{`
-                    @keyframes gradient-animation {
-                        0% {
-                            background-position: 0% 50%;
-                        }
-                        50% {
-                            background-position: 100% 50%;
-                        }
-                        100% {
-                            background-position: 0% 50%;
-                        }
-                    }
-                    
-                    .animate-gradient-background {
-                        background: linear-gradient(-45deg, #f3e7ff, #e7f5ff, #fff5e7, #e7ffef);
-                        background-size: 400% 400%;
-                        animation: gradient-animation 15s ease infinite;
-                        animation-delay: 0.2s; /* slight delay to ensure initial render */
-                    }
-                    
-                    .dark .animate-gradient-background {
-                        background: linear-gradient(-45deg, #2a1a3a, #1a2a3a, #2a2a1a, #1a2a1a);
-                        background-size: 400% 400%;
-                        animation: gradient-animation 15s ease infinite;
-                        animation-delay: 0.2s;
-                    }
-                `}</style>
-            </div>
-        );
-    };
-
     const handleModelChange = useCallback((newModel: string) => {
         setSelectedModel(newModel);
         setSuggestedQuestions([]);
@@ -1398,7 +1288,7 @@ const HomeContent = () => {
             const hasCreditsResult = await checkCredits();
             
             if (!hasCreditsResult.hasCredits) {
-                toast.error("You don&apos;t have enough credits to regenerate a response.", {
+                toast.error("You don't have enough credits to regenerate a response.", {
                     description: "Please contact support to add more credits to your account."
                 });
                 return;
@@ -1802,7 +1692,7 @@ const HomeContent = () => {
             const hasCreditsResult = await checkCredits();
             
             if (!hasCreditsResult.hasCredits) {
-                toast.error("You don&apos;t have enough credits to perform this search.", {
+                toast.error("You don't have enough credits to perform this search.", {
                     description: "Please contact support to add more credits to your account."
                 });
                 return;
@@ -1840,7 +1730,7 @@ const HomeContent = () => {
 
     return (
         <div className="flex flex-col !font-sans items-center min-h-screen bg-background text-foreground transition-all duration-500">
-            <Navbar />
+            <NavBar />
 
             <div className={`w-full p-2 sm:p-4 ${status === 'ready' && messages.length === 0
                 ? 'min-h-screen flex flex-col items-center justify-center' // Center everything when no messages
@@ -1882,6 +1772,7 @@ const HomeContent = () => {
                                     showExperimentalModels={true}
                                     status={status}
                                     setHasSubmitted={setHasSubmitted}
+                                    userCredits={userCredits}
                                 />
                             </motion.div>
                         )}
@@ -2100,6 +1991,7 @@ const HomeContent = () => {
                                 showExperimentalModels={false}
                                 status={status}
                                 setHasSubmitted={setHasSubmitted}
+                                userCredits={userCredits}
                             />
                         </motion.div>
                     ) : null}
@@ -2428,7 +2320,7 @@ const ToolInvocationListView = memo(
                                             No Content Available
                                         </h2>
                                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                            The videos found don&apos;t contain any timestamps or transcripts.
+                                            The videos found don't contain any timestamps or transcripts.
                                         </p>
                                     </div>
                                 </div>
@@ -2517,7 +2409,7 @@ const ToolInvocationListView = memo(
                                             }}
                                         >
                                             <div className="h-[300px] relative group overflow-y-auto">
-                                                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet-500/20 via-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet-500/20 via-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                                                 <div className="h-full relative backdrop-blur-sm bg-background/95 dark:bg-neutral-900/95 border border-neutral-200/50 dark:border-neutral-800/50 rounded-xl p-4 flex flex-col transition-all duration-500 group-hover:border-violet-500/20">
                                                     <h3 className="font-semibold text-xl tracking-tight mb-3 line-clamp-2 group-hover:text-violet-500 dark:group-hover:text-violet-400 transition-colors duration-300">
@@ -2774,13 +2666,31 @@ const ToolInvocationListView = memo(
                     if (!result) {
                         return (
                             <div className="border border-neutral-200 rounded-xl my-4 p-4 dark:border-neutral-800 bg-gradient-to-b from-white to-neutral-50 dark:from-neutral-900 dark:to-neutral-900/90">
-                                <div className="flex items-center gap-4">
-                                    <div className="relative w-10 h-10">
-                                        <div className="absolute inset-0 rounded-full border-4 border-neutral-300 dark:border-neutral-700 border-t-blue-500 dark:border-t-blue-400 animate-spin" />
+                                <div className="flex items-center justify-between w-full">
+                                    <div className="flex items-center gap-4">
+                                        <div className="relative w-10 h-10">
+                                            <div className="absolute inset-0 rounded-full border-4 border-neutral-300 dark:border-neutral-700 border-t-blue-500 dark:border-t-blue-400 animate-spin" />
+                                        </div>
+                                        <span className="text-neutral-700 dark:text-neutral-300 text-sm font-medium">
+                                            Fetching content...
+                                        </span>
                                     </div>
-                                    <span className="text-neutral-700 dark:text-neutral-300 text-sm font-medium">
-                                        Fetching content...
-                                    </span>
+                                    <motion.div className="flex space-x-1">
+                                        {[0, 1, 2].map((index) => (
+                                            <motion.div
+                                                key={index}
+                                                className="w-2 h-2 bg-neutral-400 dark:bg-neutral-600 rounded-full"
+                                                initial={{ opacity: 0.3 }}
+                                                animate={{ opacity: 1 }}
+                                                transition={{
+                                                    repeat: Infinity,
+                                                    duration: 0.8,
+                                                    delay: index * 0.2,
+                                                    repeatType: "reverse",
+                                                }}
+                                            />
+                                        ))}
+                                    </motion.div>
                                 </div>
                             </div>
                         );
@@ -3034,7 +2944,7 @@ const ToolInvocationListView = memo(
 
                                         <div>
                                             <h3 className="text-xs sm:text-sm font-medium text-neutral-500 dark:text-neutral-400 tracking-wider uppercase mb-2">
-                                                Today&apos;s Date
+                                                Today's Date
                                             </h3>
                                             <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 md:gap-6">
                                                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-neutral-900 dark:text-white">

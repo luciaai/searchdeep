@@ -518,6 +518,7 @@ interface FormComponentProps {
     showExperimentalModels: boolean;
     status: 'submitted' | 'streaming' | 'ready' | 'error';
     setHasSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+    userCredits?: number | null;
 }
 
 interface GroupSelectorProps {
@@ -725,7 +726,8 @@ const FormComponent: React.FC<FormComponentProps> = ({
     messages,
     status,
     setHasSubmitted,
-}) => {
+    userCredits
+}: FormComponentProps) => {
     const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
     const isMounted = useRef(true);
     const { width } = useWindowSize();
@@ -1250,7 +1252,15 @@ const FormComponent: React.FC<FormComponentProps> = ({
                                     event.preventDefault();
                                     submitForm();
                                 }}
-                                disabled={input.length === 0 && attachments.length === 0 || uploadQueue.length > 0 || status !== 'ready'}
+                                disabled={
+                                    input.length === 0 && attachments.length === 0 || 
+                                    uploadQueue.length > 0 || 
+                                    status !== 'ready' || 
+                                    (userCredits !== undefined && userCredits !== null && userCredits <= 0)
+                                }
+                                title={userCredits !== undefined && userCredits !== null && userCredits <= 0 ? 
+                                    "You don't have enough credits to perform this search" : 
+                                    ""}
                             >
                                 <ArrowUpIcon size={14} />
                             </Button>

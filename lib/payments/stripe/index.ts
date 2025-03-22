@@ -182,9 +182,9 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
       // Check if this is a renewal by looking at the billing cycle
       const isRenewal = subscription.current_period_start > subscription.created;
       
-      if (!existingSubscription || isRenewal) {
-        await addCredits(user.clerkId, creditsToAdd);
-      }
+      // Always add credits for new subscriptions or renewals
+      console.log(`Adding ${creditsToAdd} credits to user ${user.clerkId}`);
+      await addCredits(user.clerkId, creditsToAdd);
     }
 
     return true;
