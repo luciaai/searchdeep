@@ -6,6 +6,7 @@ import { SearchGroupId } from '@/lib/utils';
 import { xai } from '@ai-sdk/xai';
 import { generateObject } from 'ai';
 import { z } from 'zod';
+import { hasEnoughCredits, logSearch, getUserCredits } from '@/lib/user-credits';
 
 export async function suggestQuestions(history: any[]) {
   'use server';
@@ -528,4 +529,40 @@ export async function getGroupConfig(groupId: SearchGroupId = 'web') {
     toolInstructions,
     responseGuidelines
   };
+}
+
+export async function getCredits() {
+  'use server';
+  
+  try {
+    const credits = await getUserCredits();
+    return credits;
+  } catch (error) {
+    console.error('Error getting user credits:', error);
+    return 0;
+  }
+}
+
+export async function checkCredits() {
+  'use server';
+  
+  try {
+    const hasCredits = await hasEnoughCredits();
+    return { hasCredits };
+  } catch (error) {
+    console.error('Error checking user credits:', error);
+    return { hasCredits: false, error: 'Failed to check user credits' };
+  }
+}
+
+export async function recordSearch(query: string, groupId: SearchGroupId) {
+  'use server';
+  
+  try {
+    const search = await logSearch(query, groupId);
+    return { success: true, searchId: search.id };
+  } catch (error) {
+    console.error('Error recording search:', error);
+    return { success: false, error: 'Failed to record search' };
+  }
 }

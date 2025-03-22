@@ -3,6 +3,7 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Globe, Book, YoutubeIcon, Mountain, Brain } from 'lucide-react'
 import { ChatsCircle, Code, Memory, XLogo } from '@phosphor-icons/react'
+import React from 'react'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

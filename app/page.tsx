@@ -81,7 +81,8 @@ import {
     Clock,
     WrapText,
     ArrowLeftRight,
-    Mountain
+    Mountain,
+    CreditCard
 } from 'lucide-react';
 import Marked, { ReactRenderer } from 'marked-react';
 import { useTheme } from 'next-themes';
@@ -102,7 +103,10 @@ import { toast } from 'sonner';
 import {
     fetchMetadata,
     generateSpeech,
-    suggestQuestions
+    suggestQuestions,
+    getCredits,
+    checkCredits,
+    recordSearch
 } from './actions';
 import InteractiveStockChart from '@/components/interactive-stock-chart';
 import { CurrencyConverter } from '@/components/currency_conv';
@@ -155,107 +159,7 @@ interface AcademicResult {
     summary: string;
 }
 
-const SearchLoadingState = ({
-    icon: Icon,
-    text,
-    color
-}: {
-    icon: LucideIcon,
-    text: string,
-    color: "red" | "green" | "orange" | "violet" | "gray" | "blue"
-}) => {
-    const colorVariants = {
-        red: {
-            background: "bg-red-50 dark:bg-red-950",
-            border: "from-red-200 via-red-500 to-red-200 dark:from-red-400 dark:via-red-500 dark:to-red-700",
-            text: "text-red-500",
-            icon: "text-red-500"
-        },
-        green: {
-            background: "bg-green-50 dark:bg-green-950",
-            border: "from-green-200 via-green-500 to-green-200 dark:from-green-400 dark:via-green-500 dark:to-green-700",
-            text: "text-green-500",
-            icon: "text-green-500"
-        },
-        orange: {
-            background: "bg-orange-50 dark:bg-orange-950",
-            border: "from-orange-200 via-orange-500 to-orange-200 dark:from-orange-400 dark:via-orange-500 dark:to-orange-700",
-            text: "text-orange-500",
-            icon: "text-orange-500"
-        },
-        violet: {
-            background: "bg-violet-50 dark:bg-violet-950",
-            border: "from-violet-200 via-violet-500 to-violet-200 dark:from-violet-400 dark:via-violet-500 dark:to-violet-700",
-            text: "text-violet-500",
-            icon: "text-violet-500"
-        },
-        gray: {
-            background: "bg-neutral-50 dark:bg-neutral-950",
-            border: "from-neutral-200 via-neutral-500 to-neutral-200 dark:from-neutral-400 dark:via-neutral-500 dark:to-neutral-700",
-            text: "text-neutral-500",
-            icon: "text-neutral-500"
-        },
-        blue: {
-            background: "bg-blue-50 dark:bg-blue-950",
-            border: "from-blue-200 via-blue-500 to-blue-200 dark:from-blue-400 dark:via-blue-500 dark:to-blue-700",
-            text: "text-blue-500",
-            icon: "text-blue-500"
-        }
-    };
-
-    const variant = colorVariants[color];
-
-    return (
-        <Card className="relative w-full h-[100px] my-4 overflow-hidden shadow-none">
-            <BorderTrail
-                className={cn(
-                    'bg-gradient-to-l',
-                    variant.border
-                )}
-                size={80}
-            />
-            <CardContent className="p-6">
-                <div className="relative flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className={cn(
-                            "relative h-10 w-10 rounded-full flex items-center justify-center",
-                            variant.background
-                        )}>
-                            <BorderTrail
-                                className={cn(
-                                    "bg-gradient-to-l",
-                                    variant.border
-                                )}
-                                size={40}
-                            />
-                            <Icon className={cn("h-5 w-5", variant.icon)} />
-                        </div>
-                        <div className="space-y-2">
-                            <TextShimmer
-                                className="text-base font-medium"
-                                duration={2}
-                            >
-                                {text}
-                            </TextShimmer>
-                            <div className="flex gap-2">
-                                {[...Array(3)].map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className="h-1.5 rounded-full bg-neutral-200 dark:bg-neutral-700 animate-pulse"
-                                        style={{
-                                            width: `${Math.random() * 40 + 20}px`,
-                                            animationDelay: `${i * 0.2}s`
-                                        }}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-    );
-};
+type MessagePart = TextUIPart | ReasoningUIPart | ToolInvocationUIPart | SourceUIPart;
 
 interface VideoDetails {
     title?: string;
@@ -359,7 +263,7 @@ function CollapsibleSection({
                             <IconComponent className="h-4 w-4 text-primary" />
                         </div>
                     )}
-                    <h3 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                    <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
                         {title}
                     </h3>
                 </div>
@@ -649,6 +553,8 @@ const HomeContent = () => {
     const [query] = useQueryState('query', parseAsString.withDefault(''))
     const [q] = useQueryState('q', parseAsString.withDefault(''))
     const [model] = useQueryState('model', parseAsString.withDefault('scira-default'))
+    const [userCredits, setUserCredits] = useState<number | null>(null);
+    const [isLoadingCredits, setIsLoadingCredits] = useState(true);
 
     const initialState = useMemo(() => ({
         query: query || q,
@@ -666,12 +572,30 @@ const HomeContent = () => {
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const initializedRef = useRef(false);
     const [selectedGroup, setSelectedGroup] = useState<SearchGroupId>('web');
-    const [hasSubmitted, setHasSubmitted] = React.useState(false);
+    const [hasSubmitted, setHasSubmitted] = useState(false);
     const [hasManuallyScrolled, setHasManuallyScrolled] = useState(false);
     const isAutoScrollingRef = useRef(false);
 
     // Get stored user ID
     const userId = useMemo(() => getUserId(), []);
+
+    // Fetch user credits on component mount
+    useEffect(() => {
+        const fetchCredits = async () => {
+            try {
+                setIsLoadingCredits(true);
+                const credits = await getCredits();
+                setUserCredits(credits as number);
+            } catch (error) {
+                console.error("Error fetching credits:", error);
+                toast.error("Failed to fetch credits");
+            } finally {
+                setIsLoadingCredits(false);
+            }
+        };
+        
+        fetchCredits();
+    }, []);
 
     const chatOptions: UseChatOptions = useMemo(() => ({
         api: '/api/search',
@@ -690,6 +614,14 @@ const HomeContent = () => {
                 ];
                 const { questions } = await suggestQuestions(newHistory);
                 setSuggestedQuestions(questions);
+                
+                // Refresh user credits after search is complete
+                try {
+                    const updatedCredits = await getCredits();
+                    setUserCredits(updatedCredits as number);
+                } catch (error) {
+                    console.error("Error refreshing credits:", error);
+                }
             }
         },
         onError: (error) => {
@@ -705,7 +637,7 @@ const HomeContent = () => {
         messages,
         setInput,
         append,
-        handleSubmit,
+        handleSubmit: originalHandleSubmit,
         setMessages,
         reload,
         stop,
@@ -793,6 +725,8 @@ const HomeContent = () => {
 
     const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
         const [metadataCache, setMetadataCache] = useState<Record<string, LinkMetadata>>({});
+        // Create a unique ID for this instance of the renderer
+        const instanceId = useRef(`markdown-${Math.random().toString(36).substring(2, 11)}`);
 
         const citationLinks = useMemo<CitationLink[]>(() => {
             return Array.from(content.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g)).map(([_, text, link]) => ({ text, link }));
@@ -1073,9 +1007,15 @@ const HomeContent = () => {
             },
             list(children, ordered) {
                 const ListTag = ordered ? 'ol' : 'ul';
+                // Reset list item counter for each new list
                 return (
                     <ListTag className={`my-5 pl-6 space-y-2 text-neutral-700 dark:text-neutral-300 ${ordered ? 'list-decimal' : 'list-disc'}`}>
-                        {children}
+                        {React.Children.map(children, (child, i) => {
+                            // Add key to each child
+                            return React.isValidElement(child) 
+                                ? React.cloneElement(child, { key: `list-item-${i}` }) 
+                                : child;
+                        })}
                     </ListTag>
                 );
             },
@@ -1102,7 +1042,7 @@ const HomeContent = () => {
             },
             tableRow(children) {
                 return (
-                    <tr className="border-b border-neutral-200 dark:border-neutral-800 last:border-0 transition-colors hover:bg-neutral-50/80 dark:hover:bg-neutral-800/50">
+                    <tr className="border-b border-neutral-200 dark:border-neutral-800 last:border-0 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
                         {children}
                     </tr>
                 );
@@ -1152,7 +1092,6 @@ const HomeContent = () => {
             </div>
         );
     };
-
 
     const lastUserMessageIndex = useMemo(() => {
         for (let i = messages.length - 1; i >= 0; i--) {
@@ -1270,94 +1209,115 @@ const HomeContent = () => {
     };
 
     interface NavbarProps { }
+const Navbar: React.FC<NavbarProps> = () => {
+  return (
+    <div
+      className={cn(
+        "fixed top-0 left-0 right-0 z-[60] flex justify-between items-center p-4",
+        status === "ready"
+          ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          : "bg-background",
+        "animate-gradient-background"
+      )}
+    >
+      <div className="flex items-center gap-4">
+        <Link href="/new">
+          <Button
+            type="button"
+            variant={"secondary"}
+            className="rounded-full bg-accent hover:bg-accent/80 backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto"
+          >
+            <Plus size={18} className="group-hover:rotate-90 transition-all" />
+            <span className="text-sm ml-2 group-hover:block hidden animate-in fade-in duration-300">
+              New
+            </span>
+          </Button>
+        </Link>
+      </div>
 
-    const Navbar: React.FC<NavbarProps> = () => {
-        return (
-            <div className={cn(
-                "fixed top-0 left-0 right-0 z-[60] flex justify-between items-center p-4",
-                // Add opaque background only after submit
-                status === 'ready' ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" : "bg-background",
-                // Add pastel background animation
-                "animate-gradient-background"
-            )}>
-                <div className="flex items-center gap-4">
-                    <Link href="/new">
-                        <Button
-                            type="button"
-                            variant={'secondary'}
-                            className="rounded-full bg-accent hover:bg-accent/80 backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto"
-                        >
-                            <Plus size={18} className="group-hover:rotate-90 transition-all" />
-                            <span className="text-sm ml-2 group-hover:block hidden animate-in fade-in duration-300">
-                                New
-                            </span>
-                        </Button>
-                    </Link>
-                </div>
-                
-                {/* Added center title with shooting star emoji */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 font-semibold text-lg flex items-center">
-                    <img
-                        src="/logo.png"
-                        alt="Logo"
-                        style={{ width: '50px', height: '50px', marginRight: '0.25rem' }}
-                    />
-                    AI-powered Search Engine
-                    </div>
-                <div className='flex items-center space-x-4'>
-                    <SignedOut>
-                        <SignInButton mode="modal">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border-blue-500/20"
-                            >
-                                Sign In
-                            </Button>
-                        </SignInButton>
-                        <SignUpButton mode="modal">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="rounded-md bg-green-500/10 hover:bg-green-500/20 text-green-500 border-green-500/20 ml-2"
-                            >
-                                Sign Up
-                            </Button>
-                        </SignUpButton>
-                    </SignedOut>
-                    <SignedIn>
-                        <UserButton afterSignOutUrl="/" />
-                    </SignedIn>
-                    <AboutButton />
-                    <ThemeToggle />
-                </div>
-                
-                {/* Add a global style for the animation */}
-                <style jsx global>{`
-                    @keyframes gradient-animation {
-                        0% { background-position: 0% 50%; }
-                        50% { background-position: 100% 50%; }
-                        100% { background-position: 0% 50%; }
-                    }
-                    
-                    .animate-gradient-background {
-                        background: linear-gradient(-45deg, #f3e7ff, #e7f5ff, #fff5e7, #e7ffef);
-                        background-size: 400% 400%;
-                        animation: gradient-animation 15s ease infinite;
-                    }
-                    
-                    .dark .animate-gradient-background {
-                        background: linear-gradient(-45deg, #2a1a3a, #1a2a3a, #2a2a1a, #1a2a1a);
-                        background-size: 400% 400%;
-                        animation: gradient-animation 15s ease infinite;
-                    }
-                `}</style>
-            </div>
-        );
-    };
-    
+      {/* Logo positioned further to the right on mobile; centered on larger screens */}
+      <div className="absolute left-24 sm:left-1/2 sm:transform sm:-translate-x-1/2 font-semibold text-lg flex items-center">
+        <Image
+          src="/logo.png"
+          alt="Logo"
+          width={80} // adjust as needed
+          height={80}
+          className="mr-1 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
+        />
+      </div>
+
+      <div className="flex items-center space-x-4">
+        <SignedIn>
+          {/* Credits display */}
+          <div className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full text-sm flex items-center mr-2">
+            <CreditCard className="h-3.5 w-3.5 mr-1.5 text-blue-500 dark:text-blue-400" />
+            <span className="font-medium text-blue-600 dark:text-blue-300">
+              {isLoadingCredits ? (
+                <span className="animate-pulse">Loading...</span>
+              ) : (
+                `${userCredits} credit${userCredits !== 1 ? 's' : ''}`
+              )}
+            </span>
+          </div>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border-blue-500/20"
+            >
+              Sign In
+            </Button>
+          </SignInButton>
+          <SignUpButton mode="modal">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-md bg-green-500/10 hover:bg-green-500/20 text-green-500 border-green-500/20 ml-2"
+            >
+              Sign Up
+            </Button>
+          </SignUpButton>
+        </SignedOut>
+        <AboutButton />
+        <ThemeToggle />
+      </div>
+
+      <style jsx global>{`
+        @keyframes gradient-animation {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+        
+        .animate-gradient-background {
+          background: linear-gradient(-45deg, #f3e7ff, #e7f5ff, #fff5e7, #e7ffef);
+          background-size: 400% 400%;
+          animation: gradient-animation 15s ease infinite;
+          animation-delay: 0.2s; /* slight delay to ensure initial render */
+        }
+        
+        .dark .animate-gradient-background {
+          background: linear-gradient(-45deg, #2a1a3a, #1a2a3a, #2a2a1a, #1a2a1a);
+          background-size: 400% 400%;
+          animation: gradient-animation 15s ease infinite;
+          animation-delay: 0.2s;
+        }
+      `}</style>
+    </div>
+  );
+};
+
 
     const handleModelChange = useCallback((newModel: string) => {
         setSelectedModel(newModel);
@@ -1406,204 +1366,43 @@ const HomeContent = () => {
         const lastUserMessage = messages.findLast(m => m.role === 'user');
         if (!lastUserMessage) return;
 
-        // Remove the last assistant message
-        const newMessages = messages.slice(0, -1);
-        setMessages(newMessages);
-        setSuggestedQuestions([]);
-
-        // Resubmit the last user message
-        await reload();
-    }, [status, messages, setMessages, reload]);
-
-    // Add this type at the top with other interfaces
-    type MessagePart = TextUIPart | ReasoningUIPart | ToolInvocationUIPart | SourceUIPart;
-
-    // Update the renderPart function signature
-    const renderPart = (
-        part: MessagePart,
-        messageIndex: number,
-        partIndex: number,
-        parts: MessagePart[],
-        message: any,
-    ) => {
-        if (part.type === "text" && partIndex === 0 &&
-            parts.some((p, i) => i > partIndex && p.type === 'tool-invocation')) {
-            return null;
-        }
-
-        switch (part.type) {
-            case "text":
-                if (part.text.trim() === "" || part.text === null || part.text === undefined || !part.text) {
-                    return null;
-                }
-                return (
-                    <div key={`${messageIndex}-${partIndex}-text`}>
-                        <div className="flex items-center justify-between mt-5 mb-2">
-                            <div className="flex items-center gap-2">
-                                <Sparkles className="size-5 text-primary" />
-                                <h2 className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
-                                    Answer
-                                </h2>
-                            </div>
-                            {status === 'ready' && (
-                                <div className="flex items-center gap-1">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleRegenerate()}
-                                        className="h-8 px-2 text-xs rounded-full"
-                                    >
-                                        <RefreshCw className="h-3.5 w-3.5" />
-                                    </Button>
-                                    <CopyButton text={part.text} />
-                                </div>
-                            )}
-                        </div>
-                        <MarkdownRenderer content={part.text} />
-                    </div>
-                );
-            case "reasoning": {
-                const sectionKey = `${messageIndex}-${partIndex}`;
-                const isComplete = parts[partIndex + 1]?.type === "text";
-                const timing = reasoningTimings[sectionKey];
-                const duration = timing?.endTime ? ((timing.endTime - timing.startTime) / 1000).toFixed(1) : null;
-
-                return (
-                    <motion.div
-                        key={`${messageIndex}-${partIndex}-reasoning`}
-                        id={`reasoning-${messageIndex}`}
-                        className="my-4"
-                    >
-                        <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-                            <button
-                                onClick={() => setReasoningVisibilityMap(prev => ({
-                                    ...prev,
-                                    [sectionKey]: !prev[sectionKey]
-                                }))}
-                                className={cn(
-                                    "w-full flex items-center justify-between px-4 py-3",
-                                    "bg-neutral-50 dark:bg-neutral-900",
-                                    "hover:bg-neutral-100 dark:hover:bg-neutral-800/50",
-                                    "transition-colors duration-200",
-                                    "group text-left"
-                                )}
-                            >
-                                <div className="flex items-center gap-3">
-                                    {isComplete ? (
-                                        <div className="relative flex items-center justify-center size-2">
-                                            <div className="relative flex items-center justify-center size-2">
-                                                <div className="size-1.5 rounded-full bg-emerald-500" />
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="relative flex items-center justify-center size-2">
-                                            <div className="relative flex items-center justify-center size-2">
-                                                <div className="size-1.5 rounded-full bg-[#007AFF]/30 animate-ping" />
-                                                <div className="size-1.5 rounded-full bg-[#007AFF] absolute" />
-                                            </div>
-                                            <div className="absolute inset-0 rounded-full border-2 border-[#007AFF]/20 animate-ping" />
-                                        </div>
-                                    )}
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
-                                            {isComplete ? "Reasoned" : "Reasoning"}
-                                        </span>
-                                        {duration && (
-                                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800">
-                                                <Clock className="size-3 text-neutral-500" />
-                                                <span className="text-[10px] tabular-nums font-medium text-neutral-500">
-                                                    {duration}s
-                                                </span>
-                                            </div>
-                                        )}
-                                        {!isComplete && liveElapsedTimes[sectionKey] && (
-                                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800">
-                                                <Clock className="size-3 text-neutral-500" />
-                                                <span className="text-[10px] tabular-nums font-medium text-neutral-500">
-                                                    {liveElapsedTimes[sectionKey].toFixed(1)}s
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    {!isComplete && (
-                                        <div className="flex items-center gap-[3px] px-2 py-1">
-                                            {[...Array(3)].map((_, i) => (
-                                                <div
-                                                    key={i}
-                                                    className="size-1 rounded-full bg-primary/60 animate-pulse"
-                                                    style={{ animationDelay: `${i * 200}ms` }}
-                                                />
-                                            ))}
-                                        </div>
-                                    )}
-                                    <ChevronDown
-                                        className={cn(
-                                            "size-4 text-neutral-400 transition-transform duration-200",
-                                            reasoningVisibilityMap[sectionKey] ? "rotate-180" : ""
-                                        )}
-                                    />
-                                </div>
-                            </button>
-
-                            <AnimatePresence>
-                                {reasoningVisibilityMap[sectionKey] && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="overflow-hidden border-t border-neutral-200 dark:border-neutral-800"
-                                    >
-                                        <div className="p-4 bg-white dark:bg-neutral-900">
-                                            <div className={cn(
-                                                "text-sm text-neutral-600 dark:text-neutral-400",
-                                                "prose prose-neutral dark:prose-invert max-w-none",
-                                                "prose-p:my-2 prose-p:leading-relaxed"
-                                            )}>
-                                                {part.details ? (
-                                                    <div className="whitespace-pre-wrap">
-                                                        {part.details.map((detail, detailIndex) => (
-                                                            <div key={detailIndex}>
-                                                                {detail.type === 'text' ? (
-                                                                    <div className="text-sm font-sans leading-relaxed break-words whitespace-pre-wrap">
-                                                                        {detail.text}
-                                                                    </div>
-                                                                ) : (
-                                                                    '<redacted>'
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                ) : part.reasoning ? (
-                                                    <div className="text-sm font-sans leading-relaxed break-words whitespace-pre-wrap">
-                                                        {part.reasoning}
-                                                    </div>
-                                                ) : (
-                                                    <div className="text-neutral-500 italic">No reasoning details available</div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </motion.div>
-                );
+        // Check if user has enough credits before regenerating
+        try {
+            const hasCreditsResult = await checkCredits();
+            
+            if (!hasCreditsResult.hasCredits) {
+                toast.error("You don't have enough credits to regenerate a response.", {
+                    description: "Please contact support to add more credits to your account."
+                });
+                return;
             }
-            case "tool-invocation":
-                return (
-                    <ToolInvocationListView
-                        key={`${messageIndex}-${partIndex}-tool`}
-                        toolInvocations={[part.toolInvocation]}
-                        message={message}
-                    />
-                );
-            default:
-                return null;
+            
+            // Log the search for regeneration
+            await recordSearch(lastUserMessage.content, selectedGroup);
+            
+            // Remove the last assistant message
+            const newMessages = [...messages];
+            const lastAssistantIndex = newMessages.findLastIndex(m => m.role === 'assistant');
+            if (lastAssistantIndex !== -1) {
+                newMessages.splice(lastAssistantIndex, 1);
+                setMessages(newMessages);
+            }
+            
+            // Resubmit the last user message
+            await append({
+                content: lastUserMessage.content,
+                role: 'user',
+            });
+            
+            // Refresh user credits after regeneration
+            const updatedCredits = await getCredits();
+            setUserCredits(updatedCredits);
+            
+        } catch (error) {
+            console.error("Error checking credits:", error);
+            toast.error("An error occurred while checking your credits.");
         }
-    };
+    }, [status, messages, append, selectedGroup, setMessages]);
 
     // Add near other state declarations in HomeContent
     interface ReasoningTiming {
@@ -1758,6 +1557,259 @@ const HomeContent = () => {
     });
 
     WidgetSection.displayName = 'WidgetSection';
+
+    const renderPart = (
+        part: MessagePart,
+        messageIndex: number,
+        partIndex: number,
+        parts: MessagePart[],
+        message: any,
+    ) => {
+        if (part.type === "text" && partIndex === 0 &&
+            parts.some((p, i) => i > partIndex && p.type === 'tool-invocation')) {
+            return null;
+        }
+
+        switch (part.type) {
+            case "text":
+                if (part.text.trim() === "" || part.text === null || part.text === undefined || !part.text) {
+                    return null;
+                }
+                return (
+                    <div key={`${messageIndex}-${partIndex}-text`}>
+                        <div className="flex items-center justify-between mt-5 mb-2">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="size-5 text-primary" />
+                                <h2 className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
+                                    Answer
+                                </h2>
+                            </div>
+                            {status === 'ready' && (
+                                <div className="flex items-center gap-1">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleRegenerate()}
+                                        className="h-8 px-2 text-xs rounded-full"
+                                    >
+                                        <RefreshCw className="h-3.5 w-3.5" />
+                                    </Button>
+                                    <CopyButton text={part.text} />
+                                </div>
+                            )}
+                        </div>
+                        <MarkdownRenderer content={part.text} />
+                    </div>
+                );
+            case "reasoning": {
+                const sectionKey = `${messageIndex}-${partIndex}`;
+                const isComplete = parts[partIndex + 1]?.type === "text";
+                const timing = reasoningTimings[sectionKey];
+                const duration = timing?.endTime ? ((timing.endTime - timing.startTime) / 1000).toFixed(1) : null;
+
+                return (
+                    <motion.div
+                        key={`${messageIndex}-${partIndex}-reasoning`}
+                        id={`reasoning-${messageIndex}`}
+                        className="my-4"
+                    >
+                        <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                            <button
+                                onClick={() => setReasoningVisibilityMap(prev => ({
+                                    ...prev,
+                                    [sectionKey]: !prev[sectionKey]
+                                }))}
+                                className={cn(
+                                    "w-full flex items-center justify-between px-4 py-3",
+                                    "bg-neutral-50 dark:bg-neutral-900",
+                                    "hover:bg-neutral-100 dark:hover:bg-neutral-800/50",
+                                    "transition-colors duration-200",
+                                    "group text-left"
+                                )}
+                            >
+                                <div className="flex items-center gap-3">
+                                    {isComplete ? (
+                                        <div className="relative flex items-center justify-center size-2">
+                                            <div className="relative flex items-center justify-center size-2">
+                                                <div className="size-1.5 rounded-full bg-emerald-500" />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="relative flex items-center justify-center size-2">
+                                            <div className="relative flex items-center justify-center size-2">
+                                                <div className="size-1.5 rounded-full bg-[#007AFF]/30 animate-ping" />
+                                                <div className="size-1.5 rounded-full bg-[#007AFF] absolute" />
+                                            </div>
+                                            <div className="absolute inset-0 rounded-full border-2 border-[#007AFF]/20 animate-ping" />
+                                        </div>
+                                    )}
+                                    <div className="flex-1 min-w-0">
+                                        <span className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                                            {isComplete ? "Reasoned" : "Reasoning"}
+                                        </span>
+                                        {duration && (
+                                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800">
+                                                <Clock className="size-3 text-neutral-500" />
+                                                <span className="text-[10px] tabular-nums font-medium text-neutral-500">
+                                                    {duration}s
+                                                </span>
+                                            </div>
+                                        )}
+                                        {!isComplete && liveElapsedTimes[sectionKey] && (
+                                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800">
+                                                <Clock className="size-3 text-neutral-500" />
+                                                <span className="text-[10px] tabular-nums font-medium text-neutral-500">
+                                                    {liveElapsedTimes[sectionKey].toFixed(1)}s
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {!isComplete && (
+                                        <div className="flex items-center gap-[3px] px-2 py-1">
+                                            {[...Array(3)].map((_, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="size-1 rounded-full bg-primary/60 animate-pulse"
+                                                    style={{ animationDelay: `${i * 200}ms` }}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                    <ChevronDown
+                                        className={cn(
+                                            "size-4 text-neutral-400 transition-transform duration-200",
+                                            reasoningVisibilityMap[sectionKey] ? "rotate-180" : ""
+                                        )}
+                                    />
+                                </div>
+                            </button>
+
+                            <AnimatePresence>
+                                {reasoningVisibilityMap[sectionKey] && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: "auto" }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="overflow-hidden border-t border-neutral-200 dark:border-neutral-800"
+                                    >
+                                        <div className="p-4 bg-white dark:bg-neutral-900">
+                                            <div className={cn(
+                                                "text-sm text-neutral-600 dark:text-neutral-400",
+                                                "prose prose-neutral dark:prose-invert max-w-none",
+                                                "prose-p:my-2 prose-p:leading-relaxed"
+                                            )}>
+                                                {part.details ? (
+                                                    <div className="whitespace-pre-wrap">
+                                                        {part.details.map((detail, detailIndex) => (
+                                                            <div key={detailIndex}>
+                                                                {detail.type === 'text' ? (
+                                                                    <div className="text-sm font-sans leading-relaxed break-words whitespace-pre-wrap">
+                                                                        {detail.text}
+                                                                    </div>
+                                                                ) : (
+                                                                    '<redacted>'
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : part.reasoning ? (
+                                                    <div className="text-sm font-sans leading-relaxed break-words whitespace-pre-wrap">
+                                                        {part.reasoning}
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-neutral-500 italic">No reasoning details available</div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </motion.div>
+                );
+            }
+            case "tool-invocation":
+                return (
+                    <ToolInvocationListView
+                        key={`${messageIndex}-${partIndex}-tool`}
+                        toolInvocations={[part.toolInvocation]}
+                        message={message}
+                    />
+                );
+            default:
+                return null;
+        }
+    };
+
+    const handleSubmit = useCallback(async (event?: { preventDefault?: () => void } | undefined, chatRequestOptions?: any) => {
+        if (event?.preventDefault) {
+            event.preventDefault();
+        }
+        
+        if (isEditingMessage) {
+            // Handle message editing separately
+            if (!input.trim()) {
+                toast.error("Please enter a valid message.");
+                return;
+            }
+            
+            const newMessages = [...messages];
+            newMessages[editingMessageIndex].content = input;
+            setMessages(newMessages);
+            setIsEditingMessage(false);
+            setEditingMessageIndex(-1);
+            setInput('');
+            return;
+        }
+        
+        if (!input.trim()) {
+            toast.error("Please enter a valid message.");
+            return;
+        }
+        
+        try {
+            // Check if user has enough credits
+            const hasCreditsResult = await checkCredits();
+            
+            if (!hasCreditsResult.hasCredits) {
+                toast.error("You don't have enough credits to perform this search.", {
+                    description: "Please contact support to add more credits to your account."
+                });
+                return;
+            }
+            
+            // Store the query for reference
+            lastSubmittedQueryRef.current = input.trim();
+            
+            // Clear suggested questions
+            setSuggestedQuestions([]);
+            
+            // Record that we've submitted a query
+            setHasSubmitted(true);
+            
+            // Log the search
+            await recordSearch(input.trim(), selectedGroup);
+            
+            // Proceed with the original submit handler
+            await append({
+                content: input.trim(),
+                role: 'user',
+            }, chatRequestOptions);
+            
+            // Reset the input field
+            setInput('');
+            
+            // Reset attachments
+            setAttachments([]);
+            
+        } catch (error) {
+            console.error("Error checking credits:", error);
+            toast.error("An error occurred while checking your credits.");
+        }
+    }, [input, isEditingMessage, editingMessageIndex, messages, setMessages, setInput, append, selectedGroup, setSuggestedQuestions, setHasSubmitted]);
 
     return (
         <div className="flex flex-col !font-sans items-center min-h-screen bg-background text-foreground transition-all duration-500">
@@ -1966,7 +2018,7 @@ const HomeContent = () => {
                                             >
                                                 <div className="flex items-center gap-2 mb-4">
                                                     <AlignLeft className="w-5 h-5 text-primary" />
-                                                    <h2 className="font-semibold text-base text-neutral-800 dark:text-neutral-200">
+                                                    <h2 className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
                                                         Suggested questions
                                                     </h2>
                                                 </div>
@@ -2065,7 +2117,7 @@ const ToolInvocationListView = memo(
                     if (!features || features.length === 0) return null;
 
                     return (
-                        <Card className="w-full my-4 overflow-hidden bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800">
+                        <Card className="w-full my-4 overflow-hidden border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm">
                             <div className="relative w-full h-[60vh]">
                                 <div className="absolute top-4 left-4 z-10 flex gap-2">
                                     <Badge
@@ -2103,16 +2155,7 @@ const ToolInvocationListView = memo(
                                         )}
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
-                                                {place.feature_type === 'street_address' || place.feature_type === 'street' ? (
-                                                    <RoadHorizon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                                                ) : place.feature_type === 'locality' ? (
-                                                    <Building className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                                                ) : (
-                                                    <MapPin className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                                                )}
-                                            </div>
-
+                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-transparent rounded-lg" />
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 truncate">
                                                     {place.name}
@@ -2259,7 +2302,7 @@ const ToolInvocationListView = memo(
                             </CardHeader>
                             <div className="relative">
                                 <div className="px-4 pb-2 h-72">
-                                    <div className="flex flex-nowrap overflow-x-auto gap-4 no-scrollbar">
+                                    <div className="flex overflow-x-auto gap-4 no-scrollbar">
                                         {result.slice(0, PREVIEW_COUNT).map((post: XResult, index: number) => (
                                             <motion.div
                                                 key={post.tweetId}
@@ -2358,7 +2401,7 @@ const ToolInvocationListView = memo(
                                             No Content Available
                                         </h2>
                                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                            The videos found don&apos;t contain any timestamps or transcripts.
+                                            The videos found don't contain any timestamps or transcripts.
                                         </p>
                                     </div>
                                 </div>
@@ -2368,7 +2411,7 @@ const ToolInvocationListView = memo(
 
                     return (
                         <div className="w-full my-4">
-                            <Accordion type="single" collapsible defaultValue="videos">
+                            <Accordion type="single" collapsible>
                                 <AccordionItem value="videos" className="border dark:border-neutral-800 rounded-xl bg-white dark:bg-neutral-900 shadow-sm">
                                     <AccordionTrigger className="px-4 py-3 hover:no-underline">
                                         <div className="flex items-center gap-3">
@@ -2425,7 +2468,7 @@ const ToolInvocationListView = memo(
                             <CardHeader className="pb-2 flex flex-row items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-600/20 flex items-center justify-center backdrop-blur-sm">
-                                        <Book className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                                        <Book className="h-4 w-4 text-violet-600" />
                                     </div>
                                     <div>
                                         <CardTitle>Academic Papers</CardTitle>
@@ -2501,7 +2544,7 @@ const ToolInvocationListView = memo(
                                                                 onClick={() => window.open(paper.url.replace('abs', 'pdf'), '_blank')}
                                                                 className="bg-neutral-100 dark:bg-neutral-800 hover:bg-violet-100 dark:hover:bg-violet-900/20 hover:text-violet-600 dark:hover:text-violet-400 group/btn"
                                                             >
-                                                                <Download className="h-4 w-4 group-hover/btn:scale-110 transition-transform duration-300" />
+                                                                <Download className="h-4 w-4" />
                                                             </Button>
                                                         )}
                                                     </div>
@@ -2521,7 +2564,7 @@ const ToolInvocationListView = memo(
                             <div className="flex items-center justify-between w-full">
                                 <div className="flex items-center gap-2">
                                     <MapPin className="h-5 w-5 text-neutral-700 dark:text-neutral-300 animate-pulse" />
-                                    <span className="text-neutral-700 dark:text-neutral-300 text-lg">
+                                    <span className="text-neutral-700 dark:text-neutral-300 text-sm font-medium">
                                         Finding nearby {args.type}...
                                     </span>
                                 </div>
@@ -2606,7 +2649,9 @@ const ToolInvocationListView = memo(
                             <div className="flex items-center justify-between w-full">
                                 <div className="flex items-center gap-2">
                                     <Cloud className="h-5 w-5 text-neutral-700 dark:text-neutral-300 animate-pulse" />
-                                    <span className="text-neutral-700 dark:text-neutral-300 text-lg">Fetching weather data...</span>
+                                    <span className="text-neutral-700 dark:text-neutral-300 text-sm font-medium">
+                                        Fetching weather data...
+                                    </span>
                                 </div>
                                 <div className="flex space-x-1">
                                     {[0, 1, 2].map((index) => (
@@ -2729,15 +2774,14 @@ const ToolInvocationListView = memo(
                             </div>
                         );
                     }
-
                     // Update the error message UI with better dark mode border visibility
                     if (result.error || (result.results && result.results[0] && result.results[0].error)) {
                         const errorMessage = result.error || (result.results && result.results[0] && result.results[0].error);
                         return (
                             <div className="border border-red-200 dark:border-red-500 rounded-xl my-4 p-4 bg-red-50 dark:bg-red-950/50">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center flex-shrink-0">
-                                        <Globe className="h-4 w-4 text-red-600 dark:text-red-300" />
+                                    <div className="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
+                                        <Globe className="h-4 w-4 text-red-600" />
                                     </div>
                                     <div>
                                         <div className="text-red-700 dark:text-red-300 text-sm font-medium">
@@ -2757,8 +2801,8 @@ const ToolInvocationListView = memo(
                         return (
                             <div className="border border-amber-200 dark:border-amber-500 rounded-xl my-4 p-4 bg-amber-50 dark:bg-amber-950/50">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center flex-shrink-0">
-                                        <Globe className="h-4 w-4 text-amber-600 dark:text-amber-300" />
+                                    <div className="h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
+                                        <Globe className="h-4 w-4 text-amber-600" />
                                     </div>
                                     <div className="text-amber-700 dark:text-amber-300 text-sm font-medium">
                                         No content available
@@ -2777,7 +2821,7 @@ const ToolInvocationListView = memo(
                                         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-lg" />
                                         <img
                                             className="h-5 w-5 absolute inset-0 m-auto"
-                                            src={`https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(result.results[0].url)}`}
+                                            src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(result.results[0].url)}`}
                                             alt=""
                                             onError={(e) => {
                                                 e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-2.29-2.333A17.9 17.9 0 0 1 8.027 13H4.062a8.008 8.008 0 0 0 5.648 6.667A15.905 15.905 0 0 0 13.97 13h-3.94zm9.908 0h-3.965a17.9 17.9 0 0 1-1.683 6.667A8.008 8.008 0 0 0 19.938 13zM4.062 11h3.965A17.9 17.9 0 0 1 9.71 4.333 8.008 8.008 0 0 0 4.062 11zm5.969 0h3.938A15.905 15.905 0 0 0 12 4.248 15.905 15.905 0 0 0 10.03 11zm4.259-6.667A17.9 17.9 0 0 1 15.938 11h3.965a8.008 8.008 0 0 0-5.648-6.667z' fill='rgba(128,128,128,0.5)'/%3E%3C/svg%3E";
@@ -2828,6 +2872,7 @@ const ToolInvocationListView = memo(
                         </div>
                     );
                 }
+
                 if (toolInvocation.toolName === 'text_translate') {
                     return <TranslationTool toolInvocation={toolInvocation} result={result} />;
                 }
@@ -2888,7 +2933,6 @@ const ToolInvocationListView = memo(
                             </div>
                         );
                     }
-
                     // Live Clock component that updates every second
                     const LiveClock = memo(() => {
                         const [time, setTime] = useState(() => new Date());
@@ -2999,13 +3043,11 @@ const ToolInvocationListView = memo(
 
                 if (toolInvocation.toolName === 'memory_manager') {
                     if (!result) {
-                        return (
-                            <SearchLoadingState
-                                icon={Memory}
-                                text="Managing memories..."
-                                color="violet"
-                            />
-                        );
+                        return <SearchLoadingState
+                            icon={Memory}
+                            text="Managing memories..."
+                            color="violet"
+                        />;
                     }
                     return <MemoryManager result={result} />;
                 }
@@ -3197,3 +3239,105 @@ const Home = () => {
 };
 
 export default Home;
+
+const SearchLoadingState = ({
+    icon: Icon,
+    text,
+    color
+}: {
+    icon: LucideIcon,
+    text: string,
+    color: "red" | "green" | "orange" | "violet" | "gray" | "blue"
+}) => {
+    const colorVariants = {
+        red: {
+            background: "bg-red-50 dark:bg-red-950",
+            border: "from-red-200 via-red-500 to-red-200 dark:from-red-400 dark:via-red-500 dark:to-red-700",
+            text: "text-red-500",
+            icon: "text-red-500"
+        },
+        green: {
+            background: "bg-green-50 dark:bg-green-950",
+            border: "from-green-200 via-green-500 to-green-200 dark:from-green-400 dark:via-green-500 dark:to-green-700",
+            text: "text-green-500",
+            icon: "text-green-500"
+        },
+        orange: {
+            background: "bg-orange-50 dark:bg-orange-950",
+            border: "from-orange-200 via-orange-500 to-orange-200 dark:from-orange-400 dark:via-orange-500 dark:to-orange-700",
+            text: "text-orange-500",
+            icon: "text-orange-500"
+        },
+        violet: {
+            background: "bg-violet-50 dark:bg-violet-950",
+            border: "from-violet-200 via-violet-500 to-violet-200 dark:from-violet-400 dark:via-violet-500 dark:to-violet-700",
+            text: "text-violet-500",
+            icon: "text-violet-500"
+        },
+        gray: {
+            background: "bg-neutral-50 dark:bg-neutral-950",
+            border: "from-neutral-200 via-neutral-500 to-neutral-200 dark:from-neutral-400 dark:via-neutral-500 dark:to-neutral-700",
+            text: "text-neutral-500",
+            icon: "text-neutral-500"
+        },
+        blue: {
+            background: "bg-blue-50 dark:bg-blue-950",
+            border: "from-blue-200 via-blue-500 to-blue-200 dark:from-blue-400 dark:via-blue-500 dark:to-blue-700",
+            text: "text-blue-500",
+            icon: "text-blue-500"
+        }
+    };
+
+    const variant = colorVariants[color];
+
+    return (
+        <Card className="relative w-full h-[100px] my-4 overflow-hidden shadow-none">
+            <BorderTrail
+                className={cn(
+                    'bg-gradient-to-l',
+                    variant.border
+                )}
+                size={80}
+            />
+            <CardContent className="p-6">
+                <div className="relative flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className={cn(
+                            "relative h-10 w-10 rounded-full flex items-center justify-center",
+                            variant.background
+                        )}>
+                            <BorderTrail
+                                className={cn(
+                                    "bg-gradient-to-l",
+                                    variant.border
+                                )}
+                                size={40}
+                            />
+                            <Icon className={cn("h-5 w-5", variant.icon)} />
+                        </div>
+                        <div className="space-y-2">
+                            <TextShimmer
+                                className="text-base font-medium"
+                                duration={2}
+                            >
+                                {text}
+                            </TextShimmer>
+                            <div className="flex gap-2">
+                                {[...Array(3)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="h-1.5 rounded-full bg-neutral-200 dark:bg-neutral-700 animate-pulse"
+                                        style={{
+                                            width: `${Math.random() * 40 + 20}px`,
+                                            animationDelay: `${i * 0.2}s`
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+};
