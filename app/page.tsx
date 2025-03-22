@@ -1297,9 +1297,13 @@ const HomeContent = () => {
                 
                 {/* Added center title with shooting star emoji */}
                 <div className="absolute left-1/2 transform -translate-x-1/2 font-semibold text-lg flex items-center">
-                    <span className="mr-1">🌠</span> Deep Search by Lucia
-                </div>
-                
+                    <img
+                        src="/logo.png"
+                        alt="Logo"
+                        style={{ width: '50px', height: '50px', marginRight: '0.25rem' }}
+                    />
+                    AI-powered Search Engine
+                    </div>
                 <div className='flex items-center space-x-4'>
                     <SignedOut>
                         <SignInButton mode="modal">
