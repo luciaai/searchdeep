@@ -66,15 +66,26 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={`${GeistSans.variable} ${syne.variable} font-sans antialiased`}>
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
+          {/* <header className="flex justify-end items-center p-4 gap-4 h-16">
             <SignedOut>
-              <SignInButton />
-              <SignUpButton />
+              <SignInButton mode="modal">
+                <button className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md ml-2 transition-colors">
+                  Sign Up
+                </button>
+              </SignUpButton>
             </SignedOut>
             <SignedIn>
-              <UserButton />
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium">Welcome!</span>
+                <UserButton afterSignOutUrl="/" />
+              </div>
             </SignedIn>
-          </header>
+          </header> */}
           <NuqsAdapter>
             <Providers>
               <Toaster position="top-center" richColors theme="system" />

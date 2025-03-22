@@ -15,6 +15,34 @@ export function generateId(prefix: string): string {
 export function getUserId(): string {
   if (typeof window === 'undefined') return '';
   
+  // Check for Clerk session cookie first
+  const hasClerkSession = document.cookie.includes('__clerk_session');
+  
+  // If there's a Clerk session, try to get the user ID from the cookie
+  if (hasClerkSession) {
+    // We'll use a combination of the Clerk session ID and our local ID
+    const clerkSessionId = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('__clerk_session'))
+      ?.split('=')[1];
+      
+    if (clerkSessionId) {
+      // Store the Clerk session ID in localStorage for future reference
+      localStorage.setItem('clerk_session_id', clerkSessionId);
+      
+      // We'll still maintain our own user ID for backward compatibility
+      let localUserId = localStorage.getItem('mem0_user_id');
+      if (!localUserId) {
+        localUserId = generateId('user');
+        localStorage.setItem('mem0_user_id', localUserId);
+      }
+      
+      // Return a combination of both IDs to ensure uniqueness
+      return `${localUserId}_clerk_${clerkSessionId.substring(0, 8)}`;
+    }
+  }
+  
+  // Fall back to the original implementation if no Clerk session
   let userId = localStorage.getItem('mem0_user_id');
   if (!userId) {
     userId = generateId('user');
@@ -22,8 +50,6 @@ export function getUserId(): string {
   }
   return userId;
 }
-
-export type SearchGroupId = 'web' | 'academic' | 'youtube' | 'x' | 'analysis' | 'chat' | 'extreme' | 'buddy';
 
 export const searchGroups = [
   {
@@ -85,3 +111,4 @@ export const searchGroups = [
 ] as const;
 
 export type SearchGroup = typeof searchGroups[number];
+export type SearchGroupId = SearchGroup['id'] | 'all';

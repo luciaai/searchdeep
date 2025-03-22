@@ -513,10 +513,14 @@ const groupPrompts = {
 
 export async function getGroupConfig(groupId: SearchGroupId = 'web') {
   "use server";
-  const tools = groupTools[groupId];
-  const systemPrompt = groupPrompts[groupId];
-  const toolInstructions = groupToolInstructions[groupId];
-  const responseGuidelines = groupResponseGuidelines[groupId];
+  
+  // Default to 'web' if groupId is 'all' or not found in the objects
+  const safeGroupId = (groupId === 'all' || !(groupId in groupTools)) ? 'web' : groupId;
+  
+  const tools = groupTools[safeGroupId as keyof typeof groupTools];
+  const systemPrompt = groupPrompts[safeGroupId as keyof typeof groupPrompts];
+  const toolInstructions = groupToolInstructions[safeGroupId as keyof typeof groupToolInstructions];
+  const responseGuidelines = groupResponseGuidelines[safeGroupId as keyof typeof groupResponseGuidelines];
   
   return {
     tools,

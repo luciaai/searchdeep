@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-
 "use client";
 import 'katex/dist/katex.min.css';
 
@@ -89,16 +88,12 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import { parseAsString, useQueryState } from 'nuqs';
-import React, {
-    memo,
-    Suspense,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState
-} from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback, Suspense, useTransition, memo } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useAuth, SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from '@clerk/nextjs';
 import Latex from 'react-latex-next';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark, oneLight, oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -431,7 +426,7 @@ function CollapsibleSection({
                                 onClick={handleCopy}
                             >
                                 {copied ? (
-                                    <Check className="h-3.5 w-3.5 text-green-500" />
+                                    <Check className="h-3.5 w-3.5" />
                                 ) : (
                                     <Copy className="h-3.5 w-3.5" />
                                 )}
@@ -1306,18 +1301,31 @@ const HomeContent = () => {
                 </div>
                 
                 <div className='flex items-center space-x-4'>
-                    {/* <Link
-                        target="_blank"
-                        href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzaidmukaddam%2Fscira&env=XAI_API_KEY,ANTHROPIC_API_KEY,CEREBRAS_API_KEY,GROQ_API_KEY,E2B_API_KEY,ELEVENLABS_API_KEY,TAVILY_API_KEY,EXA_API_KEY,TMDB_API_KEY,YT_ENDPOINT,FIRECRAWL_API_KEY,OPENWEATHER_API_KEY,SANDBOX_TEMPLATE_ID,GOOGLE_MAPS_API_KEY,MAPBOX_ACCESS_TOKEN,TRIPADVISOR_API_KEY,AVIATION_STACK_API_KEY,CRON_SECRET,BLOB_READ_WRITE_TOKEN,NEXT_PUBLIC_MAPBOX_TOKEN,NEXT_PUBLIC_POSTHOG_KEY,NEXT_PUBLIC_POSTHOG_HOST,NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,MEM0_API_KEY,MEM0_ORG_NAME,MEM0_PROJECT_NAME&envDescription=API%20keys%20and%20configuration%20required%20for%20Scira%20to%20function"
-                        className="flex flex-row gap-2 items-center py-1.5 px-2 rounded-md 
-                            bg-accent hover:bg-accent/80
-                            backdrop-blur-sm text-foreground shadow-sm text-sm
-                            transition-all duration-200"
-                    >
-                        <VercelIcon size={14} />
-                        <span className='hidden sm:block'>Deploy with Vercel</span>
-                        <span className='sm:hidden block'>Deploy</span>
-                    </Link> */}
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border-blue-500/20"
+                            >
+                                Sign In
+                            </Button>
+                        </SignInButton>
+                        <SignUpButton mode="modal">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="rounded-md bg-green-500/10 hover:bg-green-500/20 text-green-500 border-green-500/20 ml-2"
+                            >
+                                Sign Up
+                            </Button>
+                        </SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <UserButton afterSignOutUrl="/" />
+                    </SignedIn>
                     <AboutButton />
                     <ThemeToggle />
                 </div>
@@ -1471,27 +1479,27 @@ const HomeContent = () => {
                                 className={cn(
                                     "w-full flex items-center justify-between px-4 py-3",
                                     "bg-neutral-50 dark:bg-neutral-900",
-                                    "hover:bg-neutral-100 dark:hover:bg-neutral-800",
+                                    "hover:bg-neutral-100 dark:hover:bg-neutral-800/50",
                                     "transition-colors duration-200",
                                     "group text-left"
                                 )}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="relative flex items-center justify-center size-2">
+                                    {isComplete ? (
                                         <div className="relative flex items-center justify-center size-2">
-                                            {isComplete ? (
+                                            <div className="relative flex items-center justify-center size-2">
                                                 <div className="size-1.5 rounded-full bg-emerald-500" />
-                                            ) : (
-                                                <>
-                                                    <div className="size-1.5 rounded-full bg-[#007AFF]/30 animate-ping" />
-                                                    <div className="size-1.5 rounded-full bg-[#007AFF] absolute" />
-                                                </>
-                                            )}
+                                            </div>
                                         </div>
-                                        {!isComplete && (
+                                    ) : (
+                                        <div className="relative flex items-center justify-center size-2">
+                                            <div className="relative flex items-center justify-center size-2">
+                                                <div className="size-1.5 rounded-full bg-[#007AFF]/30 animate-ping" />
+                                                <div className="size-1.5 rounded-full bg-[#007AFF] absolute" />
+                                            </div>
                                             <div className="absolute inset-0 rounded-full border-2 border-[#007AFF]/20 animate-ping" />
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
                                             {isComplete ? "Reasoned" : "Reasoning"}
@@ -1755,7 +1763,7 @@ const HomeContent = () => {
                 ? 'min-h-screen flex flex-col items-center justify-center' // Center everything when no messages
                 : 'mt-20 sm:mt-16' // Add top margin when showing messages
                 }`}>
-                <div className={`w-full max-w-[90%] !font-sans sm:max-w-2xl space-y-6 p-0 mx-auto transition-all duration-300`}>
+                <div className={`w-full max-w-[90%] sm:max-w-2xl space-y-6 p-0 mx-auto transition-all duration-300`}>
                     {status === 'ready' && messages.length === 0 && (
                         <div className="text-center !font-sans">
                             <h1 className="text-2xl sm:text-4xl mb-6 text-neutral-800 dark:text-neutral-100 font-syne">
@@ -1954,7 +1962,9 @@ const HomeContent = () => {
                                             >
                                                 <div className="flex items-center gap-2 mb-4">
                                                     <AlignLeft className="w-5 h-5 text-primary" />
-                                                    <h2 className="font-semibold text-base text-neutral-800 dark:text-neutral-200">Suggested questions</h2>
+                                                    <h2 className="font-semibold text-base text-neutral-800 dark:text-neutral-200">
+                                                        Suggested questions
+                                                    </h2>
                                                 </div>
                                                 <div className="space-y-2 flex flex-col">
                                                     {suggestedQuestions.map((question, index) => (
@@ -2014,7 +2024,7 @@ const HomeContent = () => {
             </div>
         </div>
     );
-}
+};
 
 const LoadingFallback = () => (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-neutral-50 to-neutral-100 dark:from-neutral-950 dark:to-neutral-900">
@@ -2073,95 +2083,89 @@ const ToolInvocationListView = memo(
                                             lat: feature.geometry.coordinates[1],
                                             lng: feature.geometry.coordinates[0],
                                         },
-                                        vicinity: feature.formatted_address,
+                                        vicinity: feature.formatted_address
                                     }))}
                                     zoom={features.length > 1 ? 12 : 15}
                                 />
                             </div>
 
                             <div className="max-h-[300px] overflow-y-auto border-t border-neutral-200 dark:border-neutral-800">
-                                {features.map((place: any, index: any) => {
-                                    const isGoogleResult = place.source === 'google';
+                                {features.map((place: any, index: any) => (
+                                    <div
+                                        key={place.id || index}
+                                        className={cn(
+                                            "p-4",
+                                            index !== features.length - 1 && "border-b border-neutral-200 dark:border-neutral-800"
+                                        )}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
+                                                {place.feature_type === 'street_address' || place.feature_type === 'street' ? (
+                                                    <RoadHorizon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                                ) : place.feature_type === 'locality' ? (
+                                                    <Building className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                                ) : (
+                                                    <MapPin className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                                )}
+                                            </div>
 
-                                    return (
-                                        <div
-                                            key={place.id || index}
-                                            className={cn(
-                                                "p-4",
-                                                index !== features.length - 1 && "border-b border-neutral-200 dark:border-neutral-800"
-                                            )}
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
-                                                    {place.feature_type === 'street_address' || place.feature_type === 'street' ? (
-                                                        <RoadHorizon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                                                    ) : place.feature_type === 'locality' ? (
-                                                        <Building className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                                                    ) : (
-                                                        <MapPin className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                                                    )}
-                                                </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 truncate">
+                                                    {place.name}
+                                                </h3>
+                                                {place.formatted_address && (
+                                                    <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                                                        {place.formatted_address}
+                                                    </p>
+                                                )}
+                                                <Badge variant="secondary" className="mt-2">
+                                                    {place.feature_type.replace(/_/g, ' ')}
+                                                </Badge>
+                                            </div>
 
-                                                <div className="flex-1 min-w-0">
-                                                    <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 truncate">
-                                                        {place.name}
-                                                    </h3>
-                                                    {place.formatted_address && (
-                                                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-                                                            {place.formatted_address}
-                                                        </p>
-                                                    )}
-                                                    <Badge variant="secondary" className="mt-2">
-                                                        {place.feature_type.replace(/_/g, ' ')}
-                                                    </Badge>
-                                                </div>
+                                            <div className="flex gap-2">
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                size="icon"
+                                                                variant="outline"
+                                                                onClick={() => {
+                                                                    const coords = `${place.geometry.coordinates[1]},${place.geometry.coordinates[0]}`;
+                                                                    navigator.clipboard.writeText(coords);
+                                                                    toast.success("Coordinates copied!");
+                                                                }}
+                                                                className="h-10 w-10"
+                                                            >
+                                                                <Copy className="h-4 w-4" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>Copy Coordinates</TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
 
-                                                <div className="flex gap-2">
-                                                    <TooltipProvider>
-                                                        <Tooltip>
-                                                            <TooltipTrigger asChild>
-                                                                <Button
-                                                                    size="icon"
-                                                                    variant="outline"
-                                                                    onClick={() => {
-                                                                        const coords = `${place.geometry.coordinates[1]},${place.geometry.coordinates[0]}`;
-                                                                        navigator.clipboard.writeText(coords);
-                                                                        toast.success("Coordinates copied!");
-                                                                    }}
-                                                                    className="h-10 w-10"
-                                                                >
-                                                                    <Copy className="h-4 w-4" />
-                                                                </Button>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent>Copy Coordinates</TooltipContent>
-                                                        </Tooltip>
-                                                    </TooltipProvider>
-
-                                                    <TooltipProvider>
-                                                        <Tooltip>
-                                                            <TooltipTrigger asChild>
-                                                                <Button
-                                                                    size="icon"
-                                                                    variant="outline"
-                                                                    onClick={() => {
-                                                                        const url = isGoogleResult
-                                                                            ? `https://www.google.com/maps/place/?q=place_id:${place.place_id}`
-                                                                            : `https://www.google.com/maps/search/?api=1&query=${place.geometry.coordinates[1]},${place.geometry.coordinates[0]}`;
-                                                                        window.open(url, '_blank');
-                                                                    }}
-                                                                    className="h-10 w-10"
-                                                                >
-                                                                    <ExternalLink className="h-4 w-4" />
-                                                                </Button>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent>View in Maps</TooltipContent>
-                                                        </Tooltip>
-                                                    </TooltipProvider>
-                                                </div>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                size="icon"
+                                                                variant="outline"
+                                                                onClick={() => {
+                                                                    const url = `https://www.google.com/maps/place/?q=place_id:${place.place_id}`;
+                                                                    window.open(url, '_blank');
+                                                                }}
+                                                                className="h-10 w-10"
+                                                            >
+                                                                <ExternalLink className="h-4 w-4" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>View in Maps</TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                             </div>
                         </Card>
                     );
@@ -2220,7 +2224,12 @@ const ToolInvocationListView = memo(
                                     key={post.id}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                                    transition={{
+                                        repeat: Infinity,
+                                        duration: 0.8,
+                                        delay: index * 0.1,
+                                        repeatType: "reverse",
+                                    }}
                                     className='[&>div]:m-0'
                                 >
                                     <Tweet id={post.tweetId} />
@@ -2235,14 +2244,12 @@ const ToolInvocationListView = memo(
                         <Card className="w-full my-4 overflow-hidden shadow-none">
                             <CardHeader className="pb-2 flex flex-row items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <div className="h-8 w-8 rounded-full bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center">
+                                    <div className="h-8 w-8 rounded-xl bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center">
                                         <XLogo className="h-4 w-4" />
                                     </div>
                                     <div>
                                         <CardTitle>Latest from X</CardTitle>
-                                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                            {result.length} tweets found
-                                        </p>
+                                        <p className="text-sm text-muted-foreground">Found {result.length} tweets</p>
                                     </div>
                                 </div>
                             </CardHeader>
@@ -2255,7 +2262,10 @@ const ToolInvocationListView = memo(
                                                 className="w-[min(100vw-2rem,320px)] flex-none"
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                transition={{ duration: 0.3, delay: index * 0.1 }}
+                                                transition={{
+                                                    duration: 0.3,
+                                                    delay: index * 0.1
+                                                }}
                                             >
                                                 <Tweet id={post.tweetId} />
                                             </motion.div>
@@ -2420,14 +2430,17 @@ const ToolInvocationListView = memo(
                                 </div>
                             </CardHeader>
                             <div className="px-4 pb-2">
-                                <div className="flex overflow-x-auto gap-4 no-scrollbar hover:overflow-x-scroll">
+                                <div className="flex overflow-x-auto gap-4 no-scrollbar">
                                     {result.results.map((paper: AcademicResult, index: number) => (
                                         <motion.div
                                             key={paper.url || index}
                                             className="w-[400px] flex-none"
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                                            transition={{
+                                                duration: 0.3,
+                                                delay: index * 0.1
+                                            }}
                                         >
                                             <div className="h-[300px] relative group overflow-y-auto">
                                                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet-500/20 via-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -2703,16 +2716,11 @@ const ToolInvocationListView = memo(
                             <div className="border border-neutral-200 rounded-xl my-4 p-4 dark:border-neutral-800 bg-gradient-to-b from-white to-neutral-50 dark:from-neutral-900 dark:to-neutral-900/90">
                                 <div className="flex items-center gap-4">
                                     <div className="relative w-10 h-10">
-                                        <div className="absolute inset-0 rounded-full bg-primary/10 animate-pulse" />
-                                        <Globe className="h-5 w-5 text-primary/70 absolute inset-0 m-auto" />
+                                        <div className="absolute inset-0 rounded-full border-4 border-neutral-300 dark:border-neutral-700 border-t-blue-500 dark:border-t-blue-400 animate-spin" />
                                     </div>
-                                    <div className="space-y-2 flex-1">
-                                        <div className="h-4 w-36 bg-neutral-200 dark:bg-neutral-800 animate-pulse rounded-md" />
-                                        <div className="space-y-1.5">
-                                            <div className="h-3 w-full bg-neutral-100 dark:bg-neutral-800/50 animate-pulse rounded-md" />
-                                            <div className="h-3 w-2/3 bg-neutral-100 dark:bg-neutral-800/50 animate-pulse rounded-md" />
-                                        </div>
-                                    </div>
+                                    <span className="text-neutral-700 dark:text-neutral-300 text-sm font-medium">
+                                        Fetching content...
+                                    </span>
                                 </div>
                             </div>
                         );
@@ -2768,7 +2776,7 @@ const ToolInvocationListView = memo(
                                             src={`https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(result.results[0].url)}`}
                                             alt=""
                                             onError={(e) => {
-                                                e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-2.29-2.333A17.9 17.9 0 0 1 8.027 13H4.062a8.008 8.008 0 0 0 5.648 6.667zM10.03 13c.151 2.439.848 4.73 1.97 6.752A15.905 15.905 0 0 0 13.97 13h-3.94zm9.908 0h-3.965a17.9 17.9 0 0 1-1.683 6.667A8.008 8.008 0 0 0 19.938 13zM4.062 11h3.965A17.9 17.9 0 0 1 9.71 4.333 8.008 8.008 0 0 0 4.062 11zm5.969 0h3.938A15.905 15.905 0 0 0 12 4.248 15.905 15.905 0 0 0 10.03 11zm4.259-6.667A17.9 17.9 0 0 1 15.938 11h3.965a8.008 8.008 0 0 0-5.648-6.667z' fill='rgba(128,128,128,0.5)'/%3E%3C/svg%3E";
+                                                e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-2.29-2.333A17.9 17.9 0 0 1 8.027 13H4.062a8.008 8.008 0 0 0 5.648 6.667A15.905 15.905 0 0 0 13.97 13h-3.94zm9.908 0h-3.965a17.9 17.9 0 0 1-1.683 6.667A8.008 8.008 0 0 0 19.938 13zM4.062 11h3.965A17.9 17.9 0 0 1 9.71 4.333 8.008 8.008 0 0 0 4.062 11zm5.969 0h3.938A15.905 15.905 0 0 0 12 4.248 15.905 15.905 0 0 0 10.03 11zm4.259-6.667A17.9 17.9 0 0 1 15.938 11h3.965a8.008 8.008 0 0 0-5.648-6.667z' fill='rgba(128,128,128,0.5)'/%3E%3C/svg%3E";
                                             }}
                                         />
                                     </div>
@@ -2867,8 +2875,8 @@ const ToolInvocationListView = memo(
                     if (!result) {
                         return (
                             <div className="flex items-center gap-3 py-4 px-2">
-                                <div className="h-5 w-5 relative">
-                                    <div className="absolute inset-0 rounded-full border-2 border-neutral-300 dark:border-neutral-700 border-t-blue-500 dark:border-t-blue-400 animate-spin" />
+                                <div className="relative w-10 h-10">
+                                    <div className="absolute inset-0 rounded-full border-4 border-neutral-300 dark:border-neutral-700 border-t-blue-500 dark:border-t-blue-400 animate-spin" />
                                 </div>
                                 <span className="text-neutral-700 dark:text-neutral-300 text-sm font-medium">
                                     Fetching current time...
@@ -2973,7 +2981,7 @@ const ToolInvocationListView = memo(
                                                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-neutral-900 dark:text-white">
                                                     {result.formatted.dateShort}
                                                 </h2>
-                                                <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-500">
+                                                <p className="text-sm text-neutral-500 dark:text-neutral-500">
                                                     {result.formatted.date}
                                                 </p>
                                             </div>
@@ -3088,7 +3096,7 @@ const ToolInvocationListView = memo(
                         <div className="space-y-4 sm:space-y-6">
                             <div>
                                 <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                                    The phrase <span className="font-medium text-neutral-900 dark:text-neutral-100">{toolInvocation.args.text}</span> translates from <span className="font-medium text-neutral-900 dark:text-neutral-100">{result.detectedLanguage}</span> to <span className="font-medium text-neutral-900 dark:text-neutral-100">{toolInvocation.args.to}</span> as <span className="font-medium text-primary">{result.translatedText}</span>
+                                    The phrase <span className="font-medium text-neutral-900 dark:text-neutral-100">{toolInvocation.args.text}</span> translates from <span className="font-medium text-neutral-900 dark:text-neutral-100">{result.detectedLanguage}</span> to <span className="font-medium text-primary">{toolInvocation.args.to}</span> as <span className="font-medium text-primary">{result.translatedText}</span>
                                 </p>
                             </div>
 
@@ -3154,6 +3162,28 @@ const ToolInvocationListView = memo(
 ToolInvocationListView.displayName = 'ToolInvocationListView';
 
 const Home = () => {
+    const { isLoaded, isSignedIn } = useAuth();
+    const router = useRouter();
+    
+    useEffect(() => {
+        if (isLoaded && !isSignedIn) {
+            router.push('/sign-in');
+        }
+    }, [isLoaded, isSignedIn, router]);
+    
+    // Show loading state while checking auth
+    if (!isLoaded || !isSignedIn) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
+                    <p className="mb-4">Please sign in to access this page</p>
+                    <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full mx-auto"></div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <Suspense fallback={<LoadingFallback />}>
             <HomeContent />
