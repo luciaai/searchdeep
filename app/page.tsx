@@ -1371,7 +1371,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             const hasCreditsResult = await checkCredits();
             
             if (!hasCreditsResult.hasCredits) {
-                toast.error("You don't have enough credits to regenerate a response.", {
+                toast.error("You don&apos;t have enough credits to regenerate a response.", {
                     description: "Please contact support to add more credits to your account."
                 });
                 return;
@@ -1775,7 +1775,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             const hasCreditsResult = await checkCredits();
             
             if (!hasCreditsResult.hasCredits) {
-                toast.error("You don't have enough credits to perform this search.", {
+                toast.error("You don&apos;t have enough credits to perform this search.", {
                     description: "Please contact support to add more credits to your account."
                 });
                 return;
@@ -2401,7 +2401,7 @@ const ToolInvocationListView = memo(
                                             No Content Available
                                         </h2>
                                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                            The videos found don't contain any timestamps or transcripts.
+                                            The videos found don&apos;t contain any timestamps or transcripts.
                                         </p>
                                     </div>
                                 </div>
@@ -2646,29 +2646,13 @@ const ToolInvocationListView = memo(
                 if (toolInvocation.toolName === 'get_weather_data') {
                     if (!result) {
                         return (
-                            <div className="flex items-center justify-between w-full">
-                                <div className="flex items-center gap-2">
-                                    <Cloud className="h-5 w-5 text-neutral-700 dark:text-neutral-300 animate-pulse" />
-                                    <span className="text-neutral-700 dark:text-neutral-300 text-sm font-medium">
-                                        Fetching weather data...
-                                    </span>
+                            <div className="flex items-center gap-3 py-4 px-2">
+                                <div className="relative w-10 h-10">
+                                    <div className="absolute inset-0 rounded-full border-4 border-neutral-300 dark:border-neutral-700 border-t-blue-500 dark:border-t-blue-400 animate-spin" />
                                 </div>
-                                <div className="flex space-x-1">
-                                    {[0, 1, 2].map((index) => (
-                                        <motion.div
-                                            key={index}
-                                            className="w-2 h-2 bg-neutral-400 dark:bg-neutral-600 rounded-full"
-                                            initial={{ opacity: 0.3 }}
-                                            animate={{ opacity: 1 }}
-                                            transition={{
-                                                repeat: Infinity,
-                                                duration: 0.8,
-                                                delay: index * 0.2,
-                                                repeatType: "reverse",
-                                            }}
-                                        />
-                                    ))}
-                                </div>
+                                <span className="text-neutral-700 dark:text-neutral-300 text-sm font-medium">
+                                    Fetching weather data...
+                                </span>
                             </div>
                         );
                     }

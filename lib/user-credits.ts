@@ -24,6 +24,14 @@ export async function getOrCreateUser() {
     // Check if user exists
     let user = await prisma.user.findUnique({
       where: { clerkId },
+      include: {
+        subscriptions: {
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 1
+        }
+      }
     });
 
     // If user doesn't exist, create a new one
@@ -34,6 +42,9 @@ export async function getOrCreateUser() {
           clerkId,
           credits: STARTING_CREDITS,
         },
+        include: {
+          subscriptions: true
+        }
       });
     }
 
@@ -60,7 +71,7 @@ export async function hasEnoughCredits() {
 /**
  * Decrement a user's credits
  */
-export async function useCredit() {
+export async function decrementCredit() {
   try {
     const user = await getOrCreateUser();
     
@@ -98,7 +109,7 @@ export async function logSearch(query: string, groupId: SearchGroupId) {
     });
     
     // Use a credit for the search
-    await useCredit();
+    await decrementCredit();
     
     return search;
   } catch (error) {
@@ -142,5 +153,86 @@ export async function getUserCredits() {
   } catch (error) {
     console.error('Error getting user credits:', error);
     return 0; // Return 0 credits as a fallback
+  }
+}
+
+/**
+ * Get a user's active subscription if any
+ */
+export async function getUserSubscription() {
+  try {
+    const user = await getOrCreateUser();
+    
+    if (!user.subscriptions || user.subscriptions.length === 0) {
+      return null;
+    }
+    
+    const subscription = user.subscriptions[0];
+    
+    // Check if subscription is active
+    if (subscription.status !== 'active') {
+      return null;
+    }
+    
+    return subscription;
+  } catch (error) {
+    console.error('Error getting user subscription:', error);
+    return null;
+  }
+}
+
+/**
+ * Add credits to a user's account
+ */
+export async function addCredits(clerkId: string, credits: number) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId },
+    });
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        credits: {
+          increment: credits
+        }
+      }
+    });
+    
+    return updatedUser;
+  } catch (error) {
+    console.error('Error adding credits:', error);
+    throw new Error('Failed to add credits');
+  }
+}
+
+/**
+ * Set a user's credits to a specific amount
+ */
+export async function setCredits(clerkId: string, credits: number) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId },
+    });
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        credits: credits
+      }
+    });
+    
+    return updatedUser;
+  } catch (error) {
+    console.error('Error setting credits:', error);
+    throw new Error('Failed to set credits');
   }
 }

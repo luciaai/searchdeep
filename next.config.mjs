@@ -11,6 +11,9 @@ jiti.import('./env/client')
 const nextConfig = {
     transpilePackages: ["geist"],
     output: 'standalone',
+    experimental: {
+        serverComponentsExternalPackages: ['@clerk/backend'],
+    },
     async headers() {
         return [
             {

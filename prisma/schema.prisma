@@ -12,13 +12,18 @@ datasource db {
 }
 
 model User {
-  id        String    @id
-  clerkId   String    @unique
-  email     String?
-  credits   Int       @default(3) // Default credits for free users
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  searches  Search[]
+  id                     String         @id
+  clerkId                String         @unique
+  email                  String?
+  credits                Int            @default(3) // Default credits for free users
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  searches               Search[]
+  stripeCustomerId       String?        @unique
+  stripeSubscriptionId   String?        @unique
+  stripeSubscriptionStatus String?
+  tierId                 String?        // Reference to the subscription tier
+  subscriptions          Subscription[]
 }
 
 model Search {
@@ -29,6 +34,22 @@ model Search {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Subscription {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id])
+  stripeSubscriptionId String   @unique
+  status              String   // active, canceled, past_due, etc.
+  priceId             String   // Stripe price ID
+  tierId              String   // Reference to the tier
+  currentPeriodEnd    DateTime
+  cancelAtPeriodEnd   Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   @@index([userId])
 }
