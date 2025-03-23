@@ -71,6 +71,7 @@ export async function createCheckoutSession(tierId: string, clerkId: string) {
         },
       ],
       mode: 'subscription',
+      allow_promotion_codes: true,
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
       metadata: {
