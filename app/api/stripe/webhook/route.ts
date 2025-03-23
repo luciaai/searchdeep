@@ -57,7 +57,9 @@ export async function POST(req: NextRequest) {
               {
                 metadata: {
                   ...subscription.metadata,
-                  tierId: session.metadata.tierId
+                  tierId: session.metadata.tierId,
+                  // Add a flag to indicate this subscription was processed via checkout
+                  processedViaCheckout: 'true'
                 }
               }
             );
@@ -77,6 +79,16 @@ export async function POST(req: NextRequest) {
         break;
 
       case 'customer.subscription.created':
+        // Only process if not already processed via checkout
+        const newSubscription = event.data.object as Stripe.Subscription;
+        if (newSubscription.metadata.processedViaCheckout !== 'true') {
+          console.log(`New subscription created:`, newSubscription.id);
+          await handleSubscriptionChange(newSubscription);
+        } else {
+          console.log(`Subscription ${newSubscription.id} already processed via checkout, skipping`);
+        }
+        break;
+        
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted':
         const subscription = event.data.object as Stripe.Subscription;
