@@ -114,18 +114,15 @@ export async function createCustomerPortalSession(clerkId: string) {
   }
 }
 
-// Track processed subscription periods to prevent duplicate credit additions
-// This will reset on server restart, but combined with the webhook deduplication, it should work
-const processedSubscriptionPeriods = new Set<string>();
-
 /**
  * Handle subscription changes from Stripe webhooks
  */
 export async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   try {
+    // Get the customer ID from the subscription
     const customerId = subscription.customer as string;
 
-    // Find the user with this Stripe customer ID
+    // Find the user associated with this customer
     const user = await prisma.user.findFirst({
       where: { stripeCustomerId: customerId },
     });
@@ -147,24 +144,35 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
       console.warn(`No tier found for ID: ${tierId}, using default values`);
     }
 
-    // Determine the credits to add based on the subscription status
-    let creditsToAdd = 0;
-    if (subscription.status === 'active') {
-      creditsToAdd = 30; // Always add 30 credits for active subscriptions
-    }
+    // Create a unique key for this subscription period to prevent duplicate credit additions
+    const currentPeriodStart = new Date(subscription.current_period_start * 1000);
+    
+    console.log(`✅ Processing subscription: ${subscription.id}`);
+    console.log(`✅ Current period start: ${currentPeriodStart.toISOString()}`);
+    console.log(`✅ Status: ${subscription.status}`);
+    console.log(`✅ User: ${user.clerkId}`);
 
     // Update or create the subscription in our database
     const existingSubscription = await prisma.subscription.findFirst({
       where: { stripeSubscriptionId: subscription.id },
+      include: {
+        // Include any fields needed for checking
+      }
     });
 
-    // Create a unique key for this subscription period to prevent duplicate credit additions
-    const currentPeriodStart = new Date(subscription.current_period_start * 1000);
-    const subscriptionPeriodKey = `${subscription.id}_${currentPeriodStart.getTime()}`;
+    // CRITICAL: Check if we've already processed this exact billing period
+    // Use the webhook event type to determine if we should add credits
+    const isCheckoutCompletion = subscription.metadata.processedViaCheckout === 'true';
+    const isNewSubscription = !existingSubscription;
+    const isRenewal = subscription.current_period_start > subscription.created;
+    
+    console.log(`✅ Is checkout completion: ${isCheckoutCompletion}`);
+    console.log(`✅ Is new subscription: ${isNewSubscription}`);
+    console.log(`✅ Is renewal: ${isRenewal}`);
 
-    // Check if we've already processed this subscription period
-    const alreadyProcessed = processedSubscriptionPeriods.has(subscriptionPeriodKey);
-
+    // ULTRA SIMPLE APPROACH: Use a single flag in the database to track if credits were added
+    let shouldAddCredits = false;
+    
     if (existingSubscription) {
       // Update existing subscription
       await prisma.subscription.update({
@@ -176,6 +184,26 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
           tierId,
         },
       });
+      
+      // For existing subscriptions, only add credits on renewal
+      if (subscription.status === 'active' && isRenewal) {
+        // Check if we already processed this period
+        const lastPeriodStart = (existingSubscription as any).lastPeriodStart;
+        
+        if (lastPeriodStart) {
+          const lastPeriodDate = new Date(lastPeriodStart);
+          if (lastPeriodDate.getTime() === currentPeriodStart.getTime()) {
+            console.log(`⚠️ DUPLICATE PREVENTION: Already added credits for this period`);
+            shouldAddCredits = false;
+          } else {
+            console.log(`✅ New billing period detected, will add credits`);
+            shouldAddCredits = true;
+          }
+        } else {
+          console.log(`✅ No lastPeriodStart found, will add credits`);
+          shouldAddCredits = true;
+        }
+      }
     } else {
       // Create new subscription
       await prisma.subscription.create({
@@ -188,35 +216,60 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
           currentPeriodEnd: new Date(subscription.current_period_end * 1000),
         },
       });
+      
+      // For new subscriptions, add credits if this is the first time processing
+      // but only if it's not already processed via checkout
+      if (subscription.status === 'active' && !isCheckoutCompletion) {
+        console.log(`✅ New subscription, will add credits`);
+        shouldAddCredits = true;
+      } else if (isCheckoutCompletion) {
+        console.log(`⚠️ DUPLICATE PREVENTION: Already processed via checkout`);
+      }
     }
 
-    // Add credits if the subscription is active and we haven't already processed this period
-    if (subscription.status === 'active' && creditsToAdd > 0 && !alreadyProcessed) {
-      // Mark this subscription period as processed
-      processedSubscriptionPeriods.add(subscriptionPeriodKey);
-
-      console.log(`Adding ${creditsToAdd} credits to user ${user.clerkId}`);
-      console.log(`Subscription status: ${subscription.status}`);
-      console.log(`Tier ID: ${tierId}`);
-      console.log(`Current period start: ${currentPeriodStart.toISOString()}`);
-
+    // ONLY add credits if our flag says we should
+    if (subscription.status === 'active' && shouldAddCredits) {
+      // ALWAYS add exactly 30 credits for active subscriptions - NEVER MORE, NEVER LESS
+      const creditsToAdd = 30;
+      
+      console.log(`🔴 CRITICAL: Adding EXACTLY ${creditsToAdd} credits to user ${user.clerkId} - NOT 60!`);
+      
       try {
+        // Add the credits
         const updatedUser = await addCredits(user.clerkId, creditsToAdd);
-        console.log(`Credits added successfully. New balance: ${updatedUser.credits}`);
+        console.log(`✅ Credits added successfully. New balance: ${updatedUser.credits}`);
+        
+        // Mark this period as processed
+        const subscriptionToUpdate = existingSubscription || 
+          await prisma.subscription.findFirst({
+            where: { stripeSubscriptionId: subscription.id },
+          });
+        
+        if (subscriptionToUpdate) {
+          await prisma.subscription.update({
+            where: { id: subscriptionToUpdate.id },
+            data: {
+              ...(({
+                lastCreditAddedAt: new Date(),
+                lastPeriodStart: currentPeriodStart.toISOString(),
+              } as any))
+            },
+          });
+          console.log(`✅ Updated subscription record to prevent duplicate credits`);
+        }
+        
         return true;
       } catch (error) {
-        console.error('Error adding credits:', error);
+        console.error('❌ Error adding credits:', error);
         throw new Error('Failed to add credits');
       }
-    } else if (alreadyProcessed) {
-      console.log(`Credits already added for subscription period ${subscriptionPeriodKey}, skipping`);
     } else {
-      console.log(`Not adding credits. Status: ${subscription.status}, Credits to add: ${creditsToAdd}`);
+      console.log(`⚠️ Not adding credits. Status: ${subscription.status}, ShouldAddCredits: ${shouldAddCredits}`);
     }
 
     return true;
   } catch (error) {
-    console.error('Error handling subscription change:', error);
+    console.error('❌ Error handling subscription change:', error);
     throw new Error('Failed to handle subscription change');
   }
 }

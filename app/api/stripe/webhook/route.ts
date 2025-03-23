@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Stripe } from 'stripe';
+import Stripe from 'stripe';
 import { handleSubscriptionChange } from '@/lib/payments/stripe';
 import prisma from '@/lib/prisma'; // Import prisma instance
 
@@ -12,7 +12,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 // Track processed events to prevent duplicates (in-memory solution)
-// This will reset on server restart, but it's better than nothing
+// This will reset on server restart, but we also check the database
 const processedEvents = new Set<string>();
 
 export async function POST(req: NextRequest) {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         process.env.STRIPE_WEBHOOK_SECRET as string
       );
     } catch (err: any) {
-      console.error(`Webhook signature verification failed: ${err.message}`);
+      console.error(`❌ Webhook signature verification failed: ${err.message}`);
       return NextResponse.json(
         { error: `Webhook signature verification failed: ${err.message}` },
         { status: 400 }
@@ -46,110 +46,150 @@ export async function POST(req: NextRequest) {
     // Generate a unique ID for this event to prevent duplicate processing
     const eventUniqueId = `${event.type}_${event.id}`;
     
-    // Check if we've already processed this event
+    // Check if we've already processed this event in memory
     if (processedEvents.has(eventUniqueId)) {
-      console.log(`Event ${eventUniqueId} already processed, skipping`);
+      console.log(`⚠️ Event ${eventUniqueId} already processed in memory, skipping`);
       return NextResponse.json({ received: true, status: 'already_processed' });
     }
     
-    // Mark this event as processed
+    // Check if we've already processed this event in the database
+    const existingEvent = await (prisma as any).stripeEvent.findUnique({
+      where: { eventId: event.id }
+    });
+    
+    if (existingEvent) {
+      console.log(`⚠️ Event ${event.id} already exists in database, skipping to prevent duplicate processing`);
+      // Still add to in-memory cache for faster checks
+      processedEvents.add(eventUniqueId);
+      return NextResponse.json({ received: true, status: 'already_processed_db' });
+    }
+    
+    // Mark this event as processed in memory
     processedEvents.add(eventUniqueId);
+    console.log(`✅ Processing event: ${event.type}, ID: ${event.id}, Total in-memory events: ${processedEvents.size}`);
+    
+    // CRITICAL: Record this event in the database BEFORE processing it
+    // This ensures that even if processing fails, we won't try to process it again
+    await (prisma as any).stripeEvent.create({
+      data: {
+        eventId: event.id,
+        type: event.type,
+        processedAt: new Date()
+      }
+    });
+    console.log(`✅ Recorded event ${event.id} in database to prevent duplicate processing`);
     
     // Process the event based on its type
     switch (event.type) {
       case 'checkout.session.completed':
         const session = event.data.object as Stripe.Checkout.Session;
-        console.log('Checkout session completed:', session.id);
         
-        // If this is a subscription checkout, retrieve the subscription
-        if (session.mode === 'subscription' && session.subscription) {
-          const subscription = await stripe.subscriptions.retrieve(
-            session.subscription as string
-          );
+        // Only process if this is a subscription checkout
+        if (session.mode === 'subscription') {
+          console.log(`✅ Processing checkout session: ${session.id}`);
           
-          // Generate a unique ID for this checkout session
-          const checkoutUniqueId = `checkout_${session.id}`;
+          // Get the subscription ID from the session
+          const subscriptionId = session.subscription as string;
           
-          // Check if we've already processed this checkout session
-          if (processedEvents.has(checkoutUniqueId)) {
-            console.log(`Checkout session ${session.id} already processed, skipping`);
-            return NextResponse.json({ received: true, status: 'already_processed' });
+          // Retrieve the subscription details
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          
+          // CRITICAL: Check if this subscription has already been processed
+          // This is our first line of defense against duplicate credits
+          if (subscription.metadata.processedViaCheckout === 'true') {
+            console.log(`⚠️ DUPLICATE PREVENTION: Subscription ${subscriptionId} already processed via checkout, skipping`);
+            return NextResponse.json({ received: true, status: 'already_processed_subscription' });
           }
           
-          // Mark this checkout session as processed
-          processedEvents.add(checkoutUniqueId);
+          // Add metadata to mark this subscription as processed via checkout
+          await stripe.subscriptions.update(subscriptionId, {
+            metadata: {
+              ...subscription.metadata,
+              processedViaCheckout: 'true',
+              processedAt: new Date().toISOString()
+            }
+          });
+          console.log(`✅ Added processedViaCheckout flag to subscription ${subscriptionId}`);
           
-          // Transfer metadata from checkout session to subscription if needed
-          if (session.metadata && session.metadata.tierId && !subscription.metadata.tierId) {
-            await stripe.subscriptions.update(
-              subscription.id,
-              {
-                metadata: {
-                  ...subscription.metadata,
-                  tierId: session.metadata.tierId,
-                  // Add a flag to indicate this subscription was processed via checkout
-                  processedViaCheckout: 'true'
-                }
-              }
-            );
-            
-            // Retrieve the updated subscription
-            const updatedSubscription = await stripe.subscriptions.retrieve(
-              subscription.id
-            );
-            
-            // Handle the subscription
-            await handleSubscriptionChange(updatedSubscription);
-          } else {
-            // Handle the subscription
-            await handleSubscriptionChange(subscription);
-          }
+          // Process the subscription - THIS WILL ADD EXACTLY 30 CREDITS
+          console.log(`🔴 CRITICAL: ADDING EXACTLY 30 CREDITS (NOT 60) FOR SUBSCRIPTION ${subscriptionId}`);
+          await handleSubscriptionChange(subscription);
+          
+          console.log(`✅ Successfully processed checkout session: ${session.id}`);
         }
         break;
-
+        
       case 'customer.subscription.created':
-        // Only process if not already processed via checkout
-        const newSubscription = event.data.object as Stripe.Subscription;
+        const createdSubscription = event.data.object as Stripe.Subscription;
         
-        // Generate a unique ID for this subscription creation
-        const subCreatedUniqueId = `subscription_created_${newSubscription.id}`;
-        
-        // Check if we've already processed this subscription creation
-        if (processedEvents.has(subCreatedUniqueId)) {
-          console.log(`Subscription creation ${newSubscription.id} already processed, skipping`);
-          return NextResponse.json({ received: true, status: 'already_processed' });
-        }
-        
-        // Mark this subscription creation as processed
-        processedEvents.add(subCreatedUniqueId);
-        
-        // Only process if not already processed via checkout
-        if (newSubscription.metadata.processedViaCheckout !== 'true') {
-          console.log(`New subscription created:`, newSubscription.id);
-          await handleSubscriptionChange(newSubscription);
+        // Check if this subscription was already processed via checkout
+        if (createdSubscription.metadata.processedViaCheckout === 'true') {
+          console.log(`⚠️ DUPLICATE PREVENTION: Subscription ${createdSubscription.id} already processed via checkout, skipping`);
+          return NextResponse.json({ received: true, status: 'already_processed_subscription' });
         } else {
-          console.log(`Subscription ${newSubscription.id} already processed via checkout, skipping`);
+          console.log(`✅ Processing new subscription: ${createdSubscription.id}`);
+          
+          // Mark as processed before handling to prevent double processing
+          await stripe.subscriptions.update(createdSubscription.id, {
+            metadata: {
+              ...createdSubscription.metadata,
+              processedViaCheckout: 'true',
+              processedAt: new Date().toISOString()
+            }
+          });
+          
+          await handleSubscriptionChange(createdSubscription);
         }
         break;
         
       case 'customer.subscription.updated':
-      case 'customer.subscription.deleted':
-        const subscription = event.data.object as Stripe.Subscription;
-        console.log(`Subscription ${event.type}:`, subscription.id);
+        const updatedSubscription = event.data.object as Stripe.Subscription;
+        console.log(`✅ Processing subscription update: ${updatedSubscription.id}`);
         
-        // Handle the subscription change
-        await handleSubscriptionChange(subscription);
+        // For subscription updates, we only care about renewals
+        // Check if this is a renewal by comparing current_period_start with previous value
+        const isRenewal = updatedSubscription.current_period_start > updatedSubscription.created;
+        
+        if (isRenewal) {
+          console.log(`✅ This appears to be a renewal for subscription ${updatedSubscription.id}`);
+          
+          // Check if we've already processed this period
+          const lastPeriodStart = updatedSubscription.metadata.lastProcessedPeriodStart;
+          const currentPeriodStart = new Date(updatedSubscription.current_period_start * 1000).toISOString();
+          
+          if (lastPeriodStart === currentPeriodStart) {
+            console.log(`⚠️ DUPLICATE PREVENTION: Already processed this renewal period, skipping`);
+            return NextResponse.json({ received: true, status: 'already_processed_period' });
+          }
+          
+          // Mark this period as processed
+          await stripe.subscriptions.update(updatedSubscription.id, {
+            metadata: {
+              ...updatedSubscription.metadata,
+              lastProcessedPeriodStart: currentPeriodStart,
+              lastProcessedAt: new Date().toISOString()
+            }
+          });
+        }
+        
+        await handleSubscriptionChange(updatedSubscription);
+        break;
+        
+      case 'customer.subscription.deleted':
+        const deletedSubscription = event.data.object as Stripe.Subscription;
+        console.log(`✅ Processing subscription deletion: ${deletedSubscription.id}`);
+        await handleSubscriptionChange(deletedSubscription);
         break;
         
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        console.log(`⚠️ Unhandled event type: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
-  } catch (error) {
-    console.error('Error processing webhook:', error);
+  } catch (error: any) {
+    console.error(`❌ Error processing webhook: ${error.message}`);
     return NextResponse.json(
-      { error: 'Error processing webhook' },
+      { error: `Webhook error: ${error.message}` },
       { status: 500 }
     );
   }
