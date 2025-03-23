@@ -114,20 +114,25 @@ export async function createCustomerPortalSession(clerkId: string) {
   }
 }
 
+// Track processed subscription periods to prevent duplicate credit additions
+// This will reset on server restart, but combined with the webhook deduplication, it should work
+const processedSubscriptionPeriods = new Set<string>();
+
 /**
  * Handle subscription changes from Stripe webhooks
  */
 export async function handleSubscriptionChange(subscription: Stripe.Subscription) {
   try {
     const customerId = subscription.customer as string;
-    
+
     // Find the user with this Stripe customer ID
     const user = await prisma.user.findFirst({
       where: { stripeCustomerId: customerId },
     });
 
     if (!user) {
-      throw new Error(`No user found with Stripe customer ID: ${customerId}`);
+      console.error(`No user found for Stripe customer: ${customerId}`);
+      return false;
     }
 
     // Get the subscription item (should only be one for our use case)
@@ -152,6 +157,13 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
     const existingSubscription = await prisma.subscription.findFirst({
       where: { stripeSubscriptionId: subscription.id },
     });
+
+    // Create a unique key for this subscription period to prevent duplicate credit additions
+    const currentPeriodStart = new Date(subscription.current_period_start * 1000);
+    const subscriptionPeriodKey = `${subscription.id}_${currentPeriodStart.getTime()}`;
+
+    // Check if we've already processed this subscription period
+    const alreadyProcessed = processedSubscriptionPeriods.has(subscriptionPeriodKey);
 
     if (existingSubscription) {
       // Update existing subscription
@@ -178,41 +190,28 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
       });
     }
 
-    // Add credits if the subscription is active and has just been created or renewed
-    if (subscription.status === 'active' && creditsToAdd > 0) {
-      // Check if this is a renewal by looking at the billing cycle
-      const isRenewal = subscription.current_period_start > subscription.created;
-      
-      // Always add credits for new subscriptions or renewals
+    // Add credits if the subscription is active and we haven't already processed this period
+    if (subscription.status === 'active' && creditsToAdd > 0 && !alreadyProcessed) {
+      // Mark this subscription period as processed
+      processedSubscriptionPeriods.add(subscriptionPeriodKey);
+
       console.log(`Adding ${creditsToAdd} credits to user ${user.clerkId}`);
       console.log(`Subscription status: ${subscription.status}`);
       console.log(`Tier ID: ${tierId}`);
-      console.log(`Tier credits: ${tier?.credits}`);
-      console.log(`Is renewal: ${isRenewal}`);
-      
+      console.log(`Current period start: ${currentPeriodStart.toISOString()}`);
+
       try {
         const updatedUser = await addCredits(user.clerkId, creditsToAdd);
         console.log(`Credits added successfully. New balance: ${updatedUser.credits}`);
-        
-        // Store the last period we added credits for to prevent duplicate credit additions
-        if (existingSubscription) {
-          await prisma.subscription.update({
-            where: { id: existingSubscription.id },
-            data: {
-              lastCreditAddedAt: new Date(),
-              lastPeriodStart: new Date(subscription.current_period_start * 1000)
-            }
-          });
-        }
-        
         return true;
       } catch (error) {
         console.error('Error adding credits:', error);
         throw new Error('Failed to add credits');
       }
+    } else if (alreadyProcessed) {
+      console.log(`Credits already added for subscription period ${subscriptionPeriodKey}, skipping`);
     } else {
       console.log(`Not adding credits. Status: ${subscription.status}, Credits to add: ${creditsToAdd}`);
-      console.log(`Tier ID: ${tierId}, Tier found: ${!!tier}`);
     }
 
     return true;

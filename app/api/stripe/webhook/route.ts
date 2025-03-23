@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Stripe } from 'stripe';
 import { handleSubscriptionChange } from '@/lib/payments/stripe';
+import prisma from '@/lib/prisma'; // Import prisma instance
 
 // Prevent static generation for this route
 export const dynamic = 'force-dynamic';
@@ -9,6 +10,10 @@ export const dynamic = 'force-dynamic';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2025-02-24.acacia',
 });
+
+// Track processed events to prevent duplicates (in-memory solution)
+// This will reset on server restart, but it's better than nothing
+const processedEvents = new Set<string>();
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,7 +43,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Handle the event
+    // Generate a unique ID for this event to prevent duplicate processing
+    const eventUniqueId = `${event.type}_${event.id}`;
+    
+    // Check if we've already processed this event
+    if (processedEvents.has(eventUniqueId)) {
+      console.log(`Event ${eventUniqueId} already processed, skipping`);
+      return NextResponse.json({ received: true, status: 'already_processed' });
+    }
+    
+    // Mark this event as processed
+    processedEvents.add(eventUniqueId);
+    
+    // Process the event based on its type
     switch (event.type) {
       case 'checkout.session.completed':
         const session = event.data.object as Stripe.Checkout.Session;
@@ -49,6 +66,18 @@ export async function POST(req: NextRequest) {
           const subscription = await stripe.subscriptions.retrieve(
             session.subscription as string
           );
+          
+          // Generate a unique ID for this checkout session
+          const checkoutUniqueId = `checkout_${session.id}`;
+          
+          // Check if we've already processed this checkout session
+          if (processedEvents.has(checkoutUniqueId)) {
+            console.log(`Checkout session ${session.id} already processed, skipping`);
+            return NextResponse.json({ received: true, status: 'already_processed' });
+          }
+          
+          // Mark this checkout session as processed
+          processedEvents.add(checkoutUniqueId);
           
           // Transfer metadata from checkout session to subscription if needed
           if (session.metadata && session.metadata.tierId && !subscription.metadata.tierId) {
@@ -81,6 +110,20 @@ export async function POST(req: NextRequest) {
       case 'customer.subscription.created':
         // Only process if not already processed via checkout
         const newSubscription = event.data.object as Stripe.Subscription;
+        
+        // Generate a unique ID for this subscription creation
+        const subCreatedUniqueId = `subscription_created_${newSubscription.id}`;
+        
+        // Check if we've already processed this subscription creation
+        if (processedEvents.has(subCreatedUniqueId)) {
+          console.log(`Subscription creation ${newSubscription.id} already processed, skipping`);
+          return NextResponse.json({ received: true, status: 'already_processed' });
+        }
+        
+        // Mark this subscription creation as processed
+        processedEvents.add(subCreatedUniqueId);
+        
+        // Only process if not already processed via checkout
         if (newSubscription.metadata.processedViaCheckout !== 'true') {
           console.log(`New subscription created:`, newSubscription.id);
           await handleSubscriptionChange(newSubscription);

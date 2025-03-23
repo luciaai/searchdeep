@@ -49,10 +49,17 @@ model Subscription {
   tierId              String   // Reference to the tier
   currentPeriodEnd    DateTime
   cancelAtPeriodEnd   Boolean  @default(false)
-  lastCreditAddedAt   DateTime?
-  lastPeriodStart     DateTime?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  lastCreditAddedAt   DateTime? // Track when credits were last added
+  lastPeriodStart     DateTime? // Track the billing period start when credits were last added
+}
 
-  @@index([userId])
+// Model to track processed Stripe webhook events to prevent duplicate processing
+model StripeEvent {
+  id          String   @id @default(cuid())
+  eventId     String   @unique // Unique identifier for the event
+  type        String   // Event type (e.g., checkout.session.completed)
+  processedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
 }
