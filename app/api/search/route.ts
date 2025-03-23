@@ -184,7 +184,8 @@ export async function POST(req: Request) {
     }
 
     // Decrement user credits for this search
-    await decrementCredit();
+    // This is already handled in logSearch, so we don't need to call it here
+    // await decrementCredit();
 
     if (group !== 'chat' && group !== 'buddy') {
         console.log("Running inside part 1");
