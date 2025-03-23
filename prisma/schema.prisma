@@ -23,6 +23,7 @@ model User {
   stripeSubscriptionId   String?        @unique
   stripeSubscriptionStatus String?
   tierId                 String?        // Reference to the subscription tier
+  lastManualCreditAddition DateTime?    // Track when credits were last manually added
   subscriptions          Subscription[]
 }
 
