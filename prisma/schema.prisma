@@ -48,6 +48,8 @@ model Subscription {
   tierId              String   // Reference to the tier
   currentPeriodEnd    DateTime
   cancelAtPeriodEnd   Boolean  @default(false)
+  lastCreditAddedAt   DateTime?
+  lastPeriodStart     DateTime?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 

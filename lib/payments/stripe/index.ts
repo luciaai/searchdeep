@@ -145,7 +145,7 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
     // Determine the credits to add based on the subscription status
     let creditsToAdd = 0;
     if (subscription.status === 'active') {
-      creditsToAdd = tier?.credits || 0;
+      creditsToAdd = 30; // Always add 30 credits for active subscriptions
     }
 
     // Update or create the subscription in our database
@@ -188,10 +188,23 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
       console.log(`Subscription status: ${subscription.status}`);
       console.log(`Tier ID: ${tierId}`);
       console.log(`Tier credits: ${tier?.credits}`);
+      console.log(`Is renewal: ${isRenewal}`);
       
       try {
         const updatedUser = await addCredits(user.clerkId, creditsToAdd);
         console.log(`Credits added successfully. New balance: ${updatedUser.credits}`);
+        
+        // Store the last period we added credits for to prevent duplicate credit additions
+        if (existingSubscription) {
+          await prisma.subscription.update({
+            where: { id: existingSubscription.id },
+            data: {
+              lastCreditAddedAt: new Date(),
+              lastPeriodStart: new Date(subscription.current_period_start * 1000)
+            }
+          });
+        }
+        
         return true;
       } catch (error) {
         console.error('Error adding credits:', error);
