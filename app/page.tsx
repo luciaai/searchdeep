@@ -1287,7 +1287,7 @@ const HomeContent = () => {
             const hasCreditsResult = await checkCredits();
             
             if (!hasCreditsResult.hasCredits) {
-                toast.error("You don't have enough credits to regenerate a response.", {
+                toast.error("You don&apos;t have enough credits to regenerate a response.", {
                     description: "Please contact support to add more credits to your account."
                 });
                 return;
@@ -1691,7 +1691,7 @@ const HomeContent = () => {
             const hasCreditsResult = await checkCredits();
             
             if (!hasCreditsResult.hasCredits) {
-                toast.error("You don't have enough credits to perform this search.", {
+                toast.error("You don&apos;t have enough credits to perform this search.", {
                     description: "Please contact support to add more credits to your account."
                 });
                 return;
@@ -2207,8 +2207,8 @@ const ToolInvocationListView = memo(
                         <Card className="w-full my-4 overflow-hidden shadow-none">
                             <CardHeader className="pb-2 flex flex-row items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <div className="h-8 w-8 rounded-xl bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center">
-                                        <XLogo className="h-4 w-4" />
+                                    <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-600/20 flex items-center justify-center backdrop-blur-sm">
+                                        <XLogo className="h-4 w-4 text-violet-600" />
                                     </div>
                                     <div>
                                         <CardTitle>Latest from X</CardTitle>
@@ -2317,7 +2317,7 @@ const ToolInvocationListView = memo(
                                             No Content Available
                                         </h2>
                                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                            The videos found don't contain any timestamps or transcripts.
+                                            The videos found don&apos;t contain any timestamps or transcripts.
                                         </p>
                                     </div>
                                 </div>
