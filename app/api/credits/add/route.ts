@@ -2,12 +2,34 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { addCredits } from '@/lib/user-credits';
 
-// Use a simple in-memory cache for rate limiting
-// This will reset when the server restarts
-const lastCreditAddition = new Map<string, number>();
-
+// This endpoint should never be publicly accessible
+// It requires an admin secret key to work
 export async function GET(req: NextRequest) {
   try {
+    // Check for admin secret key
+    const url = new URL(req.url);
+    const adminKey = url.searchParams.get('adminKey');
+    const expectedAdminKey = process.env.ADMIN_SECRET_KEY;
+    
+    // If no admin key is set in env, disable this endpoint completely
+    if (!expectedAdminKey) {
+      console.error('ADMIN_SECRET_KEY not set in environment variables');
+      return NextResponse.json(
+        { error: 'This endpoint is disabled' },
+        { status: 404 }
+      );
+    }
+    
+    // Verify the admin key
+    if (adminKey !== expectedAdminKey) {
+      console.error('Invalid admin key used to access credits/add endpoint');
+      return NextResponse.json(
+        { error: 'Not Found' },
+        { status: 404 }
+      );
+    }
+    
+    // Get the user ID
     const session = await auth();
     const clerkId = session?.userId;
     
@@ -18,22 +40,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if the user has already used this endpoint in the last 24 hours
-    const now = Date.now();
-    const lastAddition = lastCreditAddition.get(clerkId);
-    
-    if (lastAddition && (now - lastAddition < 24 * 60 * 60 * 1000)) {
-      return NextResponse.json(
-        { error: 'Rate limited: You can only add credits once per day' },
-        { status: 429 }
-      );
-    }
-
     // Force add 30 credits to the user's account
     const updatedUser = await addCredits(clerkId, 30);
-    
-    // Update the last credit addition timestamp in memory
-    lastCreditAddition.set(clerkId, now);
     
     return NextResponse.json({
       success: true,
