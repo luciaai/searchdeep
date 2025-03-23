@@ -1922,7 +1922,7 @@ const HomeContent = () => {
                                             )
                                         )}
                                         
-                                        {/* Add suggested questions if this is the last message and it's from the assistant */}
+                  
                                         {index === memoizedMessages.length - 1 && suggestedQuestions.length > 0 && (
                                             <motion.div
                                                 initial={{ opacity: 0, y: 20 }}
