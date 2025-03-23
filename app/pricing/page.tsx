@@ -177,14 +177,6 @@ function PricingContent() {
                   <span className="text-neutral-600 dark:text-neutral-400">/month</span>
                 </div>
                 <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>{tier.credits} credits per month</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Full access to all search features</span>
-                  </li>
                   {tier.features?.map((feature, index) => (
                     <li key={index} className="flex items-center">
                       <Check className="h-5 w-5 text-green-500 mr-2" />
