@@ -71,7 +71,7 @@ export async function createCheckoutSession(tierId: string, clerkId: string) {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
       metadata: {
         userId: user.id,
@@ -185,7 +185,21 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
       
       // Always add credits for new subscriptions or renewals
       console.log(`Adding ${creditsToAdd} credits to user ${user.clerkId}`);
-      await addCredits(user.clerkId, creditsToAdd);
+      console.log(`Subscription status: ${subscription.status}`);
+      console.log(`Tier ID: ${tierId}`);
+      console.log(`Tier credits: ${tier?.credits}`);
+      
+      try {
+        const updatedUser = await addCredits(user.clerkId, creditsToAdd);
+        console.log(`Credits added successfully. New balance: ${updatedUser.credits}`);
+        return true;
+      } catch (error) {
+        console.error('Error adding credits:', error);
+        throw new Error('Failed to add credits');
+      }
+    } else {
+      console.log(`Not adding credits. Status: ${subscription.status}, Credits to add: ${creditsToAdd}`);
+      console.log(`Tier ID: ${tierId}, Tier found: ${!!tier}`);
     }
 
     return true;
