@@ -116,13 +116,46 @@ export async function POST(req: NextRequest) {
           
           // ENSURE CREDITS ARE ADDED - Force add 30 credits directly here
           try {
-            const user = await prisma.user.findFirst({
+            console.log(`🔍 Looking for user with Stripe customer ID: ${subscription.customer}`);
+            
+            // ADDITIONAL DIAGNOSTIC LOGGING
+            console.log(`📋 Session metadata:`, JSON.stringify(session.metadata));
+            console.log(`📋 Subscription metadata:`, JSON.stringify(subscription.metadata));
+            console.log(`📋 Subscription status: ${subscription.status}`);
+            
+            // First attempt: Find by stripeCustomerId (standard approach)
+            let user = await prisma.user.findFirst({
               where: { stripeCustomerId: subscription.customer as string },
             });
+            
+            // If user not found by stripeCustomerId, try to find by metadata
+            if (!user && session.metadata?.userId) {
+              console.log(`⚠️ User not found by Stripe customer ID. Trying to find by userId from metadata: ${session.metadata.userId}`);
+              user = await prisma.user.findFirst({
+                where: { id: session.metadata.userId },
+              });
+            }
+            
+            // If user still not found, try to find by clerkId from metadata
+            if (!user && session.metadata?.clerkId) {
+              console.log(`⚠️ User not found by userId. Trying to find by clerkId from metadata: ${session.metadata.clerkId}`);
+              user = await prisma.user.findFirst({
+                where: { clerkId: session.metadata.clerkId },
+              });
+            }
             
             if (user) {
               // CRITICAL: Hard-code exactly 30 credits - NEVER MORE, NEVER LESS
               const EXACT_CREDITS_TO_ADD = 30;
+              
+              // Update the stripeCustomerId if it's missing
+              if (!user.stripeCustomerId) {
+                console.log(`⚠️ User found but missing stripeCustomerId. Updating user record with Stripe customer ID: ${subscription.customer}`);
+                await prisma.user.update({
+                  where: { id: user.id },
+                  data: { stripeCustomerId: subscription.customer as string }
+                });
+              }
               
               // DIRECT DATABASE UPDATE - Do not rely on addCredits function
               await prisma.user.update({
@@ -130,18 +163,38 @@ export async function POST(req: NextRequest) {
                 data: {
                   credits: {
                     increment: EXACT_CREDITS_TO_ADD
-                  }
+                  },
+                  stripeSubscriptionId: subscription.id,  // CRITICAL: Store the subscription ID
+                  stripeSubscriptionStatus: 'active'      // CRITICAL: Mark subscription as active
                 }
               });
               
-              console.log(`✅ FORCE ADDED ${EXACT_CREDITS_TO_ADD} credits to user ${user.clerkId} via DIRECT DATABASE UPDATE`);
-              
-              // Verify the credits were added
+              // VERIFICATION: Double-check that credits were actually added
               const verifiedUser = await prisma.user.findUnique({
                 where: { id: user.id }
               });
               
               console.log(`✅ VERIFICATION: User now has ${verifiedUser?.credits} credits`);
+              
+              // CRITICAL FAILSAFE: If we somehow didn't add enough credits, try again with a fixed value
+              // This ensures the user ALWAYS gets at least 30 credits
+              if (verifiedUser && verifiedUser.credits < EXACT_CREDITS_TO_ADD) {
+                console.log(`⚠️ CRITICAL PROTECTION: User only has ${verifiedUser.credits} credits - forcing a fixed update to 30 credits`);
+                
+                await prisma.user.update({
+                  where: { id: user.id },
+                  data: {
+                    credits: EXACT_CREDITS_TO_ADD // Force to exactly 30 as a last resort
+                  }
+                });
+                
+                // Final verification
+                const finalCheck = await prisma.user.findUnique({
+                  where: { id: user.id }
+                });
+                
+                console.log(`✅ FINAL VERIFICATION: User now has ${finalCheck?.credits} credits`);
+              }
               
               // CRITICAL: Make sure the tierId is set correctly in the subscription
               // Get the tierId from the checkout session metadata
@@ -163,6 +216,13 @@ export async function POST(req: NextRequest) {
               console.log(`✅ Updated subscription with tierId: ${tierId}`);
             } else {
               console.error(`❌ ERROR: Could not find user with Stripe customer ID: ${subscription.customer}`);
+              
+              // FALLBACK: Log error for manual investigation
+              console.error(`⚠️ CRITICAL: User not found for subscription. Manual intervention required!`);
+              console.error(`⚠️ Subscription ID: ${subscription.id}`);
+              console.error(`⚠️ Customer ID: ${subscription.customer}`);
+              console.error(`⚠️ Session ID: ${session.id}`);
+              console.error(`⚠️ Session Metadata: ${JSON.stringify(session.metadata)}`);
             }
           } catch (error) {
             console.error('❌ Error directly adding credits:', error);

@@ -63,3 +63,14 @@ model StripeEvent {
   processedAt DateTime @default(now())
   createdAt   DateTime @default(now())
 }
+
+// Model to track errors for debugging and manual intervention
+model ErrorLog {
+  id        String    @id @default(cuid())
+  type      String    // Type of error (e.g., MISSING_USER_FOR_SUBSCRIPTION)
+  message   String    // Error message
+  metadata  Json      // Additional metadata about the error
+  resolved  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

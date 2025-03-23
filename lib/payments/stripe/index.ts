@@ -92,21 +92,32 @@ export async function createCheckoutSession(tierId: string, clerkId: string) {
  */
 export async function createCustomerPortalSession(clerkId: string) {
   try {
+    console.log(`🔍 Looking up user with clerkId: ${clerkId} for customer portal`);
+    
     // Find the user
     const user = await prisma.user.findUnique({
       where: { clerkId },
     });
 
-    if (!user || !user.stripeCustomerId) {
-      throw new Error('User not found or no Stripe customer ID');
+    if (!user) {
+      console.error(`❌ User not found with clerkId: ${clerkId}`);
+      throw new Error('User not found');
+    }
+    
+    console.log(`✅ Found user: ${user.id}, stripeCustomerId: ${user.stripeCustomerId}, subId: ${user.stripeSubscriptionId}, status: ${user.stripeSubscriptionStatus}`);
+
+    if (!user.stripeCustomerId) {
+      console.error(`❌ User does not have a Stripe customer ID: ${user.id}`);
+      throw new Error('User has no Stripe customer ID');
     }
 
-    // Create the portal session
+    // Create a session
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
       return_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
     });
 
+    console.log(`✅ Created portal session for customer: ${user.stripeCustomerId}`);
     return { url: session.url };
   } catch (error) {
     console.error('Error creating portal session:', error);
@@ -237,6 +248,16 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
         // Add the credits
         const updatedUser = await addCredits(user.clerkId, creditsToAdd);
         console.log(`✅ Credits added successfully. New balance: ${updatedUser.credits}`);
+        
+        // CRITICAL: Update the user's subscription status in the user table
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            stripeSubscriptionId: subscription.id,
+            stripeSubscriptionStatus: subscription.status
+          }
+        });
+        console.log(`✅ Updated user record with subscription ID and status: ${subscription.status}`);
         
         // Mark this period as processed
         const subscriptionToUpdate = existingSubscription || 
