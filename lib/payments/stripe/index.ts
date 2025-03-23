@@ -227,7 +227,7 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
     }
 
     // ONLY add credits if our flag says we should
-    if (subscription.status === 'active' && shouldAddCredits) {
+    if (subscription.status === 'active') {
       // ALWAYS add exactly 30 credits for active subscriptions - NEVER MORE, NEVER LESS
       const creditsToAdd = 30;
       
@@ -263,7 +263,7 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
         throw new Error('Failed to add credits');
       }
     } else {
-      console.log(`⚠️ Not adding credits. Status: ${subscription.status}, ShouldAddCredits: ${shouldAddCredits}`);
+      console.log(`⚠️ Not adding credits. Status: ${subscription.status}`);
     }
 
     return true;

@@ -124,9 +124,24 @@ export async function POST(req: NextRequest) {
               // CRITICAL: Hard-code exactly 30 credits - NEVER MORE, NEVER LESS
               const EXACT_CREDITS_TO_ADD = 30;
               
-              const { addCredits } = require('@/lib/user-credits');
-              const updatedUser = await addCredits(user.clerkId, EXACT_CREDITS_TO_ADD);
-              console.log(`✅ DIRECTLY added ${EXACT_CREDITS_TO_ADD} credits to user ${user.clerkId}. New balance: ${updatedUser.credits}`);
+              // DIRECT DATABASE UPDATE - Do not rely on addCredits function
+              await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                  credits: {
+                    increment: EXACT_CREDITS_TO_ADD
+                  }
+                }
+              });
+              
+              console.log(`✅ FORCE ADDED ${EXACT_CREDITS_TO_ADD} credits to user ${user.clerkId} via DIRECT DATABASE UPDATE`);
+              
+              // Verify the credits were added
+              const verifiedUser = await prisma.user.findUnique({
+                where: { id: user.id }
+              });
+              
+              console.log(`✅ VERIFICATION: User now has ${verifiedUser?.credits} credits`);
               
               // Also mark this in the database
               await prisma.subscription.updateMany({
@@ -138,23 +153,20 @@ export async function POST(req: NextRequest) {
                   } as any))
                 }
               });
-              
-              // FINAL VERIFICATION - Check that credits were actually added
-              const verifiedUser = await prisma.user.findUnique({
-                where: { clerkId: user.clerkId }
-              });
-              
-              console.log(`🔍 VERIFICATION: User ${user.clerkId} now has ${verifiedUser?.credits} credits`);
-              
-              // Disable the regular credit addition in handleSubscriptionChange
-              subscription.metadata.creditsAlreadyAdded = 'true';
+            } else {
+              console.error(`❌ ERROR: Could not find user with Stripe customer ID: ${subscription.customer}`);
             }
           } catch (error) {
             console.error('❌ Error directly adding credits:', error);
           }
           
-          // Still call the handler for database updates
-          await handleSubscriptionChange(subscription);
+          // STILL call the handler for database updates, but DON'T rely on it for credits
+          try {
+            await handleSubscriptionChange(subscription);
+          } catch (error) {
+            console.error('❌ Error in handleSubscriptionChange:', error);
+            // Don't fail completely if this errors
+          }
           
           console.log(`✅ Successfully processed checkout session: ${session.id}`);
         }
