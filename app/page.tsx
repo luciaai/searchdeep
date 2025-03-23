@@ -2941,7 +2941,7 @@ const ToolInvocationListView = memo(
 
                                         <div>
                                             <h3 className="text-xs sm:text-sm font-medium text-neutral-500 dark:text-neutral-400 tracking-wider uppercase mb-2">
-                                                Today's Date
+                                                Today&apos;s Date
                                             </h3>
                                             <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 md:gap-6">
                                                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-neutral-900 dark:text-white">
