@@ -196,7 +196,7 @@ export default function AboutPage() {
                                     ))}
                                 </div>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    <span className="font-medium">500K+</span> users trust Ziq
+                                    <span className="font-medium">20+</span> users trust Ziq
                                 </p>
                             </div>
                         </motion.div>
@@ -537,17 +537,17 @@ export default function AboutPage() {
                         {[
                             {
                                 quote: "Ziq has completely transformed my research process. I can find relevant academic sources in seconds rather than hours.",
-                                name: "Sarah Johnson",
-                                title: "PhD Student, Stanford University"
+                                name: "Nick Kukaj",
+                                title: "CEO"
                             },
                             {
                                 quote: "As a high school teacher, Ziq helps me create research-backed lesson plans and stay current with educational best practices.",
-                                name: "Michael Chen",
+                                name: "Ross Cohen",
                                 title: "Science Teacher, Boston Public Schools"
                             },
                             {
                                quote: "The market intelligence I get from Ziq has been instrumental in developing our startup's go-to-market strategy.",
-                                name: "David Rodriguez",
+                                name: "Lucia",
                                 title: "Founder & CEO, TechNova"
                             }
                         ].map((testimonial, i) => (

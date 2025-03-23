@@ -143,6 +143,10 @@ export async function POST(req: NextRequest) {
               
               console.log(`✅ VERIFICATION: User now has ${verifiedUser?.credits} credits`);
               
+              // CRITICAL: Make sure the tierId is set correctly in the subscription
+              // Get the tierId from the checkout session metadata
+              const tierId = session.metadata?.tierId || 'pro'; // Default to 'pro' if not found
+              
               // Also mark this in the database
               await prisma.subscription.updateMany({
                 where: { stripeSubscriptionId: subscription.id },
@@ -150,9 +154,13 @@ export async function POST(req: NextRequest) {
                   ...(({
                     lastCreditAddedAt: new Date(),
                     lastPeriodStart: new Date(subscription.current_period_start * 1000).toISOString(),
+                    tierId: tierId, // CRITICAL: Set the tierId correctly
+                    status: 'active' // Ensure status is set to active
                   } as any))
                 }
               });
+              
+              console.log(`✅ Updated subscription with tierId: ${tierId}`);
             } else {
               console.error(`❌ ERROR: Could not find user with Stripe customer ID: ${subscription.customer}`);
             }
