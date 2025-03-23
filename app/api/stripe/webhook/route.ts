@@ -50,8 +50,29 @@ export async function POST(req: NextRequest) {
             session.subscription as string
           );
           
-          // Handle the subscription
-          await handleSubscriptionChange(subscription);
+          // Transfer metadata from checkout session to subscription if needed
+          if (session.metadata && session.metadata.tierId && !subscription.metadata.tierId) {
+            await stripe.subscriptions.update(
+              subscription.id,
+              {
+                metadata: {
+                  ...subscription.metadata,
+                  tierId: session.metadata.tierId
+                }
+              }
+            );
+            
+            // Retrieve the updated subscription
+            const updatedSubscription = await stripe.subscriptions.retrieve(
+              subscription.id
+            );
+            
+            // Handle the subscription
+            await handleSubscriptionChange(updatedSubscription);
+          } else {
+            // Handle the subscription
+            await handleSubscriptionChange(subscription);
+          }
         }
         break;
 

@@ -63,20 +63,21 @@ export async function createCheckoutSession(tierId: string, clerkId: string) {
     // Create the checkout session using the tier's Stripe price ID
     const session = await stripe.checkout.sessions.create({
       customer: user.stripeCustomerId,
+      payment_method_types: ['card'],
       line_items: [
         {
           price: tier.stripePriceId,
           quantity: 1,
         },
       ],
-      metadata: {
-        tierId,
-        clerkId,
-        userId: user.id,
-      },
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://searchdeep.vercel.app'}/pricing?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://searchdeep.vercel.app'}/pricing?canceled=true`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
+      metadata: {
+        userId: user.id,
+        clerkId,
+        tierId,
+      },
     });
 
     return { url: session.url };
@@ -103,7 +104,7 @@ export async function createCustomerPortalSession(clerkId: string) {
     // Create the portal session
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://searchdeep.vercel.app'}/pricing`,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
     });
 
     return { url: session.url };
