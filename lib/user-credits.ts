@@ -75,6 +75,11 @@ export async function decrementCredit() {
   try {
     const user = await getOrCreateUser();
     
+    // Check if user has enough credits
+    if (user.credits < 1) {
+      throw new Error('Not enough credits');
+    }
+    
     // Update the user's credits
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
