@@ -113,6 +113,47 @@ export async function POST(req: NextRequest) {
           
           // Process the subscription - THIS WILL ADD EXACTLY 30 CREDITS
           console.log(`🔴 CRITICAL: ADDING EXACTLY 30 CREDITS (NOT 60) FOR SUBSCRIPTION ${subscriptionId}`);
+          
+          // ENSURE CREDITS ARE ADDED - Force add 30 credits directly here
+          try {
+            const user = await prisma.user.findFirst({
+              where: { stripeCustomerId: subscription.customer as string },
+            });
+            
+            if (user) {
+              // CRITICAL: Hard-code exactly 30 credits - NEVER MORE, NEVER LESS
+              const EXACT_CREDITS_TO_ADD = 30;
+              
+              const { addCredits } = require('@/lib/user-credits');
+              const updatedUser = await addCredits(user.clerkId, EXACT_CREDITS_TO_ADD);
+              console.log(`✅ DIRECTLY added ${EXACT_CREDITS_TO_ADD} credits to user ${user.clerkId}. New balance: ${updatedUser.credits}`);
+              
+              // Also mark this in the database
+              await prisma.subscription.updateMany({
+                where: { stripeSubscriptionId: subscription.id },
+                data: {
+                  ...(({
+                    lastCreditAddedAt: new Date(),
+                    lastPeriodStart: new Date(subscription.current_period_start * 1000).toISOString(),
+                  } as any))
+                }
+              });
+              
+              // FINAL VERIFICATION - Check that credits were actually added
+              const verifiedUser = await prisma.user.findUnique({
+                where: { clerkId: user.clerkId }
+              });
+              
+              console.log(`🔍 VERIFICATION: User ${user.clerkId} now has ${verifiedUser?.credits} credits`);
+              
+              // Disable the regular credit addition in handleSubscriptionChange
+              subscription.metadata.creditsAlreadyAdded = 'true';
+            }
+          } catch (error) {
+            console.error('❌ Error directly adding credits:', error);
+          }
+          
+          // Still call the handler for database updates
           await handleSubscriptionChange(subscription);
           
           console.log(`✅ Successfully processed checkout session: ${session.id}`);

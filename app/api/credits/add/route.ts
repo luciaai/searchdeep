@@ -41,7 +41,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Force add 30 credits to the user's account
+    console.log(`🔴 ADMIN: Adding 30 credits to user ${clerkId} via admin endpoint`);
     const updatedUser = await addCredits(clerkId, 30);
+    console.log(`✅ ADMIN: Successfully added 30 credits. New balance: ${updatedUser.credits}`);
     
     return NextResponse.json({
       success: true,

@@ -219,11 +219,10 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
       
       // For new subscriptions, add credits if this is the first time processing
       // but only if it's not already processed via checkout
-      if (subscription.status === 'active' && !isCheckoutCompletion) {
+      if (subscription.status === 'active') {
+        // ALWAYS add credits for new active subscriptions
         console.log(`✅ New subscription, will add credits`);
         shouldAddCredits = true;
-      } else if (isCheckoutCompletion) {
-        console.log(`⚠️ DUPLICATE PREVENTION: Already processed via checkout`);
       }
     }
 
