@@ -37,6 +37,27 @@ export async function GET(req: NextRequest) {
         currentPeriodEnd: 'desc',
       },
     });
+    
+    // If no subscription found in the Subscription table, but user has stripeSubscriptionId and status
+    // This is critical for showing subscription status on pricing page
+    if (!subscription && user.stripeSubscriptionId && user.stripeSubscriptionStatus === 'active') {
+      console.log(`✅ No subscription found in Subscription table, but user has active stripe subscription: ${user.stripeSubscriptionId}`);
+      
+      // Create a fallback subscription object from user data
+      const fallbackSubscription = {
+        id: 'fallback-' + user.id,
+        userId: user.id,
+        stripeSubscriptionId: user.stripeSubscriptionId,
+        status: 'active',
+        tierId: user.tierId || 'pro', // Default to 'pro' tier
+        // Set a future date (1 month from now) for currentPeriodEnd 
+        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        cancelAtPeriodEnd: false
+      };
+      
+      console.log(`✅ Created fallback subscription from user record`, fallbackSubscription);
+      return NextResponse.json({ subscription: fallbackSubscription });
+    }
 
     return NextResponse.json({ subscription });
   } catch (error: any) {
