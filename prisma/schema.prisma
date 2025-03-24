@@ -10,8 +10,6 @@ datasource db {
 model User {
   id                       String         @id
   clerkId                  String         @unique
-  firstName                String?
-  lastName                 String?
   email                    String?
   credits                  Int            @default(3)
   createdAt                DateTime       @default(now())
@@ -21,6 +19,8 @@ model User {
   stripeSubscriptionStatus String?
   tierId                   String?
   lastManualCreditAddition DateTime?
+  firstName                String?
+  lastName                 String?
   searches                 Search[]
   subscriptions            Subscription[]
 }
