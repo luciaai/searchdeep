@@ -21,6 +21,14 @@ export async function getOrCreateUser() {
     // Get the combined user ID from the utils function
     const combinedUserId = `user_${clerkId}`;
     
+    // Get user details from Clerk
+    const clerkUser = await fetch(`https://api.clerk.dev/v1/users/${clerkId}`, {
+      headers: {
+        'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    }).then(res => res.json());
+    
     // Check if user exists
     let user = await prisma.user.findUnique({
       where: { clerkId },
@@ -40,12 +48,32 @@ export async function getOrCreateUser() {
         data: {
           id: combinedUserId,
           clerkId,
+          firstName: clerkUser.first_name || null,
+          lastName: clerkUser.last_name || null,
+          email: clerkUser.email_addresses?.[0]?.email_address || null,
           credits: STARTING_CREDITS,
         },
         include: {
           subscriptions: true
         }
       });
+    } else if (!user.firstName || !user.lastName) {
+      // Update existing user with name if it's missing
+      user = await prisma.user.update({
+        where: { clerkId },
+        data: {
+          firstName: clerkUser.first_name || user.firstName,
+          lastName: clerkUser.last_name || user.lastName,
+          email: clerkUser.email_addresses?.[0]?.email_address || user.email,
+        },
+        include: {
+          subscriptions: true
+        }
+      });
+    }
+
+    if (!user) {
+      throw new Error('Failed to create or find user');
     }
 
     return user;

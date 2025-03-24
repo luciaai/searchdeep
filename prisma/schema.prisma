@@ -1,76 +1,70 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                     String         @id
-  clerkId                String         @unique
-  email                  String?
-  credits                Int            @default(3) // Default credits for free users
-  createdAt              DateTime       @default(now())
-  updatedAt              DateTime       @updatedAt
-  searches               Search[]
-  stripeCustomerId       String?        @unique
-  stripeSubscriptionId   String?        @unique
+  id                       String         @id
+  clerkId                  String         @unique
+  email                    String?
+  credits                  Int            @default(3)
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
+  stripeCustomerId         String?        @unique
+  stripeSubscriptionId     String?        @unique
   stripeSubscriptionStatus String?
-  tierId                 String?        // Reference to the subscription tier
-  lastManualCreditAddition DateTime?    // Track when credits were last manually added
-  subscriptions          Subscription[]
+  tierId                   String?
+  lastManualCreditAddition DateTime?
+  searches                 Search[]
+  subscriptions            Subscription[]
 }
 
 model Search {
   id        String   @id @default(cuid())
   query     String
-  groupId   String   // The search group ID (web, buddy, x, etc.)
+  groupId   String
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model Subscription {
-  id                  String   @id @default(cuid())
-  userId              String
-  user                User     @relation(fields: [userId], references: [id])
-  stripeSubscriptionId String   @unique
-  status              String   // active, canceled, past_due, etc.
-  priceId             String   // Stripe price ID
-  tierId              String   // Reference to the tier
-  currentPeriodEnd    DateTime
-  cancelAtPeriodEnd   Boolean  @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  lastCreditAddedAt   DateTime? // Track when credits were last added
-  lastPeriodStart     DateTime? // Track the billing period start when credits were last added
+  id                   String    @id @default(cuid())
+  userId               String
+  stripeSubscriptionId String    @unique
+  status               String
+  priceId              String
+  tierId               String
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  lastCreditAddedAt    DateTime?
+  lastPeriodStart      DateTime?
+  user                 User      @relation(fields: [userId], references: [id])
 }
 
-// Model to track processed Stripe webhook events to prevent duplicate processing
 model StripeEvent {
   id          String   @id @default(cuid())
-  eventId     String   @unique // Unique identifier for the event
-  type        String   // Event type (e.g., checkout.session.completed)
+  eventId     String   @unique
+  type        String
   processedAt DateTime @default(now())
   createdAt   DateTime @default(now())
 }
 
-// Model to track errors for debugging and manual intervention
 model ErrorLog {
-  id        String    @id @default(cuid())
-  type      String    // Type of error (e.g., MISSING_USER_FOR_SUBSCRIPTION)
-  message   String    // Error message
-  metadata  Json      // Additional metadata about the error
-  resolved  Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  type      String
+  message   String
+  metadata  Json
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
