@@ -10,6 +10,8 @@ datasource db {
 model User {
   id                       String         @id
   clerkId                  String         @unique
+  firstName                String?
+  lastName                 String?
   email                    String?
   credits                  Int            @default(3)
   createdAt                DateTime       @default(now())

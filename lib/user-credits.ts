@@ -52,13 +52,16 @@ export async function getOrCreateUser() {
           lastName: clerkUser.last_name || null,
           email: clerkUser.email_addresses?.[0]?.email_address || null,
           credits: STARTING_CREDITS,
+          subscriptions: {
+            create: []
+          }
         },
         include: {
           subscriptions: true
         }
       });
-    } else if (!user.firstName || !user.lastName) {
-      // Update existing user with name if it's missing
+    } else if (!user.firstName || !user.lastName || !user.email) {
+      // Update existing user with missing information
       user = await prisma.user.update({
         where: { clerkId },
         data: {
