@@ -164,9 +164,9 @@ const SearchLoadingState = ({
             {/* Images section skeleton */}
             <div>
                 <div className="flex items-center gap-2 mb-3">
-                    <h3 className="text-lg font-medium">AI Generated Images</h3>
+                    <h3 className="text-lg font-medium">Web Images</h3>
                     <Badge variant="secondary" className="bg-blue-500/80 text-white">
-                        AI
+                        Search Results
                     </Badge>
                 </div>
                 <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
@@ -308,8 +308,8 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                             }}
                         />
                         <div className="absolute top-1 left-1 z-10">
-                            <Badge variant="outline" className="bg-indigo-500/60 text-white border-indigo-400 text-[10px] py-0 px-1.5 h-4">
-                                AI
+                            <Badge variant="outline" className="bg-blue-500/60 text-white border-blue-400 text-[10px] py-0 px-1.5 h-4">
+                                Web
                             </Badge>
                         </div>
 
