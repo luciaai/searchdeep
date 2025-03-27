@@ -391,21 +391,17 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                                 <ChevronRight className="h-6 w-6" />
                             </Button>
 
-                            {images[selectedImage].description && (
-                                <motion.div 
-                                    className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/40 dark:from-black/60 via-black/20 dark:via-black/40 to-transparent"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                >
-                                    <div className="flex flex-col gap-1">
-                                        <p className="text-sm text-white">
-                                            {images[selectedImage].description}
-                                        </p>
-
-
-                                    </div>
-                                </motion.div>
-                            )}
+                            <motion.div 
+                                className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/40 dark:from-black/60 via-black/20 dark:via-black/40 to-transparent"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                            >
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-sm text-white break-all">
+                                        {new URL(images[selectedImage].url).hostname}
+                                    </p>
+                                </div>
+                            </motion.div>
                         </div>
                     </DialogContent>
                 </Dialog>
@@ -475,21 +471,17 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                                 <ChevronRight className="h-6 w-6" />
                             </Button>
 
-                            {images[selectedImage].description && (
-                                <motion.div 
-                                    className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/40 dark:from-black/60 via-black/20 dark:via-black/40 to-transparent"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                >
-                                    <div className="flex flex-col gap-1">
-                                        <p className="text-sm text-white">
-                                            {images[selectedImage].description}
-                                        </p>
-
-
-                                    </div>
-                                </motion.div>
-                            )}
+                            <motion.div 
+                                className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/40 dark:from-black/60 via-black/20 dark:via-black/40 to-transparent"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                            >
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-sm text-white break-all">
+                                        {new URL(images[selectedImage].url).hostname}
+                                    </p>
+                                </div>
+                            </motion.div>
                         </div>
                     </DrawerContent>
                 </Drawer>
