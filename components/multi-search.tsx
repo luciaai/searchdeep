@@ -307,17 +307,13 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                                 e.currentTarget.classList.add('loaded');
                             }}
                         />
-                        <div className="absolute top-1 left-1 z-10">
-                            <Badge variant="outline" className="bg-blue-500/60 text-white border-blue-400 text-[10px] py-0 px-1.5 h-4">
-                                Web
-                            </Badge>
-                        </div>
 
-                        {image.description && (
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2">
-                                <p className="text-xs text-white line-clamp-3">{image.description}</p>
-                            </div>
-                        )}
+
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2">
+                            <p className="text-xs text-white line-clamp-3 break-all">
+                                {new URL(image.url).hostname}
+                            </p>
+                        </div>
                         {!showAll && hasMore && index === displayImages.length - 1 && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                                 <span className="text-sm font-medium text-white">

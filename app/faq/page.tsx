@@ -200,15 +200,15 @@ export default function FAQPage() {
                   
                   <ul className="list-disc pl-6 text-sm space-y-1">
                     <li>Finds relevant images from across the web</li>
-                    <li>Displays images with their descriptions</li>
+                    <li>Shows source website when hovering over images</li>
                     <li>Great for visual research and inspiration</li>
-                    <li>Each image includes a clear &quot;Web&quot; label</li>
+                    <li>Hover over images to see their source website</li>
                   </ul>
                   
                   <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800 mt-3">
                     <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">How Image Search Works</p>
                     <p className="text-xs text-slate-700 dark:text-slate-300">
-                      Uses the Tavily API to find relevant images from web sources based on your search terms. Images are validated and displayed with their descriptions when available.
+                      Uses the Tavily API to find relevant images from web sources based on your search terms. Images are validated and displayed with their source websites visible when hovering.
                     </p>
                     <div className="mt-2 bg-indigo-100 dark:bg-indigo-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
