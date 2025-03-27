@@ -309,10 +309,19 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                         />
 
 
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2">
-                            <p className="text-xs text-white line-clamp-3 break-all">
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2 flex flex-col justify-between">
+                            <p className="text-xs text-white line-clamp-2 break-all">
                                 {new URL(image.url).hostname}
                             </p>
+                            <a 
+                                href={image.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-xs text-white hover:text-blue-300 transition-colors mt-auto self-end"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                Visit <ExternalLink className="h-3 w-3" />
+                            </a>
                         </div>
                         {!showAll && hasMore && index === displayImages.length - 1 && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/60">
@@ -353,15 +362,23 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                             </motion.div>
 
                             <div className="absolute inset-0 flex items-center justify-center p-12 mt-[60px] mb-[60px]">
-                                <motion.img
-                                    key={images[selectedImage].url}
-                                    src={images[selectedImage].url}
-                                    alt={images[selectedImage].description}
-                                    className="w-full h-full object-contain"
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.3 }}
-                                />
+                                <a 
+                                    href={images[selectedImage].url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full h-full flex items-center justify-center cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <motion.img
+                                        key={images[selectedImage].url}
+                                        src={images[selectedImage].url}
+                                        alt={images[selectedImage].description}
+                                        className="w-full h-full object-contain"
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.3 }}
+                                    />
+                                </a>
                             </div>
 
                             <Button
@@ -397,9 +414,16 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                                 animate={{ opacity: 1, y: 0 }}
                             >
                                 <div className="flex flex-col gap-1">
-                                    <p className="text-sm text-white break-all">
-                                        {new URL(images[selectedImage].url).hostname}
-                                    </p>
+                                    <a 
+                                        href={images[selectedImage].url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-1 text-sm text-white hover:text-blue-300 transition-colors group"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <span className="break-all">{new URL(images[selectedImage].url).hostname}</span>
+                                        <ExternalLink className="h-3 w-3 opacity-70 group-hover:opacity-100" />
+                                    </a>
                                 </div>
                             </motion.div>
                         </div>
@@ -433,15 +457,23 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                             </motion.div>
 
                             <div className="absolute inset-0 flex items-center justify-center p-12 mt-[60px] mb-[60px]">
-                                <motion.img
-                                    key={images[selectedImage].url}
-                                    src={images[selectedImage].url}
-                                    alt={images[selectedImage].description}
-                                    className="w-full h-full object-contain"
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.3 }}
-                                />
+                                <a 
+                                    href={images[selectedImage].url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full h-full flex items-center justify-center cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <motion.img
+                                        key={images[selectedImage].url}
+                                        src={images[selectedImage].url}
+                                        alt={images[selectedImage].description}
+                                        className="w-full h-full object-contain"
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.3 }}
+                                    />
+                                </a>
                             </div>
 
                             <Button
@@ -477,9 +509,16 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                                 animate={{ opacity: 1, y: 0 }}
                             >
                                 <div className="flex flex-col gap-1">
-                                    <p className="text-sm text-white break-all">
-                                        {new URL(images[selectedImage].url).hostname}
-                                    </p>
+                                    <a 
+                                        href={images[selectedImage].url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-1 text-sm text-white hover:text-blue-300 transition-colors group"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <span className="break-all">{new URL(images[selectedImage].url).hostname}</span>
+                                        <ExternalLink className="h-3 w-3 opacity-70 group-hover:opacity-100" />
+                                    </a>
                                 </div>
                             </motion.div>
                         </div>
