@@ -16,10 +16,15 @@ export function generateId(prefix: string): string {
 export function getUserId(): string {
   if (typeof window === 'undefined') return '';
   
-  // Check for Clerk session cookie first
-  const hasClerkSession = document.cookie.includes('__clerk_session');
+  // First check if we have a Clerk user ID in localStorage
+  // This would be set by the AuthHandler component when a user is authenticated
+  const clerkUserId = localStorage.getItem('clerk_user_id');
+  if (clerkUserId) {
+    return `user_${clerkUserId}`;
+  }
   
-  // If there's a Clerk session, try to get the user ID from the cookie
+  // Check for Clerk session cookie as a backup
+  const hasClerkSession = document.cookie.includes('__clerk_session');
   if (hasClerkSession) {
     // We'll use a combination of the Clerk session ID and our local ID
     const clerkSessionId = document.cookie
@@ -28,9 +33,6 @@ export function getUserId(): string {
       ?.split('=')[1];
       
     if (clerkSessionId) {
-      // Store the Clerk session ID in localStorage for future reference
-      localStorage.setItem('clerk_session_id', clerkSessionId);
-      
       // We'll still maintain our own user ID for backward compatibility
       let localUserId = localStorage.getItem('mem0_user_id');
       if (!localUserId) {

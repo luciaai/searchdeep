@@ -76,8 +76,11 @@ export default function HistoryPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Your Search History</h1>
-        <Button variant="outline" onClick={() => router.push('/')}>
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">Your Search History</h1>
+        <Button 
+          className="bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white shadow-md hover:shadow-lg transition-all duration-300" 
+          onClick={() => router.push('/')}
+        >
           Back to Search
         </Button>
       </div>
@@ -95,7 +98,12 @@ export default function HistoryPage() {
       ) : searches.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">You haven&apos;t made any searches yet.</p>
-          <Button onClick={() => router.push('/')}>Start Searching</Button>
+          <Button 
+            className="bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white shadow-md hover:shadow-lg transition-all duration-300"
+            onClick={() => router.push('/')}
+          >
+            Start Searching
+          </Button>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -116,7 +124,7 @@ export default function HistoryPage() {
                   <td className="p-4">{format(new Date(search.createdAt), 'MMM d, yyyy h:mm a')}</td>
                   <td className="p-4">
                     <Button 
-                      variant="outline" 
+                      className="bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white shadow-sm hover:shadow-md transition-all duration-300"
                       size="sm"
                       onClick={() => router.push(`/?q=${encodeURIComponent(search.query)}&groupId=${search.groupId}`)}
                     >

@@ -16,9 +16,9 @@ export const tiers: Tier[] = [
     name: 'Free',
     description: 'Basic access with limited credits',
     price: 0,
-    credits: 3,
+    credits: 5,
     features: [
-      'Limited to 3 credits per month',
+      'Limited to 5 credits per month',
       'Basic search functionality',
       'No priority support'
     ],

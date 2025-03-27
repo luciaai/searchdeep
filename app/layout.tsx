@@ -16,6 +16,7 @@ import {
 import "./globals.css";
 import { Providers } from "./providers";
 import { NavBar } from "@/components/nav-bar";
+import AuthHandler from "@/components/auth/auth-handler";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://healthiliving.com"),
@@ -69,6 +70,7 @@ export default function RootLayout({
         <body className={`${GeistSans.variable} ${syne.variable} font-sans antialiased`}>
           <NuqsAdapter>
             <Providers>
+              <AuthHandler />
               <NavBar />
               <Toaster position="top-center" richColors theme="system" />
               {children}

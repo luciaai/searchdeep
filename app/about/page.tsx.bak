@@ -65,7 +65,7 @@ export default function AboutPage() {
                                 Welcome to Ziq Research Assistant
                             </DialogTitle>
                             <DialogDescription className="text-gray-600 dark:text-gray-300 text-center mt-2 text-base">
-                                Your AI research companion designed for students, teachers, entrepreneurs, and business professionals.
+                                Your AI research companion designed for teachers, entrepreneurs, and professionals.
                             </DialogDescription>
                         </DialogHeader>
                         
@@ -164,14 +164,14 @@ export default function AboutPage() {
                             </h1>
                             
                             <div className="mt-3 mb-4 flex flex-wrap gap-2">
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Professionals</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Researchers</span>
                                 <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Teachers</span>
                                 <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Students</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Entrepreneurs</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Professionals</span>
                             </div>
                             
                             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                                Ziq helps students, teachers, entrepreneurs, and professionals find reliable information, synthesize knowledge, and gain deeper insights - all in seconds.
+                                Ziq helps teachers, students, entrepreneurs, and professionals find reliable information, synthesize knowledge, and gain deeper insights - all in seconds.
                             </p>
                             
                             <form onSubmit={handleSearch} className="mb-8 relative max-w-xl">
@@ -216,57 +216,88 @@ export default function AboutPage() {
                                     </div>
                                     
                                     <div className="space-y-5">
-                                        <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-750">
-                                            <p className="text-gray-900 dark:text-white">
+                                        <div className="p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                                            <p className="text-neutral-900 dark:text-neutral-100">
                                                 What are the most effective teaching methods for high school STEM education?
                                             </p>
                                         </div>
                                         
                                         <div className="flex gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center flex-shrink-0">
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-500 dark:to-teal-400 flex items-center justify-center flex-shrink-0">
                                                 <img src="/logo.png" alt="Ziq Logo" className="w-5 h-5 dark:invert" />
                                             </div>
                                             <div className="flex-1">
-                                                <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 mb-3">
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                        Analyzing research from educational journals and studies...
-                                                    </p>
-                                                    <div className="flex gap-1 mt-1">
-                                                        <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
-                                                        <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                                                        <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div className="space-y-3">
-                                                    <p className="text-gray-900 dark:text-white">
-                                                        Based on recent research, the most effective teaching methods for high school STEM education include:
+                                                <div className="space-y-4">
+                                                    <p className="text-neutral-900 dark:text-neutral-100">
+                                                        Based on recent educational research, the most effective teaching methods for high school STEM education include:
                                                     </p>
                                                     
                                                     <ul className="space-y-2">
                                                         <li className="flex items-start gap-2">
-                                                            <CheckCircle size={18} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                                                            <span className="text-gray-700 dark:text-gray-300">Project-based learning that connects concepts to real-world applications</span>
+                                                            <CheckCircle size={18} className="text-teal-500 mt-0.5 flex-shrink-0" />
+                                                            <span className="text-neutral-700 dark:text-neutral-300">Project-based learning that connects theoretical concepts to real-world applications</span>
                                                         </li>
                                                         <li className="flex items-start gap-2">
-                                                            <CheckCircle size={18} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                                                            <span className="text-gray-700 dark:text-gray-300">Inquiry-based approaches that encourage student investigation</span>
+                                                            <CheckCircle size={18} className="text-teal-500 mt-0.5 flex-shrink-0" />
+                                                            <span className="text-neutral-700 dark:text-neutral-300">Inquiry-based approaches that encourage student-led investigation and discovery</span>
                                                         </li>
                                                         <li className="flex items-start gap-2">
-                                                            <CheckCircle size={18} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                                                            <span className="text-gray-700 dark:text-gray-300">Collaborative learning environments with peer instruction</span>
+                                                            <CheckCircle size={18} className="text-teal-500 mt-0.5 flex-shrink-0" />
+                                                            <span className="text-neutral-700 dark:text-neutral-300">Collaborative learning environments with structured peer instruction</span>
                                                         </li>
                                                     </ul>
-                                                    
-                                                    <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-                                                        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                                                            <FileText size={12} />
-                                                            <span>Sources: Journal of Research in STEM Education, Science Education, Educational Psychology Review</span>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        <div className="mt-6">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <FileText className="h-3.5 w-3.5" />
+                                                <h3 className="text-sm font-medium">Sources</h3>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <a href="#" className="block p-4 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="flex-shrink-0 mt-1">
+                                                            <GraduationCap className="h-4 w-4 text-neutral-500" />
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-sm font-medium leading-tight">Project-Based Learning Outcomes in Secondary Education</h4>
+                                                            <p className="text-xs text-neutral-500 mt-1 line-clamp-2">
+                                                                Journal of Research in STEM Education (2024)
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                                <a href="#" className="block p-4 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="flex-shrink-0 mt-1">
+                                                            <GraduationCap className="h-4 w-4 text-neutral-500" />
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-sm font-medium leading-tight">Inquiry-Based Approaches in STEM Classrooms</h4>
+                                                            <p className="text-xs text-neutral-500 mt-1 line-clamp-2">
+                                                                Science Education, 108(2), 423-441
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                                <a href="#" className="block p-4 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="flex-shrink-0 mt-1">
+                                                            <GraduationCap className="h-4 w-4 text-neutral-500" />
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-sm font-medium leading-tight">Collaborative Learning Strategies for STEM Subjects</h4>
+                                                            <p className="text-xs text-neutral-500 mt-1 line-clamp-2">
+                                                                Educational Psychology Review, 35(1), 112-138
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -278,18 +309,7 @@ export default function AboutPage() {
                     </div>
                     
                     {/* Partners */}
-                    <div className="mt-24 text-center">
-                        <p className="text-sm uppercase text-gray-500 dark:text-gray-400 tracking-wider mb-8">
-                            Trusted by leading institutions
-                        </p>
-                        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 justify-items-center items-center opacity-70">
-                            {['Stanford', 'Harvard', 'MIT', 'UC Berkeley', 'Oxford', 'Cambridge'].map((name, i) => (
-                                <div key={i} className="text-xl font-bold text-gray-400 dark:text-gray-600">
-                                    {name}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+
                 </div>
             </section>
             
@@ -457,8 +477,8 @@ export default function AboutPage() {
                             },
                             {
                                 icon: BookOpen,
-                                title: "For Educators",
-                                description: "Teachers and professors use Ziq to develop curriculum materials, create lesson plans, and stay updated on educational research and best practices.",
+                                title: "For Teachers",
+                                description: "Teachers use Ziq to develop curriculum materials, create lesson plans, and stay updated on educational research and best practices.",
                                 features: [
                                     "Curriculum development",
                                     "Instructional material creation",
@@ -468,8 +488,8 @@ export default function AboutPage() {
                             },
                             {
                                 icon: Briefcase,
-                                title: "For Professionals",
-                                description: "Entrepreneurs and business people leverage Ziq for market research, competitive analysis, and strategic planning with reliable business intelligence.",
+                                title: "For Entrepreneurs & Professionals",
+                                description: "Entrepreneurs and professionals leverage Ziq for market research, competitive analysis, and strategic planning with reliable business intelligence.",
                                 features: [
                                     "Market analysis",
                                     "Competitive intelligence",
@@ -525,7 +545,7 @@ export default function AboutPage() {
                         </p>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         {[
                             {
                                 quote: "Ziq has completely transformed my research process. I can find relevant academic sources in seconds rather than hours.",
@@ -533,14 +553,9 @@ export default function AboutPage() {
                                 title: "CEO"
                             },
                             {
-                                quote: "As a high school teacher, Ziq helps me create research-backed lesson plans and stay current with educational best practices.",
+                                quote: "As a AI tech developer for educators, Ziq helps me create research-backed lesson plans and stay current with educational best practices.",
                                 name: "Ross Cohen",
                                 title: "Science Teacher"
-                            },
-                            {
-                               quote: "Ziq has been instrumental in developing our startup's go-to-market strategy.",
-                                name: "Lucia",
-                                title: "Founder & CEO"
                             }
                         ].map((testimonial, i) => (
                             <motion.div
@@ -582,28 +597,7 @@ export default function AboutPage() {
                 </div>
             </section>
             
-            {/* Stats */}
-            <section className="py-20 bg-blue-600 dark:bg-blue-900">
-                <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                        {[
-                            { value: "10M+", label: "Questions Answered" },
-                            { value: "500K+", label: "Active Users" },
-                            { value: "1,000+", label: "Academic Institutions" },
-                            { value: "98%", label: "Satisfaction Rate" }
-                        ].map((stat, i) => (
-                            <div key={i} className="space-y-2">
-                                <div className="text-4xl md:text-5xl font-bold text-white">
-                                    {stat.value}
-                                </div>
-                                <div className="text-blue-100">
-                                    {stat.label}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+
             
             {/* CTA Section */}
             <section className="py-20 bg-gray-50 dark:bg-gray-900/50">
@@ -613,7 +607,7 @@ export default function AboutPage() {
                             Ready to Transform Your Research?
                         </h2>
                         <p className="text-lg text-gray-600 dark:text-gray-400">
-                            Join thousands of students, educators, and professionals who use Ziq to make their research process faster, deeper, and more effective.
+                            Join thousands of teachers, students, entrepreneurs, and professionals who use Ziq to make their research process faster, deeper, and more effective.
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -654,23 +648,23 @@ export default function AboutPage() {
                         {[
                             {
                                 question: "How is Ziq different from regular search engines?",
-                                answer: "Unlike traditional search engines that return a list of links, Ziq processes information from multiple sources to provide comprehensive, synthesized answers with proper citations. It understands the context of your question and delivers research-quality responses."
+                                answer: "Unlike traditional search engines that return a list of links, Ziq processes information from multiple sources to provide comprehensive, synthesized answers with proper citations. It understands the context of your question and delivers research-quality responses across various search modes including Web, Academic, News, and Extreme Mode."
                             },
                             {
-                                question: "Is Ziq suitable for academic research?",
-                                answer: "Yes! Ziq is designed with academic standards in mind. It provides citations for information sources, helping students and researchers maintain academic integrity while accelerating their research process."
+                                question: "What search modes does Ziq offer?",
+                                answer: "Ziq offers multiple specialized search modes: Web Search for general information, Academic Search for scholarly content, News Search for current events, Local Search for location-specific information, and Extreme Mode for in-depth research with comprehensive citations. Each mode is optimized for different research needs."
                             },
                             {
-                                question: "How accurate is the information Ziq provides?",
-                                answer: "Ziq draws information from reputable academic and professional sources. While we strive for maximum accuracy, we always recommend verifying critical information through the provided citations and sources."
+                                question: "How does the Memory feature work?",
+                                answer: "The Memory feature allows you to save important information for future reference. Simply ask Ziq to remember specific details, and they'll be saved to your personal database. Your memories are private and persist across search sessions. You can retrieve them anytime by asking related questions or manage them by asking to show or delete specific memories."
                             },
                             {
-                                question: "Can I use Ziq for my business research needs?",
-                                answer: "Absolutely. Ziq is equipped to handle market research, competitive analysis, and industry trend research to support business strategy and decision-making processes."
+                                question: "How do credits work in Ziq?",
+                                answer: "Each search uses one credit from your account. Free accounts receive 5 credits per month, while Pro accounts ($10/month) get 30 credits. Your credit balance is displayed in the top navigation bar and resets monthly. All accounts have access to all search types, with Pro accounts receiving additional benefits like priority support."
                             },
                             {
-                                question: "What kind of data privacy does Ziq offer?",
-                                answer: "We take data privacy seriously. Your research queries are not used to train our models without explicit consent, and we follow strict data protection standards to ensure your intellectual property remains secure."
+                                question: "What data privacy measures does Ziq implement?",
+                                answer: "We take data privacy seriously. Your research queries and saved memories are private and not used to train our models without explicit consent. We follow strict data protection standards to ensure your intellectual property remains secure, and you can delete your saved memories at any time."
                             }
                         ].map((faq, i) => (
                             <motion.div 

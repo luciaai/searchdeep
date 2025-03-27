@@ -416,13 +416,14 @@ export async function POST(req: Request) {
                                                         ? {
                                                             url: sanitizedUrl,
                                                             description: description ?? '',
+                                                            sourceUrl: url.startsWith('http') ? new URL(url).origin : null,
                                                         }
                                                         : null;
                                                 },
                                             ),
                                         ).then((results) =>
                                             results.filter(
-                                                (image): image is { url: string; description: string } =>
+                                                (image): image is { url: string; description: string; sourceUrl: string | null } =>
                                                     image !== null &&
                                                     typeof image === 'object' &&
                                                     typeof image.description === 'string' &&

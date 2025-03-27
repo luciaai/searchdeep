@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 
 export function NavBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [userCredits, setUserCredits] = useState<number | null>(null);
   const [isLoadingCredits, setIsLoadingCredits] = useState(true);
   
@@ -53,9 +54,9 @@ export function NavBar() {
           <Button
             variant="outline"
             size="icon"
-            className="rounded-full w-8 h-8 bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all"
+            className="rounded-full w-8 h-8 bg-background dark:bg-muted border-border dark:border-muted hover:bg-muted/50 dark:hover:bg-muted/80 transition-all"
           >
-            <Info className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+            <Info className="h-5 w-5 text-foreground/70 dark:text-foreground/70" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[180px] mt-1" sideOffset={8}>
@@ -72,6 +73,12 @@ export function NavBar() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
+            <Link href="/faq" className="flex items-center cursor-pointer">
+              <Info className="mr-2 h-4 w-4" />
+              <span>FAQ</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href="/about" className="flex items-center cursor-pointer">
               <Info className="mr-2 h-4 w-4" />
               <span>About</span>
@@ -85,46 +92,70 @@ export function NavBar() {
   return (
     <div
       className={cn(
-        "fixed top-0 left-0 right-0 z-[60] flex justify-between items-center p-4 h-[72px]",
-        "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+        "fixed top-0 left-0 right-0 z-[60] flex justify-between items-center px-6 py-4 h-[72px]",
+        "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40",
         "animate-gradient-background"
       )}
     >
-      <div className="flex items-center gap-4">
-        <Link href="/">
+      <div className="flex items-center gap-3 group/nav">
+        <div className="overflow-hidden mr-1">
           <Button
             type="button"
-            variant={"secondary"}
-            className="rounded-full bg-accent hover:bg-accent/80 backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto"
+            variant={"default"}
+            className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto flex items-center transition-all duration-300 shadow-sm"
+            onClick={() => {
+              // Clear any localStorage state that might be persisting search data
+              localStorage.removeItem('lastQuery');
+              localStorage.removeItem('lastMessages');
+              localStorage.removeItem('searchState');
+              
+              // Use a client-side approach to reset the application state
+              if (pathname === '/') {
+                // Create a custom event to notify the page to reset its state
+                const resetEvent = new CustomEvent('resetSearch', { detail: { timestamp: Date.now() } });
+                window.dispatchEvent(resetEvent);
+                
+                // Use router.refresh() to update the page without a full reload
+                router.refresh();
+              } else {
+                // If we're on another page, navigate to home
+                router.push('/');
+              }
+            }}
           >
             <Plus size={18} className="group-hover:rotate-90 transition-all" />
-            <span className="text-sm ml-2 group-hover:block hidden animate-in fade-in duration-300">
+            <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
               New
             </span>
           </Button>
-        </Link>
-      </div>
-
-      {/* Logo positioned further to the right on mobile; centered on larger screens */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 font-semibold text-lg flex items-center z-50">
-        <Link href="/">
+        </div>
+        
+        <Link href="/" className="flex items-center z-10 mx-1">
           <Image
             src="/logo.png"
-            alt="Logo"
-            width={80}
-            height={80}
-            className="mr-1 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
+            alt="Ziq Logo"
+            width={64}
+            height={64}
+            className="w-12 h-12"
           />
+        </Link>
+        
+        <Link href="/faq" className="ml-1 px-2.5 py-1 text-sm font-medium text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/15 rounded-full transition-all border border-primary/20 dark:border-primary/30">
+          FAQ
         </Link>
       </div>
 
-      <div className="flex items-center space-x-6">
+      {/* Empty div to maintain layout balance */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 font-semibold text-lg items-center z-50 hidden">
+      </div>
+
+      <div className="flex items-center space-x-4">
         <SignedIn>
           {/* Credits display */}
-          <div className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full text-sm flex items-center mr-2">
-            <Coins className="h-3.5 w-3.5 mr-1.5 text-yellow-500" />
-            <span className="font-medium">
-             {userCredits !== null ? userCredits : '...'} 
+          <div className="px-3 py-1.5 bg-primary/10 dark:bg-primary/20 rounded-full text-sm flex items-center mr-2 border border-primary/20 dark:border-primary/30 transition-all hover:bg-primary/15 dark:hover:bg-primary/25">
+            <Coins className="h-3.5 w-3.5 mr-1.5 text-primary" />
+            <span className="font-medium text-primary">
+              {isLoadingCredits ? '...' : userCredits !== null ? userCredits : '0'}
             </span>
           </div>
           <UserButton afterSignOutUrl="/" />
@@ -133,9 +164,9 @@ export function NavBar() {
           <SignInButton mode="modal">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border-blue-500/20"
+              className="rounded-md hover:bg-primary/10 text-primary font-medium transition-all"
             >
               Sign In
             </Button>
@@ -143,9 +174,9 @@ export function NavBar() {
           <SignUpButton mode="modal">
             <Button
               type="button"
-              variant="outline"
+              variant="default"
               size="sm"
-              className="rounded-md bg-green-500/10 hover:bg-green-500/20 text-green-500 border-green-500/20 ml-2"
+              className="rounded-md bg-primary hover:bg-primary/90 text-primary-foreground ml-2 font-medium transition-all"
             >
               Sign Up
             </Button>
@@ -169,7 +200,7 @@ export function NavBar() {
         }
         
         .animate-gradient-background {
-          background: linear-gradient(-45deg, #f3e7ff, #e7f5ff, #fff5e7, #e7ffef);
+          background: linear-gradient(-45deg, hsl(var(--background)), hsl(var(--background)), hsl(var(--muted)), hsl(var(--background)));
           background-size: 400% 400%;
           animation: gradient-animation 15s ease infinite;
           animation-delay: 0.2s; /* slight delay to ensure initial render */

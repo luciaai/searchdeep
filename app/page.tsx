@@ -41,7 +41,7 @@ import {
 import WeatherChart from '@/components/weather-chart';
 import { cn, getUserId, SearchGroupId } from '@/lib/utils';
 import { Wave } from "@foobar404/wave";
-import { CheckCircle, CurrencyDollar, Flag, Info, Memory, RoadHorizon, SoccerBall, TennisBall, XLogo } from '@phosphor-icons/react';
+import { CheckCircle, CurrencyDollar as DollarIcon, Flag, Memory, RoadHorizon, SoccerBall, TennisBall, XLogo } from '@phosphor-icons/react';
 import { TextIcon } from '@radix-ui/react-icons';
 import { ToolInvocation } from 'ai';
 import { useChat, UseChatOptions } from '@ai-sdk/react';
@@ -88,8 +88,9 @@ import {
     WrapText,
     ArrowLeftRight,
     Mountain,
-    CreditCard,
-    History
+    CreditCard as PaymentCard,
+    History as HistoryIcon,
+    Info as InfoIcon
 } from 'lucide-react';
 import Marked, { ReactRenderer } from 'marked-react';
 import { useTheme } from 'next-themes';
@@ -603,6 +604,8 @@ const HomeContent = () => {
         
         fetchCredits();
     }, []);
+    
+    // We'll set up the reset event listener after initializing the chat hook
 
     const chatOptions: UseChatOptions = useMemo(() => ({
         api: '/api/search',
@@ -661,6 +664,38 @@ const HomeContent = () => {
             });
         }
     }, [initialState.query, append, setInput, messages.length]);
+    
+    // Listen for reset events from the + new button
+    useEffect(() => {
+        const handleResetSearch = () => {
+            // Reset all state
+            setMessages([]);
+            setInput('');
+            setAttachments([]);
+            setSuggestedQuestions([]);
+            setHasSubmitted(false);
+            setHasManuallyScrolled(false);
+            setIsEditingMessage(false);
+            setEditingMessageIndex(-1);
+            
+            // Reset refs
+            lastSubmittedQueryRef.current = '';
+            isAutoScrollingRef.current = false;
+            
+            // Focus the input field
+            if (inputRef.current) {
+                inputRef.current.focus();
+            }
+        };
+        
+        // Add event listener for the custom reset event
+        window.addEventListener('resetSearch', handleResetSearch);
+        
+        // Clean up
+        return () => {
+            window.removeEventListener('resetSearch', handleResetSearch);
+        };
+    }, []);
 
     const ThemeToggle: React.FC = () => {
         const { resolvedTheme, setTheme } = useTheme();
@@ -1736,8 +1771,31 @@ const HomeContent = () => {
                 <div className={`w-full max-w-[90%] sm:max-w-2xl space-y-6 p-0 mx-auto transition-all duration-300`}>
                     {status === 'ready' && messages.length === 0 && (
                         <div className="text-center !font-sans">
-                            <h1 className="text-2xl sm:text-4xl mb-6 text-neutral-800 dark:text-neutral-100 font-syne">
-                                What do you want to explore?
+                            <div className="w-full bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg mb-8">
+                                <div className="flex flex-col items-center justify-center">
+                                    <div className="relative h-48 w-48 mb-0 animate-pulse-subtle">
+                                        <img 
+                                            src="/logo.png" 
+                                            alt="Ziq Logo" 
+                                            className="object-contain h-full w-full drop-shadow-md"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <h1 className="text-3xl sm:text-5xl font-syne font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent dark:from-primary dark:to-accent">
+                                            Ziq Search
+                                        </h1>
+                                        <div className="mt-3 flex flex-wrap justify-center gap-2">
+                                            <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-800 transition-all hover:bg-blue-200 dark:hover:bg-blue-800">Professional</span>
+                                            <span className="text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 border border-amber-200 dark:border-amber-800 transition-all hover:bg-amber-200 dark:hover:bg-amber-800">Academic</span>
+                                            <span className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border border-green-200 dark:border-green-800 transition-all hover:bg-green-200 dark:hover:bg-green-800">Research</span>
+                                            <span className="text-xs px-3 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 border border-purple-200 dark:border-purple-800 transition-all hover:bg-purple-200 dark:hover:bg-purple-800">Education</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 className="text-2xl sm:text-4xl mb-6 text-foreground font-syne relative inline-block">
+                                What do you <span className="font-bold text-blue-500">Ziq</span> today?
+                                <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent opacity-40"></div>
                             </h1>
                         </div>
                     )}
@@ -1749,7 +1807,9 @@ const HomeContent = () => {
                                 transition={{ duration: 0.5 }}
                                 className='!mt-4'
                             >
-                                <FormComponent
+                                <div className="p-3 bg-card dark:bg-card rounded-xl shadow-lg border border-border/60 dark:border-border/40 overflow-hidden transition-all duration-300 hover:shadow-xl">
+                                    <div className="px-1 py-1">
+                                        <FormComponent
                                     input={input}
                                     setInput={setInput}
                                     attachments={attachments}
@@ -1770,7 +1830,9 @@ const HomeContent = () => {
                                     status={status}
                                     setHasSubmitted={setHasSubmitted}
                                     userCredits={userCredits}
-                                />
+                                        />
+                                    </div>
+                                </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -2026,6 +2088,7 @@ const ToolInvocationListView = memo(
                             icon={MapPin}
                             text="Finding locations..."
                             color="blue"
+                            stop={stop}
                         />;
                     }
 
@@ -2140,6 +2203,7 @@ const ToolInvocationListView = memo(
                             icon={Film}
                             text="Discovering entertainment content..."
                             color="violet"
+                            stop={stop}
                         />;
                     }
 
@@ -2152,6 +2216,7 @@ const ToolInvocationListView = memo(
                             icon={Film}
                             text="Loading trending movies..."
                             color="blue"
+                            stop={stop}
                         />;
                     }
                     return <TrendingResults result={result} type="movie" />;
@@ -2163,6 +2228,7 @@ const ToolInvocationListView = memo(
                             icon={Tv}
                             text="Loading trending TV shows..."
                             color="blue"
+                            stop={stop}
                         />;
                     }
                     return <TrendingResults result={result} type="tv" />;
@@ -2175,6 +2241,7 @@ const ToolInvocationListView = memo(
                             icon={XLogo}
                             text="Searching for latest news..."
                             color="gray"
+                            stop={stop}
                         />;
                     }
 
@@ -2292,6 +2359,7 @@ const ToolInvocationListView = memo(
                             icon={YoutubeIcon}
                             text="Searching YouTube videos..."
                             color="red"
+                            stop={stop}
                         />;
                     }
 
@@ -2376,6 +2444,7 @@ const ToolInvocationListView = memo(
                             icon={Book}
                             text="Searching academic papers..."
                             color="violet"
+                            stop={stop}
                         />;
                     }
 
@@ -2965,6 +3034,7 @@ const ToolInvocationListView = memo(
                             icon={Memory}
                             text="Managing memories..."
                             color="violet"
+                            stop={stop}
                         />;
                     }
                     return <MemoryManager result={result} />;
@@ -3161,11 +3231,13 @@ export default Home;
 const SearchLoadingState = ({
     icon: Icon,
     text,
-    color
+    color,
+    stop
 }: {
     icon: LucideIcon,
     text: string,
-    color: "red" | "green" | "orange" | "violet" | "gray" | "blue"
+    color: "red" | "green" | "orange" | "violet" | "gray" | "blue",
+    stop?: () => void
 }) => {
     const colorVariants = {
         red: {
@@ -3254,6 +3326,19 @@ const SearchLoadingState = ({
                             </div>
                         </div>
                     </div>
+                    {stop && (
+                        <div className="absolute right-6 top-1/2 -translate-y-1/2">
+                            <Button
+                                variant="destructive"
+                                size="sm"
+                                className="rounded-full flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 border-0 animate-pulse"
+                                onClick={() => stop()}
+                            >
+                                <StopIcon size={14} className="text-white" />
+                                <span>Stop</span>
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </CardContent>
         </Card>

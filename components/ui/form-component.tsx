@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card"
+import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 import useWindowSize from '@/hooks/use-window-size';
 import { X } from 'lucide-react';
 import {
@@ -63,8 +64,8 @@ const models = [
     { value: "scira-default", label: "Grok 2.0", icon: XAIIcon, iconClass: "!text-neutral-300", description: "xAI's Grok 2.0 model", color: "glossyblack", vision: false, experimental: false, category: "Stable" },
     { value: "scira-vision", label: "Grok 2.0 Vision", icon: XAIIcon, iconClass: "!text-neutral-300", description: "xAI's Grok 2.0 Vision model", color: "steel", vision: true, experimental: false, category: "Stable" },
     { value: "scira-sonnet", label: "Claude 3.7 Sonnet", icon: AnthropicIcon, iconClass: "!text-neutral-900 dark:!text-white", description: "Anthropic's G.O.A.T. model", color: "purple", vision: true, experimental: false, category: "Stable" },
-    // { value: "scira-llama", label: "Llama 3.3 70B", icon: "/cerebras.png", iconClass: "!text-neutral-900 dark:!text-white", description: "Meta's Llama model by Cerebras", color: "offgray", vision: false, experimental: true, category: "Experimental" },
-    // { value: "scira-r1", label: "DeepSeek R1 Distilled", icon: "/groq.svg", iconClass: "!text-neutral-900 dark:!text-white", description: "DeepSeek R1 model by Groq", color: "sapphire", vision: false, experimental: true, category: "Experimental" },
+    { value: "scira-llama", label: "Llama 3.3 70B", icon: "/cerebras.png", iconClass: "!text-neutral-900 dark:!text-white", description: "Meta's Llama model by Cerebras", color: "offgray", vision: false, experimental: true, category: "Experimental" },
+    { value: "scira-r1", label: "DeepSeek R1 Distilled", icon: "/groq.svg", iconClass: "!text-neutral-900 dark:!text-white", description: "DeepSeek R1 model by Groq", color: "sapphire", vision: false, experimental: true, category: "Experimental" },
 ];
 
 const getColorClasses = (color: string, isSelected: boolean = false) => {
@@ -143,9 +144,10 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = ({ selectedModel, setSelecte
                 className={cn(
                     "flex items-center gap-2 p-2 sm:px-3 h-8",
                     "rounded-full transition-all duration-300",
-                    "border border-neutral-200 dark:border-neutral-800",
+                    "border border-blue-200 dark:border-blue-800/50",
                     "hover:shadow-md",
-                    getColorClasses(selectedModelData?.color || "neutral", true),
+                    "bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30",
+                    "text-blue-700 dark:text-blue-300",
                     isProcessing && "opacity-50 pointer-events-none",
                     className
                 )}
@@ -538,15 +540,44 @@ const ToolbarButton = ({ group, isSelected, onClick }: ToolbarButtonProps) => {
     const Icon = group.icon;
     const { width } = useWindowSize();
     const isMobile = width ? width < 768 : false;
-
+    
+    // Get the appropriate color based on the group id
+    const getButtonColor = () => {
+        if (group.id === 'academic') {
+            // Teachers - amber
+            return isSelected 
+                ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 border border-amber-200 dark:border-amber-800" 
+                : "text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-800/50";
+        } else if (group.id === 'buddy') {
+            // Students - green
+            return isSelected 
+                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border border-green-200 dark:border-green-800" 
+                : "text-green-800 dark:text-green-200 hover:bg-green-100 dark:hover:bg-green-900/50 border border-green-200 dark:border-green-800/50";
+        } else if (group.id === 'analysis') {
+            // Entrepreneurs - purple
+            return isSelected 
+                ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 border border-purple-200 dark:border-purple-800" 
+                : "text-purple-800 dark:text-purple-200 hover:bg-purple-100 dark:hover:bg-purple-900/50 border border-purple-200 dark:border-purple-800/50";
+        } else if (group.id === 'web') {
+            // Professionals - blue
+            return isSelected 
+                ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-800" 
+                : "text-blue-800 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-800/50";
+        } else {
+            // Default styling for other buttons
+            return isSelected 
+                ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-600" 
+                : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700/50";
+        }
+    };
+    
     const commonClassNames = cn(
         "relative flex items-center justify-center",
         "size-8",
         "rounded-full",
-        "transition-colors duration-300",
-        isSelected
-            ? "bg-neutral-500 dark:bg-neutral-600 text-white dark:text-neutral-300"
-            : "text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800/80"
+        "transition-all duration-300",
+        "shadow-sm hover:shadow-md",
+        getButtonColor()
     );
 
     const handleClick = (e: React.MouseEvent) => {
@@ -562,21 +593,16 @@ const ToolbarButton = ({ group, isSelected, onClick }: ToolbarButtonProps) => {
         }
     };
 
-    // Use regular button for mobile
-    if (isMobile) {
-        return (
-            <button
-                onClick={handleClick}
-                className={commonClassNames}
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-            >
-                <Icon className="size-4" />
-            </button>
-        );
-    }
-
-    // Use motion.button for desktop
-    const button = (
+    // Create button for both mobile and desktop
+    const buttonElement = isMobile ? (
+        <button
+            onClick={handleClick}
+            className={commonClassNames}
+            style={{ WebkitTapHighlightColor: 'transparent' }}
+        >
+            <Icon className="size-4" />
+        </button>
+    ) : (
         <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -587,10 +613,48 @@ const ToolbarButton = ({ group, isSelected, onClick }: ToolbarButtonProps) => {
         </motion.button>
     );
 
+    // Create card content for both mobile and desktop
+    const cardContent = (
+        <div className="space-y-0.5">
+            <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                {group.name}
+            </h4>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-normal">
+                {group.description}
+            </p>
+        </div>
+    );
+
+    // For mobile, use a Popover component that toggles on click
+    if (isMobile) {
+        return (
+            <Popover>
+                <PopoverTrigger asChild>
+                    {buttonElement}
+                </PopoverTrigger>
+                <PopoverContent
+                    side="bottom"
+                    align="center"
+                    sideOffset={6}
+                    className={cn(
+                        "z-[100]",
+                        "w-44 p-2 rounded-lg",
+                        "border border-neutral-200 dark:border-neutral-700",
+                        "bg-white dark:bg-neutral-800 shadow-md",
+                        "transition-opacity duration-300"
+                    )}
+                >
+                    {cardContent}
+                </PopoverContent>
+            </Popover>
+        );
+    }
+
+    // For desktop, use HoverCard that shows on hover
     return (
         <HoverCard openDelay={100} closeDelay={50}>
             <HoverCardTrigger asChild>
-                {button}
+                {buttonElement}
             </HoverCardTrigger>
             <HoverCardContent
                 side="bottom"
@@ -629,17 +693,61 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
     const isProcessing = status === 'submitted' || status === 'streaming';
     const { width } = useWindowSize();
     const isMobile = width ? width < 768 : false;
+    const expandTimeoutRef = useRef<NodeJS.Timeout>();
+    const containerRef = useRef<HTMLDivElement>(null);
 
     // Notify parent component when expansion state changes
     useEffect(() => {
         if (onExpandChange) {
-            // Only notify about expansion on mobile devices
-            onExpandChange(isMobile ? isExpanded : false);
+            onExpandChange(isExpanded);
         }
-    }, [isExpanded, onExpandChange, isMobile]);
+    }, [isExpanded, onExpandChange]);
+
+    // Only handle clicks outside to close the menu
+    useEffect(() => {
+        // No auto-collapse after selection on any device
+        // Menu stays open until user interaction
+
+        // Handle clicks outside to collapse
+        const handleClickOutside = (event: Event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node) && isExpanded) {
+                setIsExpanded(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('touchstart', handleClickOutside);
+
+        return () => {
+            if (expandTimeoutRef.current) {
+                clearTimeout(expandTimeoutRef.current);
+            }
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+        };
+    }, [isExpanded, selectedGroup, isMobile]);
+
+    const handleInteraction = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent event bubbling
+        
+        if (!isProcessing) {
+            // Toggle the expanded state
+            setIsExpanded(!isExpanded);
+        }
+    };
+    
+    // Handle selection of a group
+    const handleGroupSelection = (group: SearchGroup) => {
+        // Apply the selection
+        onGroupSelect(group);
+        
+        // Don't auto-collapse after selection
+        // Let the user explicitly close by clicking outside or toggling
+    };
 
     return (
         <motion.div
+            ref={containerRef}
             layout={false}
             initial={false}
             animate={{
@@ -656,10 +764,17 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
                 "rounded-full border border-neutral-200 dark:border-neutral-800",
                 "bg-white dark:bg-neutral-900 shadow-sm overflow-visible",
                 "relative z-10",
-                isProcessing && "opacity-50 pointer-events-none"
+                isProcessing && "opacity-50 pointer-events-none",
+                "cursor-pointer"
             )}
-            onMouseEnter={() => !isProcessing && setIsExpanded(true)}
-            onMouseLeave={() => !isProcessing && setIsExpanded(false)}
+            onClick={handleInteraction}
+            onMouseEnter={() => !isProcessing && !isMobile && setIsExpanded(true)}
+            onMouseLeave={() => {
+                // Only collapse when mouse leaves the component
+                if (!isProcessing && !isMobile) {
+                    setIsExpanded(false);
+                }
+            }}
         >
             <AnimatePresence initial={false}>
                 {searchGroups.filter(group => group.show).map((group, index, filteredGroups) => {
@@ -686,7 +801,7 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
                             <ToolbarButton
                                 group={group}
                                 isSelected={selectedGroup === group.id}
-                                onClick={() => !isProcessing && onGroupSelect(group)}
+                                onClick={() => !isProcessing && handleGroupSelection(group)}
                             />
                         </motion.div>
                     );
@@ -1104,7 +1219,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                 </div>
             )}
 
-            <div className="relative rounded-lg bg-neutral-100 dark:bg-neutral-900">
+            <div className="relative rounded-lg bg-gradient-to-br from-white to-blue-50 dark:from-neutral-900 dark:to-blue-950/20 shadow-sm border border-blue-100/50 dark:border-blue-900/30">
                 <Textarea
                     ref={inputRef}
                     placeholder={hasInteracted ? "Ask a new question..." : "Ask a question..."}
@@ -1116,15 +1231,16 @@ const FormComponent: React.FC<FormComponentProps> = ({
                     className={cn(
                         "min-h-[72px] w-full resize-none rounded-lg",
                         "text-base leading-relaxed",
-                        "bg-neutral-100 dark:bg-neutral-900",
-                        "border !border-neutral-200 dark:!border-neutral-700",
-                        "focus:!border-neutral-300 dark:focus:!border-neutral-600",
-                        isFocused ? "!border-neutral-300 dark:!border-neutral-600" : "",
-                        "text-neutral-900 dark:text-neutral-100",
-                        "focus:!ring-1 focus:!ring-neutral-300 dark:focus:!ring-neutral-600",
+                        "bg-card dark:bg-card",
+                        "border !border-border/60 dark:!border-border/40",
+                        "focus:!border-primary/60 dark:focus:!border-primary/60",
+                        isFocused ? "!border-primary/60 dark:!border-primary/60" : "",
+                        "text-foreground dark:text-foreground",
+                        "focus:!ring-1 focus:!ring-primary/40 dark:focus:!ring-primary/40",
                         "px-4 py-4 pb-16",
                         "overflow-y-auto",
                         "touch-manipulation",
+                        "transition-all duration-200"
                     )}
                     style={{
                         maxHeight: `${MAX_HEIGHT}px`,
@@ -1146,10 +1262,11 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
                 <div className={cn(
                     "absolute bottom-0 inset-x-0 flex justify-between items-center p-2 rounded-b-lg",
-                    "bg-neutral-100 dark:bg-neutral-900",
-                    "!border !border-t-0 !border-neutral-200 dark:!border-neutral-700",
-                    isFocused ? "!border-neutral-300 dark:!border-neutral-600" : "",
-                    isProcessing ? "!opacity-20 !cursor-not-allowed" : ""
+                    "bg-card dark:bg-card",
+                    "!border !border-t-0 !border-border/60 dark:!border-border/40",
+                    isFocused ? "!border-primary/60 dark:!border-primary/60" : "",
+                    isProcessing ? "!opacity-20 !cursor-not-allowed" : "",
+                    "transition-all duration-200"
                 )}>
                     <div className={cn(
                         "flex items-center gap-2",
@@ -1171,7 +1288,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
                         <div className={cn(
                             "transition-all duration-300",
-                            (isMobile && isGroupSelectorExpanded) ? "opacity-0 w-0 invisible" : "opacity-100 visible w-auto"
+                            (isMobile && isGroupSelectorExpanded) ? "opacity-50 scale-90" : "opacity-100 visible w-auto"
                         )}>
                             <ModelSwitcher
                                 selectedModel={selectedModel}
@@ -1186,7 +1303,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                         <div className={cn(
                             "transition-all duration-300",
                             (isMobile && isGroupSelectorExpanded)
-                                ? "opacity-0 invisible w-0"
+                                ? "opacity-50 scale-90"
                                 : "opacity-100 visible w-auto"
                         )}>
                             <button
@@ -1206,11 +1323,10 @@ const FormComponent: React.FC<FormComponentProps> = ({
                                 className={cn(
                                     "flex items-center gap-2 p-2 sm:px-3 h-8",
                                     "rounded-full transition-all duration-300",
-                                    "border border-neutral-200 dark:border-neutral-800",
                                     "hover:shadow-md",
                                     selectedGroup === 'extreme'
-                                        ? "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
-                                        : "bg-white dark:bg-neutral-900 text-neutral-500",
+                                        ? "bg-gradient-to-r from-purple-500 to-indigo-600 text-white dark:from-purple-700 dark:to-indigo-800 dark:text-white border border-purple-400 dark:border-purple-700 shadow-md"
+                                        : "bg-gradient-to-r from-purple-50 to-indigo-50 text-purple-800 dark:from-purple-900/30 dark:to-indigo-900/30 dark:text-purple-200 hover:from-purple-100 hover:to-indigo-100 dark:hover:from-purple-800/40 dark:hover:to-indigo-800/40 border border-purple-200 dark:border-purple-800/50",
                                 )}
                             >
                                 <Mountain className="h-3.5 w-3.5" />
@@ -1219,12 +1335,16 @@ const FormComponent: React.FC<FormComponentProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        {hasVisionSupport(selectedModel) && !(isMobile && isGroupSelectorExpanded) && (
+                    <div className="flex items-center gap-2 z-20">
+                        {hasVisionSupport(selectedModel) && (
                             <Button
-                                className="rounded-full p-1.5 h-8 w-8 bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-600"
+                                className="rounded-full p-1.5 h-8 w-8 bg-muted dark:bg-muted text-foreground/80 dark:text-foreground/80 hover:bg-muted/80 dark:hover:bg-muted/80 z-20 border border-border/60 dark:border-border/40 transition-all duration-200"
                                 onClick={(event) => {
                                     event.preventDefault();
+                                    // If group selector is expanded on mobile, collapse it first
+                                    if (isMobile && isGroupSelectorExpanded) {
+                                        setIsGroupSelectorExpanded(false);
+                                    }
                                     triggerFileInput();
                                 }}
                                 variant="outline"
@@ -1236,7 +1356,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
                         {isProcessing ? (
                             <Button
-                                className="rounded-full p-1.5 h-8 w-8"
+                                className="rounded-full p-1.5 h-8 w-8 z-20 bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-all duration-200 shadow-sm"
                                 onClick={(event) => {
                                     event.preventDefault();
                                     stop();
@@ -1247,10 +1367,19 @@ const FormComponent: React.FC<FormComponentProps> = ({
                             </Button>
                         ) : (
                             <Button
-                                className="rounded-full p-1.5 h-8 w-8"
+                                className="rounded-full p-1.5 h-8 w-8 z-20 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white transition-all duration-200 shadow-sm hover:shadow-md"
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    submitForm();
+                                    // If group selector is expanded on mobile, collapse it first
+                                    if (isMobile && isGroupSelectorExpanded) {
+                                        setIsGroupSelectorExpanded(false);
+                                        // Add a small delay to allow the UI to update before submitting
+                                        setTimeout(() => {
+                                            submitForm();
+                                        }, 100);
+                                    } else {
+                                        submitForm();
+                                    }
                                 }}
                                 disabled={
                                     input.length === 0 && attachments.length === 0 || 

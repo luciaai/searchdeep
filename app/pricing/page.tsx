@@ -136,7 +136,13 @@ function PricingContent() {
   return (
     <div className="container max-w-6xl py-12 mt-16">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">Pricing Plans</h1>
+        <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">Pricing Plans</h1>
+        <div className="mt-3 mb-4 flex flex-wrap gap-2 justify-center">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Teachers</span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Students</span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Entrepreneurs</span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Professionals</span>
+        </div>
         <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
           Choose the perfect plan for your research needs. All plans include access to our powerful AI search engine.
         </p>
@@ -161,26 +167,26 @@ function PricingContent() {
           {tiers.map((tier) => (
             <Card 
               key={tier.id}
-              className={`flex flex-col ${
-                tier.id === 'pro' ? 'border-primary/50 shadow-lg' : ''
+              className={`flex flex-col bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 ${
+                tier.id === 'pro' ? 'border-primary/50 shadow-lg ring-2 ring-blue-500/20 dark:ring-blue-400/20' : ''
               }`}
             >
-              <CardHeader>
-                <CardTitle className="text-2xl">{tier.name}</CardTitle>
+              <CardHeader className="pb-2">
+                <CardTitle className={`text-2xl ${tier.id === 'pro' ? 'bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300' : ''}`}>{tier.name}</CardTitle>
                 <CardDescription>
                   {tier.description || `${tier.credits} credits per month`}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow">
-                <div className="mb-4">
-                  <span className="text-3xl font-bold">${tier.price}</span>
-                  <span className="text-neutral-600 dark:text-neutral-400">/month</span>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold">${tier.price}</span>
+                  <span className="text-neutral-600 dark:text-neutral-400 ml-1">/month</span>
                 </div>
                 <ul className="space-y-2">
                   {tier.features?.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <Check className="h-5 w-5 text-green-500 mr-2" />
-                      <span>{feature}</span>
+                    <li key={index} className="flex items-center py-1">
+                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                      <span className="text-slate-700 dark:text-slate-300">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -189,7 +195,7 @@ function PricingContent() {
                 <SignedIn>
                   {hasActiveTier(tier.id) ? (
                     <Button 
-                      className="w-full" 
+                      className="w-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white border-0 shadow-md hover:shadow-lg transition-all duration-300" 
                       variant="outline"
                       onClick={handleManageSubscription}
                       disabled={isProcessing}
@@ -205,7 +211,7 @@ function PricingContent() {
                     </Button>
                   ) : (
                     <Button 
-                      className="w-full" 
+                      className="w-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white shadow-md hover:shadow-lg transition-all duration-300" 
                       onClick={() => handleSubscribe(tier.id)}
                       disabled={isProcessing}
                     >
@@ -222,7 +228,7 @@ function PricingContent() {
                 </SignedIn>
                 <SignedOut>
                   <SignInButton mode="modal">
-                    <Button className="w-full">
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white shadow-md hover:shadow-lg transition-all duration-300">
                       Sign in to Subscribe
                     </Button>
                   </SignInButton>
