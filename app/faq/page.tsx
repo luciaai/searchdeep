@@ -202,7 +202,7 @@ export default function FAQPage() {
                     <li>Creates custom AI-generated visuals</li>
                     <li>Images are not from websites and cannot be clicked through</li>
                     <li>Great for visual inspiration and concepts</li>
-                    <li>Each image includes a clear "AI Generated" label</li>
+                    <li>Each image includes a clear &quot;AI Generated&quot; label</li>
                   </ul>
                   
                   <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800 mt-3">
@@ -468,7 +468,7 @@ export default function FAQPage() {
                   SEARCH HISTORY
                 </h4>
                 <p className="text-sm mb-3">
-                  Your search history is saved when you're signed in, allowing you to revisit and repeat previous searches. <span className="font-medium">Note:</span> Only your search queries are saved, not the search results or content. Use the Memory feature to save important content.
+                  Your search history is saved when you&apos;re signed in, allowing you to revisit and repeat previous searches. <span className="font-medium">Note:</span> Only your search queries are saved, not the search results or content. Use the Memory feature to save important content.
                 </p>
                 
                 <div className="flex items-start space-x-3 mb-3">
@@ -595,7 +595,7 @@ export default function FAQPage() {
                   FEEDBACK & SUPPORT
                 </h4>
                 <p className="text-sm mb-3">
-                  We're constantly improving Ziq based on user feedback. If you encounter any issues or have suggestions for new features,
+                  We&apos;re constantly improving Ziq based on user feedback. If you encounter any issues or have suggestions for new features,
                   please contact our support team.
                 </p>
                 
