@@ -212,7 +212,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-indigo-100 dark:bg-indigo-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "Mountain lake at sunset" will generate AI images of mountain lakes at sunset, not search results from websites.
+                        <span className="font-medium">Example:</span> &quot;Mountain lake at sunset&quot; will generate AI images of mountain lakes at sunset, not search results from websites.
                       </p>
                     </div>
                   </div>
@@ -243,7 +243,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-blue-100 dark:bg-blue-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "What are the best practices for sustainable gardening?" will search across gardening websites, environmental resources, and expert advice to provide a comprehensive answer with source links.
+                        <span className="font-medium">Example:</span> &quot;What are the best practices for sustainable gardening?&quot; will search across gardening websites, environmental resources, and expert advice to provide a comprehensive answer with source links.
                       </p>
                     </div>
                   </div>
@@ -276,7 +276,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-green-100 dark:bg-green-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "What are the latest developments in renewable energy policy?" will return recent news articles and press releases about policy changes, focusing on content published within the last few days or weeks.
+                        <span className="font-medium">Example:</span> &quot;What are the latest developments in renewable energy policy?&quot; will return recent news articles and press releases about policy changes, focusing on content published within the last few days or weeks.
                       </p>
                     </div>
                   </div>
@@ -309,7 +309,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-purple-100 dark:bg-purple-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "Remember that my project deadline is May 15th" or "Save this information about renewable energy sources." Later, you can ask "What's my project deadline?" or "What did I save about renewable energy?"
+                        <span className="font-medium">Example:</span> &quot;Remember that my project deadline is May 15th&quot; or &quot;Save this information about renewable energy sources.&quot; Later, you can ask &quot;What&apos;s my project deadline?&quot; or &quot;What did I save about renewable energy?&quot;
                       </p>
                     </div>
                   </div>
@@ -317,7 +317,7 @@ export default function FAQPage() {
                   <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-100 dark:border-purple-800 mt-3">
                     <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">Managing Your Memories</p>
                     <p className="text-xs text-slate-700 dark:text-slate-300">
-                      <span className="font-medium">To delete a memory:</span> Ask Ziq to "forget" or "delete" specific information. For example, "Please forget what I told you about [topic]" or "Delete my memory about [specific information]." You can also manage your memories by asking to "show all my memories" and then selecting which ones to remove.
+                      <span className="font-medium">To delete a memory:</span> Ask Ziq to &quot;forget&quot; or &quot;delete&quot; specific information. For example, &quot;Please forget what I told you about [topic]&quot; or &quot;Delete my memory about [specific information].&quot; You can also manage your memories by asking to &quot;show all my memories&quot; and then selecting which ones to remove.
                     </p>
                   </div>
                 </div>
@@ -348,7 +348,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-amber-100 dark:bg-amber-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "What are the recent advances in quantum computing?" will prioritize scholarly articles, research papers, and academic publications with proper citations in academic format.
+                        <span className="font-medium">Example:</span> &quot;What are the recent advances in quantum computing?&quot; will prioritize scholarly articles, research papers, and academic publications with proper citations in academic format.
                       </p>
                     </div>
                   </div>
@@ -380,7 +380,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-rose-100 dark:bg-rose-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "What are the best restaurants near me?" or "Where can I find hiking trails in my area?" will use your location to provide results specific to your geographic area.
+                        <span className="font-medium">Example:</span> &quot;What are the best restaurants near me?&quot; or &quot;Where can I find hiking trails in my area?&quot; will use your location to provide results specific to your geographic area.
                       </p>
                     </div>
                   </div>
@@ -399,7 +399,7 @@ export default function FAQPage() {
                 </p>
                 
                 <ul className="list-disc pl-6 text-sm space-y-1">
-                  <li>Uses advanced "reason_search" technology</li>
+                  <li>Uses advanced &quot;reason_search&quot; technology</li>
                   <li>Searches web and academic sources simultaneously</li>
                   <li>Provides comprehensive inline citations</li>
                   <li>Supports LaTeX for mathematical equations</li>
@@ -412,7 +412,7 @@ export default function FAQPage() {
                   </p>
                   <div className="mt-2 bg-indigo-100 dark:bg-indigo-800/30 p-2 rounded">
                     <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                      <span className="font-medium">Example:</span> "Explain the implications of quantum computing on modern cryptography" will perform deep research across academic papers, technical blogs, and expert analyses, providing a comprehensive answer with detailed citations and potentially including mathematical formulas in LaTeX format.
+                      <span className="font-medium">Example:</span> &quot;Explain the implications of quantum computing on modern cryptography&quot; will perform deep research across academic papers, technical blogs, and expert analyses, providing a comprehensive answer with detailed citations and potentially including mathematical formulas in LaTeX format.
                     </p>
                   </div>
                 </div>
@@ -438,7 +438,7 @@ export default function FAQPage() {
                   <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
                     <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">Sign In</p>
                     <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
-                      <li>Click "Sign In" in the top right corner</li>
+                      <li>Click &quot;Sign In&quot; in the top right corner</li>
                       <li>Use your Google account for quick access</li>
                       <li>Or sign in with your email and password</li>
                     </ul>
@@ -447,8 +447,8 @@ export default function FAQPage() {
                   <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
                     <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">Create Account</p>
                     <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
-                      <li>Click "Sign In" in the top right corner</li>
-                      <li>Select "Create account" option</li>
+                      <li>Click &quot;Sign In&quot; in the top right corner</li>
+                      <li>Select &quot;Create account&quot; option</li>
                       <li>Follow the simple registration steps</li>
                     </ul>
                   </div>
@@ -481,7 +481,7 @@ export default function FAQPage() {
                     <p className="text-sm mb-1 font-medium">Accessing Your History:</p>
                     <ol className="list-decimal pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
                       <li>Click the Info icon (ⓘ) in the top navigation bar</li>
-                      <li>Select "History" from the dropdown menu</li>
+                      <li>Select &quot;History&quot; from the dropdown menu</li>
                       <li>View a table of your past searches with options to repeat them</li>
                     </ol>
                   </div>

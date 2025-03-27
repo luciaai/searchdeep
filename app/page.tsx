@@ -49,6 +49,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { GeistMono } from 'geist/font/mono';
 import {
     AlignLeft,
+    Info,
+    History,
+    CreditCard,
+    Square,
     ArrowRight,
     Book,
     Brain,
@@ -3334,7 +3338,7 @@ const SearchLoadingState = ({
                                 className="rounded-full flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 border-0 animate-pulse"
                                 onClick={() => stop()}
                             >
-                                <StopIcon size={14} className="text-white" />
+                                <Square size={14} className="text-white" />
                                 <span>Stop</span>
                             </Button>
                         </div>
