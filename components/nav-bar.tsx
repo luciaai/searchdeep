@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getUserCredits } from '@/lib/user-credits';
 import { useEffect, useState } from 'react';
-import { Coins, CreditCard, History, Info, Plus } from 'lucide-react';
+import { Coins, CreditCard, HelpCircle, History, Info, Plus } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -97,8 +97,8 @@ export function NavBar() {
         "animate-gradient-background"
       )}
     >
-      <div className="flex items-center gap-3 group/nav">
-        <div className="overflow-hidden mr-1">
+      <div className="flex items-center gap-2 group/nav">
+        <div className="flex space-x-2">
           <Button
             type="button"
             variant={"default"}
@@ -125,24 +125,24 @@ export function NavBar() {
           >
             <Plus size={18} className="group-hover:rotate-90 transition-all" />
             <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
-              New
+              New Search
+            </span>
+          </Button>
+          
+          <Button
+            type="button"
+            variant={"outline"}
+            className="rounded-full bg-background hover:bg-muted/50 text-foreground backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto flex items-center transition-all duration-300 shadow-sm"
+            onClick={() => router.push('/faq')}
+          >
+            <HelpCircle size={18} className="transition-all" />
+            <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
+              FAQ
             </span>
           </Button>
         </div>
         
-        <Link href="/" className="flex items-center z-10 mx-1">
-          <Image
-            src="/logo.png"
-            alt="Ziq Logo"
-            width={64}
-            height={64}
-            className="w-12 h-12"
-          />
-        </Link>
-        
-        <Link href="/faq" className="ml-1 px-2.5 py-1 text-sm font-medium text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/15 rounded-full transition-all border border-primary/20 dark:border-primary/30">
-          FAQ
-        </Link>
+        {/* Brand text removed as requested */}
       </div>
 
       {/* Empty div to maintain layout balance */}

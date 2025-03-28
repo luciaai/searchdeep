@@ -49,10 +49,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { GeistMono } from 'geist/font/mono';
 import {
     AlignLeft,
-    Info,
-    History,
-    CreditCard,
-    Square,
     ArrowRight,
     Book,
     Brain,
@@ -1789,10 +1785,10 @@ const HomeContent = () => {
                                             Ziq Search
                                         </h1>
                                         <div className="mt-3 flex flex-wrap justify-center gap-2">
-                                            <span className="text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-800 transition-all hover:bg-blue-200 dark:hover:bg-blue-800">Professional</span>
-                                            <span className="text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 border border-amber-200 dark:border-amber-800 transition-all hover:bg-amber-200 dark:hover:bg-amber-800">Academic</span>
-                                            <span className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border border-green-200 dark:border-green-800 transition-all hover:bg-green-200 dark:hover:bg-green-800">Research</span>
-                                            <span className="text-xs px-3 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 border border-purple-200 dark:border-purple-800 transition-all hover:bg-purple-200 dark:hover:bg-purple-800">Education</span>
+                                            <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 dark:bg-primary/20 dark:border-primary/30 transition-all hover:bg-primary/20">Professional</span>
+                                            <span className="text-xs px-3 py-1 rounded-full bg-accent/10 text-accent border border-accent/20 dark:bg-accent/20 dark:border-accent/30 transition-all hover:bg-accent/20">Academic</span>
+                                            <span className="text-xs px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 dark:bg-blue-500/20 dark:border-blue-500/30 transition-all hover:bg-blue-500/20">Research</span>
+                                            <span className="text-xs px-3 py-1 rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20 dark:bg-purple-500/20 dark:border-purple-500/30 transition-all hover:bg-purple-500/20">Education</span>
                                         </div>
                                     </div>
                                 </div>
@@ -3338,7 +3334,7 @@ const SearchLoadingState = ({
                                 className="rounded-full flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 border-0 animate-pulse"
                                 onClick={() => stop()}
                             >
-                                <Square size={14} className="text-white" />
+                                <StopIcon size={14} className="text-white" />
                                 <span>Stop</span>
                             </Button>
                         </div>
