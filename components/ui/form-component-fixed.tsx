@@ -9,7 +9,7 @@ import { Textarea } from '../ui/textarea';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 import useWindowSize from '@/hooks/use-window-size';
-import { X } from 'lucide-react';
+import { X, Info } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -537,147 +537,59 @@ interface ToolbarButtonProps {
 }
 
 const ToolbarButton = ({ group, isSelected, onClick }: ToolbarButtonProps) => {
-    const Icon = group.icon;
     const { width } = useWindowSize();
     const isMobile = width ? width < 768 : false;
     
-    // Get the appropriate color based on the group id
-    const getButtonColor = () => {
-        if (group.id === 'academic') {
-            // Teachers - amber
-            return isSelected 
-                ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100 border border-amber-200 dark:border-amber-800" 
-                : "text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-800/50";
-        } else if (group.id === 'buddy') {
-            // Students - green
-            return isSelected 
-                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border border-green-200 dark:border-green-800" 
-                : "text-green-800 dark:text-green-200 hover:bg-green-100 dark:hover:bg-green-900/50 border border-green-200 dark:border-green-800/50";
-        } else if (group.id === 'analysis') {
-            // Entrepreneurs - purple
-            return isSelected 
-                ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 border border-purple-200 dark:border-purple-800" 
-                : "text-purple-800 dark:text-purple-200 hover:bg-purple-100 dark:hover:bg-purple-900/50 border border-purple-200 dark:border-purple-800/50";
-        } else if (group.id === 'web') {
-            // Professionals - blue
-            return isSelected 
-                ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-800" 
-                : "text-blue-800 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-800/50";
-        } else {
-            // Default styling for other buttons
-            return isSelected 
-                ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-600" 
-                : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700/50";
-        }
-    };
-    
-    const commonClassNames = cn(
-        "relative flex items-center justify-center",
-        "size-8",
-        "rounded-full",
-        "transition-all duration-300",
-        "shadow-sm hover:shadow-md",
-        getButtonColor()
-    );
-
-    const handleClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onClick();
-
-        // Show toast notification on mobile devices
-        if (isMobile) {
-            toast(`Switched to ${group.name}: ${group.description}`, {
-                duration: 2000,
-            });
-        }
-    };
-
-    // Create button for both mobile and desktop
-    const buttonElement = isMobile ? (
-        <button
-            onClick={handleClick}
-            className={commonClassNames}
-            style={{ WebkitTapHighlightColor: 'transparent' }}
-        >
-            <Icon className="size-4" />
-        </button>
-    ) : (
-        <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleClick}
-            className={commonClassNames}
-        >
-            <Icon className="size-4" />
-        </motion.button>
-    );
-
-    // Create card content for both mobile and desktop
-    const cardContent = (
-        <div className="space-y-0.5">
-            <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                {group.name}
-            </h4>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-normal">
-                {group.description}
-            </p>
-        </div>
-    );
-
-    // For mobile, use a Popover component that toggles on click
-    if (isMobile) {
-        return (
-            <Popover>
-                <PopoverTrigger asChild>
-                    {buttonElement}
-                </PopoverTrigger>
-                <PopoverContent
-                    side="bottom"
-                    align="center"
-                    sideOffset={6}
-                    className={cn(
-                        "z-[100]",
-                        "w-44 p-2 rounded-lg",
-                        "border border-neutral-200 dark:border-neutral-700",
-                        "bg-white dark:bg-neutral-800 shadow-md",
-                        "transition-opacity duration-300"
-                    )}
-                >
-                    {cardContent}
-                </PopoverContent>
-            </Popover>
-        );
-    }
-
-    // For desktop, use HoverCard that shows on hover
     return (
-        <HoverCard openDelay={100} closeDelay={50}>
-            <HoverCardTrigger asChild>
-                {buttonElement}
-            </HoverCardTrigger>
-            <HoverCardContent
-                side="bottom"
-                align="center"
-                sideOffset={6}
-                className={cn(
-                    "z-[100]",
-                    "w-44 p-2 rounded-lg",
-                    "border border-neutral-200 dark:border-neutral-700",
-                    "bg-white dark:bg-neutral-800 shadow-md",
-                    "transition-opacity duration-300"
+        <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                onClick();
+            }}
+            className={cn(
+                "flex items-center justify-between w-full px-3 py-2.5", // Increased padding for better touch targets
+                "rounded-md transition-all duration-200",
+                "text-sm font-medium",
+                isSelected
+                    ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
+                    : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300",
+                "active:scale-95 transform-gpu", // Added active state with GPU acceleration
+                "focus:outline-none focus:ring-2 focus:ring-blue-500/40 dark:focus:ring-blue-500/30", // Better focus state
+                isMobile && "touch-manipulation" // Improved touch handling
+            )}
+        >
+            <div className="flex items-center gap-2">
+                {group.icon && (
+                    <group.icon className={cn(
+                        "h-4 w-4", // Slightly larger icon for better visibility
+                        isSelected ? "text-blue-600 dark:text-blue-400" : "text-neutral-600 dark:text-neutral-400"
+                    )} />
                 )}
-            >
-                <div className="space-y-0.5">
-                    <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                        {group.name}
-                    </h4>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-normal">
-                        {group.description}
-                    </p>
-                </div>
-            </HoverCardContent>
-        </HoverCard>
+                <span>{group.name}</span>
+            </div>
+            
+            {group.description && (
+                <HoverCard>
+                    <HoverCardTrigger asChild>
+                        <div className="rounded-full p-1 hover:bg-neutral-200/50 dark:hover:bg-neutral-700/50">
+                            <Info className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-500" />
+                        </div>
+                    </HoverCardTrigger>
+                    <HoverCardContent 
+                        side="top" 
+                        className="w-64 text-xs p-3"
+                        sideOffset={10}
+                        align="end"
+                    >
+                        <div className="space-y-1">
+                            <p className="font-medium">{group.name}</p>
+                            <p className="text-neutral-600 dark:text-neutral-400">{group.description}</p>
+                        </div>
+                    </HoverCardContent>
+                </HoverCard>
+            )}
+        </motion.button>
     );
 };
 
@@ -695,6 +607,28 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
     const isMobile = width ? width < 768 : false;
     const expandTimeoutRef = useRef<NodeJS.Timeout>();
     const containerRef = useRef<HTMLDivElement>(null);
+    
+    // Unified click outside handler with better touch support
+    useEffect(() => {
+        const handleClickOutside = (event: Event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node) && isExpanded) {
+                setIsExpanded(false);
+                if (onExpandChange) onExpandChange(false);
+            }
+        };
+        
+        // Use capture phase for better mobile handling
+        document.addEventListener('mousedown', handleClickOutside, true);
+        document.addEventListener('touchstart', handleClickOutside, true);
+        
+        return () => {
+            if (expandTimeoutRef.current) {
+                clearTimeout(expandTimeoutRef.current);
+            }
+            document.removeEventListener('mousedown', handleClickOutside, true);
+            document.removeEventListener('touchstart', handleClickOutside, true);
+        };
+    }, [isExpanded, onExpandChange]);
 
     // Notify parent component when expansion state changes
     useEffect(() => {
@@ -702,30 +636,6 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
             onExpandChange(isExpanded);
         }
     }, [isExpanded, onExpandChange]);
-
-    // Only handle clicks outside to close the menu
-    useEffect(() => {
-        // No auto-collapse after selection on any device
-        // Menu stays open until user interaction
-
-        // Handle clicks outside to collapse
-        const handleClickOutside = (event: Event) => {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node) && isExpanded) {
-                setIsExpanded(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        document.addEventListener('touchstart', handleClickOutside);
-
-        return () => {
-            if (expandTimeoutRef.current) {
-                clearTimeout(expandTimeoutRef.current);
-            }
-            document.removeEventListener('mousedown', handleClickOutside);
-            document.removeEventListener('touchstart', handleClickOutside);
-        };
-    }, [isExpanded, selectedGroup, isMobile]);
 
     const handleInteraction = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent event bubbling
@@ -736,13 +646,18 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
         }
     };
     
-    // Handle selection of a group
+    // Handle selection of a group with improved feedback
     const handleGroupSelection = (group: SearchGroup) => {
         // Apply the selection
         onGroupSelect(group);
         
-        // Don't auto-collapse after selection
-        // Let the user explicitly close by clicking outside or toggling
+        // On mobile, collapse after selection for better UX
+        if (isMobile) {
+            setTimeout(() => {
+                setIsExpanded(false);
+                if (onExpandChange) onExpandChange(false);
+            }, 150); // Short delay for visual feedback
+        }
     };
 
     return (
@@ -763,14 +678,14 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
                 "inline-flex items-center min-w-[38px] p-0.5",
                 "rounded-full border border-neutral-200 dark:border-neutral-800",
                 "bg-white dark:bg-neutral-900 shadow-sm overflow-visible",
-                "relative z-10",
+                "relative z-[50]", // Increased z-index for better stacking
                 isProcessing && "opacity-50 pointer-events-none",
                 "cursor-pointer"
             )}
             onClick={handleInteraction}
             onMouseEnter={() => !isProcessing && !isMobile && setIsExpanded(true)}
             onMouseLeave={() => {
-                // Only collapse when mouse leaves the component
+                // Only collapse when mouse leaves on desktop
                 if (!isProcessing && !isMobile) {
                     setIsExpanded(false);
                 }
@@ -787,7 +702,8 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
                             animate={{
                                 width: showItem ? "28px" : 0,
                                 opacity: showItem ? 1 : 0,
-                                marginRight: (showItem && isLastItem && isExpanded) ? "2px" : 0
+                                marginRight: (showItem && isLastItem && isExpanded) ? "2px" : 0,
+                                scale: showItem ? 1 : 0.9 // Added scale for better visual feedback
                             }}
                             transition={{
                                 duration: 0.15,
@@ -1261,69 +1177,238 @@ const FormComponent: React.FC<FormComponentProps> = ({
                 )}
 
                 <div className={cn(
-                    "absolute bottom-0 inset-x-0 flex justify-between items-center p-2 rounded-b-lg",
+                    "absolute bottom-0 inset-x-0 p-2 rounded-b-lg",
                     "bg-card dark:bg-card",
                     "!border !border-t-0 !border-border/60 dark:!border-border/40",
                     isFocused ? "!border-primary/60 dark:!border-primary/60" : "",
                     isProcessing ? "!opacity-20 !cursor-not-allowed" : "",
-                    "transition-all duration-200"
+                    "transition-all duration-200",
+                    "overflow-visible" // Ensure content can overflow the container
                 )}>
-                    <div className={cn(
-                        "flex items-center gap-2",
-                        isMobile && "overflow-visible"
-                    )}>
-                        <div className={cn(
-                            "transition-all duration-100",
-                            (selectedGroup !== 'extreme')
-                                ? "opacity-100 visible w-auto"
-                                : "opacity-0 invisible w-0"
-                        )}>
-                            <GroupSelector
-                                selectedGroup={selectedGroup}
-                                onGroupSelect={handleGroupSelect}
-                                status={status}
-                                onExpandChange={setIsGroupSelectorExpanded}
-                            />
-                        </div>
+                    {isMobile ? (
+                        /* Mobile layout - stacked for better spacing */
+                        <div className="flex flex-col space-y-2">
+                            {/* Top row with group selector */}
+                            <div className="flex justify-between items-center">
+                                <div className={cn(
+                                    "transition-all duration-100",
+                                    (selectedGroup !== 'extreme')
+                                        ? "opacity-100 visible w-auto"
+                                        : "opacity-0 invisible w-0"
+                                )}>
+                                    <GroupSelector
+                                        selectedGroup={selectedGroup}
+                                        onGroupSelect={handleGroupSelect}
+                                        status={status}
+                                        onExpandChange={setIsGroupSelectorExpanded}
+                                    />
+                                </div>
+                                
+                                {/* Action buttons always visible */}
+                                <div className={cn(
+                                    "flex items-center gap-2 z-[60] ml-auto", // Increased z-index for better stacking
+                                    isGroupSelectorExpanded ? "bg-white dark:bg-neutral-900 p-1 rounded-full shadow-md" : "",
+                                    "relative" // Ensure proper stacking context
+                                )}>
+                                    {hasVisionSupport(selectedModel) && (
+                                        <Button
+                                            className="rounded-full p-1.5 h-8 w-8 bg-muted dark:bg-muted text-foreground/80 dark:text-foreground/80 hover:bg-muted/80 dark:hover:bg-muted/80 z-[60] border border-border/60 dark:border-border/40 transition-all duration-200 shadow-sm"
+                                            onClick={(event) => {
+                                                event.preventDefault();
+                                                // If group selector is expanded on mobile, collapse it first
+                                                if (isMobile && isGroupSelectorExpanded) {
+                                                    setIsGroupSelectorExpanded(false);
+                                                }
+                                                triggerFileInput();
+                                            }}
+                                            variant="outline"
+                                            disabled={isProcessing}
+                                        >
+                                            <Upload className="h-3.5 w-3.5" />
+                                        </Button>
+                                    )}
 
-                        <div className={cn(
-                            "transition-all duration-300",
-                            (isMobile && isGroupSelectorExpanded) ? "opacity-50 scale-90" : "opacity-100 visible w-auto"
-                        )}>
-                            <ModelSwitcher
-                                selectedModel={selectedModel}
-                                setSelectedModel={setSelectedModel}
-                                showExperimentalModels={showExperimentalModels}
-                                attachments={attachments}
-                                messages={messages}
-                                status={status}
-                            />
+                                    {isProcessing ? (
+                                        <Button
+                                            className="rounded-full p-1.5 h-8 w-8 z-[60] bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-all duration-200 shadow-sm"
+                                            onClick={(event) => {
+                                                event.preventDefault();
+                                                stop();
+                                            }}
+                                        >
+                                            <X className="h-3.5 w-3.5" />
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            className="rounded-full p-1.5 h-8 w-8 z-[60] bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white transition-all duration-200 shadow-sm hover:shadow-md"
+                                            onClick={(event) => {
+                                                event.preventDefault();
+                                                // If group selector is expanded on mobile, collapse it first
+                                                if (isMobile && isGroupSelectorExpanded) {
+                                                    setIsGroupSelectorExpanded(false);
+                                                    // Add a small delay before submitting
+                                                    setTimeout(() => {
+                                                        handleSubmit(event);
+                                                    }, 100);
+                                                } else {
+                                                    handleSubmit(event);
+                                                }
+                                            }}
+                                            disabled={isProcessing || input.trim().length === 0}
+                                        >
+                                            <svg className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            {/* Bottom row with model switcher and extreme button */}
+                            <div className="flex justify-between items-center">
+                                <div className={cn(
+                                    "transition-all duration-300",
+                                    isGroupSelectorExpanded 
+                                        ? "opacity-0 scale-95 transform-gpu pointer-events-none" 
+                                        : "opacity-100 visible w-auto"
+                                )}>
+                                    <ModelSwitcher
+                                        selectedModel={selectedModel}
+                                        setSelectedModel={setSelectedModel}
+                                        showExperimentalModels={showExperimentalModels}
+                                        attachments={attachments}
+                                        messages={messages}
+                                        status={status}
+                                    />
+                                </div>
+                                
+                                <div className={cn(
+                                    "transition-all duration-300 ml-auto",
+                                    isGroupSelectorExpanded
+                                        ? "opacity-0 scale-95 transform-gpu pointer-events-none" 
+                                        : "opacity-100 visible w-auto"
+                                )}>
+                                    <button
+                                        onClick={() => {
+                                            // If group selector is expanded on mobile, collapse it first
+                                            if (isGroupSelectorExpanded) {
+                                                setIsGroupSelectorExpanded(false);
+                                                // Add a small delay before changing the mode
+                                                setTimeout(() => {
+                                                    setSelectedGroup(selectedGroup === 'extreme' ? 'web' : 'extreme');
+                                                    // Show toast notification on mobile devices
+                                                    const newMode = selectedGroup === 'extreme' ? 'Web Search' : 'Extreme Mode';
+                                                    const description = selectedGroup === 'extreme' 
+                                                        ? 'Standard web search mode'
+                                                        : 'Enhanced deep research mode';
+                                                    toast(`Switched to ${newMode}: ${description}`, {
+                                                        duration: 2000,
+                                                    });
+                                                }, 100);
+                                            } else {
+                                                setSelectedGroup(selectedGroup === 'extreme' ? 'web' : 'extreme');
+                                                // Show toast notification on mobile devices
+                                                const newMode = selectedGroup === 'extreme' ? 'Web Search' : 'Extreme Mode';
+                                                const description = selectedGroup === 'extreme' 
+                                                    ? 'Standard web search mode'
+                                                    : 'Enhanced deep research mode';
+                                                toast(`Switched to ${newMode}: ${description}`, {
+                                                    duration: 2000,
+                                                });
+                                            }
+                                        }}
+                                        className={cn(
+                                            "flex items-center gap-2 p-2 sm:px-3 h-8",
+                                            "rounded-full transition-all duration-300",
+                                            "hover:shadow-md",
+                                            "relative z-[55]", // Increased z-index but below action buttonsns
+                                            selectedGroup === 'extreme'
+                                                ? "bg-gradient-to-r from-purple-500 to-indigo-600 text-white dark:from-purple-700 dark:to-indigo-800 dark:text-white border border-purple-400 dark:border-purple-700 shadow-md"
+                                                : "bg-gradient-to-r from-purple-50 to-indigo-50 text-purple-800 dark:from-purple-900/30 dark:to-indigo-900/30 dark:text-purple-200 hover:from-purple-100 hover:to-indigo-100 dark:hover:from-purple-800/40 dark:hover:to-indigo-800/40 border border-purple-200 dark:border-purple-800/50",
+                                        )}
+                                    >
+                                        <Mountain className="h-3.5 w-3.5" />
+                                        <span className="hidden sm:block text-xs font-medium">Extreme</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+                    ) : (
+                        <div className="flex justify-between items-center">
+                            <div className={cn(
+                                "flex items-center gap-2 flex-shrink-0",
+                                isMobile && "overflow-visible"
+                            )}>
+                                <div className={cn(
+                                    "transition-all duration-100",
+                                    (selectedGroup !== 'extreme')
+                                        ? "opacity-100 visible w-auto"
+                                        : "opacity-0 invisible w-0"
+                                )}>
+                                    <GroupSelector
+                                        selectedGroup={selectedGroup}
+                                        onGroupSelect={handleGroupSelect}
+                                        status={status}
+                                        onExpandChange={setIsGroupSelectorExpanded}
+                                    />
+                                </div>
 
-                        <div className={cn(
-                            "transition-all duration-300",
-                            (isMobile && isGroupSelectorExpanded)
-                                ? "opacity-50 scale-90"
-                                : "opacity-100 visible w-auto"
-                        )}>
+                                <div className={cn(
+                                    "transition-all duration-300",
+                                    (isMobile && isGroupSelectorExpanded) 
+                                        ? "opacity-0 scale-95 transform-gpu pointer-events-none" 
+                                        : "opacity-100 visible w-auto"
+                                )}>
+                                    <ModelSwitcher
+                                        selectedModel={selectedModel}
+                                        setSelectedModel={setSelectedModel}
+                                        showExperimentalModels={showExperimentalModels}
+                                        attachments={attachments}
+                                        messages={messages}
+                                        status={status}
+                                    />
+                                </div>
+
+                                <div className={cn(
+                                    "transition-all duration-300",
+                                    (isMobile && isGroupSelectorExpanded)
+                                        ? "opacity-0 scale-95 transform-gpu pointer-events-none" 
+                                        : "opacity-100 visible w-auto"
+                                )}>
                             <button
                                 onClick={() => {
-                                    setSelectedGroup(selectedGroup === 'extreme' ? 'web' : 'extreme');
-                                    // Show toast notification on mobile devices
-                                    if (isMobile) {
-                                        const newMode = selectedGroup === 'extreme' ? 'Web Search' : 'Extreme Mode';
-                                        const description = selectedGroup === 'extreme' 
-                                            ? 'Standard web search mode'
-                                            : 'Enhanced deep research mode';
-                                        toast(`Switched to ${newMode}: ${description}`, {
-                                            duration: 2000,
-                                        });
+                                    // If group selector is expanded on mobile, collapse it first
+                                    if (isMobile && isGroupSelectorExpanded) {
+                                        setIsGroupSelectorExpanded(false);
+                                        // Add a small delay before changing the mode
+                                        setTimeout(() => {
+                                            setSelectedGroup(selectedGroup === 'extreme' ? 'web' : 'extreme');
+                                            // Show toast notification on mobile devices
+                                            const newMode = selectedGroup === 'extreme' ? 'Web Search' : 'Extreme Mode';
+                                            const description = selectedGroup === 'extreme' 
+                                                ? 'Standard web search mode'
+                                                : 'Enhanced deep research mode';
+                                            toast(`Switched to ${newMode}: ${description}`, {
+                                                duration: 2000,
+                                            });
+                                        }, 100);
+                                    } else {
+                                        setSelectedGroup(selectedGroup === 'extreme' ? 'web' : 'extreme');
+                                        // Show toast notification on mobile devices
+                                        if (isMobile) {
+                                            const newMode = selectedGroup === 'extreme' ? 'Web Search' : 'Extreme Mode';
+                                            const description = selectedGroup === 'extreme' 
+                                                ? 'Standard web search mode'
+                                                : 'Enhanced deep research mode';
+                                            toast(`Switched to ${newMode}: ${description}`, {
+                                                duration: 2000,
+                                            });
+                                        }
                                     }
                                 }}
                                 className={cn(
                                     "flex items-center gap-2 p-2 sm:px-3 h-8",
                                     "rounded-full transition-all duration-300",
                                     "hover:shadow-md",
+                                    "relative z-[55]", // Increased z-index but below action buttons
                                     selectedGroup === 'extreme'
                                         ? "bg-gradient-to-r from-purple-500 to-indigo-600 text-white dark:from-purple-700 dark:to-indigo-800 dark:text-white border border-purple-400 dark:border-purple-700 shadow-md"
                                         : "bg-gradient-to-r from-purple-50 to-indigo-50 text-purple-800 dark:from-purple-900/30 dark:to-indigo-900/30 dark:text-purple-200 hover:from-purple-100 hover:to-indigo-100 dark:hover:from-purple-800/40 dark:hover:to-indigo-800/40 border border-purple-200 dark:border-purple-800/50",
@@ -1332,68 +1417,61 @@ const FormComponent: React.FC<FormComponentProps> = ({
                                 <Mountain className="h-3.5 w-3.5" />
                                 <span className="hidden sm:block text-xs font-medium">Extreme</span>
                             </button>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 z-[60] flex-shrink-0 ml-auto">
+                                {hasVisionSupport(selectedModel) && (
+                                    <Button
+                                        className="rounded-full p-1.5 h-8 w-8 bg-muted dark:bg-muted text-foreground/80 dark:text-foreground/80 hover:bg-muted/80 dark:hover:bg-muted/80 z-[60] border border-border/60 dark:border-border/40 transition-all duration-200 shadow-sm"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            // If group selector is expanded on mobile, collapse it first
+                                            if (isMobile && isGroupSelectorExpanded) {
+                                                setIsGroupSelectorExpanded(false);
+                                            }
+                                            triggerFileInput();
+                                        }}
+                                        variant="outline"
+                                        disabled={isProcessing}
+                                    >
+                                        <Upload className="h-3.5 w-3.5" />
+                                    </Button>
+                                )}
+
+                                {isProcessing ? (
+                                    <Button
+                                        className="rounded-full p-1.5 h-8 w-8 z-[60] bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-all duration-200 shadow-sm"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            stop();
+                                        }}
+                                    >
+                                        <X className="h-3.5 w-3.5" />
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        className="rounded-full p-1.5 h-8 w-8 z-[60] bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white transition-all duration-200 shadow-sm hover:shadow-md"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            // If group selector is expanded on mobile, collapse it first
+                                            if (isMobile && isGroupSelectorExpanded) {
+                                                setIsGroupSelectorExpanded(false);
+                                                // Add a small delay before submitting
+                                                setTimeout(() => {
+                                                    handleSubmit(event);
+                                                }, 100);
+                                            } else {
+                                                handleSubmit(event);
+                                            }
+                                        }}
+                                        disabled={isProcessing || input.trim().length === 0}
+                                    >
+                                        <svg className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                    </Button>
+                                )}
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 z-20">
-                        {hasVisionSupport(selectedModel) && (
-                            <Button
-                                className="rounded-full p-1.5 h-8 w-8 bg-muted dark:bg-muted text-foreground/80 dark:text-foreground/80 hover:bg-muted/80 dark:hover:bg-muted/80 z-20 border border-border/60 dark:border-border/40 transition-all duration-200"
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    // If group selector is expanded on mobile, collapse it first
-                                    if (isMobile && isGroupSelectorExpanded) {
-                                        setIsGroupSelectorExpanded(false);
-                                    }
-                                    triggerFileInput();
-                                }}
-                                variant="outline"
-                                disabled={isProcessing}
-                            >
-                                <PaperclipIcon size={14} />
-                            </Button>
-                        )}
-
-                        {isProcessing ? (
-                            <Button
-                                className="rounded-full p-1.5 h-8 w-8 z-20 bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-all duration-200 shadow-sm"
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    stop();
-                                }}
-                                variant="destructive"
-                            >
-                                <StopIcon size={14} />
-                            </Button>
-                        ) : (
-                            <Button
-                                className="rounded-full p-1.5 h-8 w-8 z-20 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white transition-all duration-200 shadow-sm hover:shadow-md"
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    // If group selector is expanded on mobile, collapse it first
-                                    if (isMobile && isGroupSelectorExpanded) {
-                                        setIsGroupSelectorExpanded(false);
-                                        // Add a small delay to allow the UI to update before submitting
-                                        setTimeout(() => {
-                                            submitForm();
-                                        }, 100);
-                                    } else {
-                                        submitForm();
-                                    }
-                                }}
-                                disabled={
-                                    input.length === 0 && attachments.length === 0 || 
-                                    uploadQueue.length > 0 || 
-                                    status !== 'ready' || 
-                                    (userCredits !== undefined && userCredits !== null && userCredits <= 0)
-                                }
-                                title={userCredits !== undefined && userCredits !== null && userCredits <= 0 ? 
-                                    "You don't have enough credits to perform this search" : 
-                                    ""}
-                            >
-                                <ArrowUpIcon size={14} />
-                            </Button>
-                        )}
                     </div>
                 </div>
             </div>
