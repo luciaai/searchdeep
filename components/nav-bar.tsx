@@ -97,7 +97,8 @@ export function NavBar() {
         "animate-gradient-background"
       )}
     >
-      <div className="flex items-center gap-2 group/nav">
+      {/* Left section - no logo, only buttons */}
+      <div className="flex items-center">
         <div className="flex space-x-2">
           <Button
             type="button"
@@ -141,8 +142,6 @@ export function NavBar() {
             </span>
           </Button>
         </div>
-        
-        {/* Brand text removed as requested */}
       </div>
 
       {/* Empty div to maintain layout balance */}
