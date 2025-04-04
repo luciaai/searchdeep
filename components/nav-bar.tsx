@@ -125,7 +125,7 @@ export function NavBar() {
           >
             <Plus size={18} className="group-hover:rotate-90 transition-all" />
             <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
-              New Search
+              New
             </span>
           </Button>
           
