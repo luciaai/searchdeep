@@ -202,7 +202,7 @@ export default function FAQPage() {
                     <li>Creates custom AI-generated visuals</li>
                     <li>Images are not from websites and cannot be clicked through</li>
                     <li>Great for visual inspiration and concepts</li>
-                    <li>Each image includes a clear "AI Generated" label</li>
+                    <li>Each image includes a clear &quot;AI Generated&quot; label</li>
                   </ul>
                   
                   <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800 mt-3">
@@ -212,7 +212,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-indigo-100 dark:bg-indigo-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "Mountain lake at sunset" will generate AI images of mountain lakes at sunset, not search results from websites.
+                        <span className="font-medium">Example:</span> &quot;Mountain lake at sunset&quot; will generate AI images of mountain lakes at sunset, not search results from websites.
                       </p>
                     </div>
                   </div>
@@ -243,7 +243,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-blue-100 dark:bg-blue-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "What are the best practices for sustainable gardening?" will search across gardening websites, environmental resources, and expert advice to provide a comprehensive answer with source links.
+                        <span className="font-medium">Example:</span> &quot;What are the best practices for sustainable gardening?&quot; will search across gardening websites, environmental resources, and expert advice to provide a comprehensive answer with source links.
                       </p>
                     </div>
                   </div>
@@ -276,7 +276,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-green-100 dark:bg-green-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "What are the latest developments in renewable energy policy?" will return recent news articles and press releases about policy changes, focusing on content published within the last few days or weeks.
+                        <span className="font-medium">Example:</span> &quot;What are the latest developments in renewable energy policy?&quot; will return recent news articles and press releases about policy changes, focusing on content published within the last few days or weeks.
                       </p>
                     </div>
                   </div>
@@ -309,7 +309,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-purple-100 dark:bg-purple-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "Remember that my project deadline is May 15th" or "Save this information about renewable energy sources." Later, you can ask "What's my project deadline?" or "What did I save about renewable energy?"
+                        <span className="font-medium">Example:</span> &quot;Remember that my project deadline is May 15th&quot; or &quot;Save this information about renewable energy sources.&quot; Later, you can ask &quot;What&apos;s my project deadline?&quot; or &quot;What did I save about renewable energy?&quot;
                       </p>
                     </div>
                   </div>
@@ -317,7 +317,7 @@ export default function FAQPage() {
                   <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-100 dark:border-purple-800 mt-3">
                     <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">Managing Your Memories</p>
                     <p className="text-xs text-slate-700 dark:text-slate-300">
-                      <span className="font-medium">To delete a memory:</span> Ask Ziq to "forget" or "delete" specific information. For example, "Please forget what I told you about [topic]" or "Delete my memory about [specific information]." You can also manage your memories by asking to "show all my memories" and then selecting which ones to remove.
+                      <span className="font-medium">To delete a memory:</span> Ask Ziq to &quot;forget&quot; or &quot;delete&quot; specific information. For example, &quot;Please forget what I told you about [topic]&quot; or &quot;Delete my memory about [specific information].&quot; You can also manage your memories by asking to &quot;show all my memories&quot; and then selecting which ones to remove.
                     </p>
                   </div>
                 </div>
