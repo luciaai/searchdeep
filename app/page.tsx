@@ -1143,17 +1143,70 @@ const HomeContent = () => {
         return -1;
     }, [messages]);
 
+    // Get window width for responsive behavior
+    const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 0);
+    
+    useEffect(() => {
+        // Function to update window width
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+        
+        // Set up resize listener
+        if (typeof window !== 'undefined') {
+            setWindowWidth(window.innerWidth);
+            window.addEventListener('resize', handleResize);
+        }
+        
+        // Clean up
+        return () => {
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('resize', handleResize);
+            }
+        };
+    }, []);
+    
     useEffect(() => {
         // Reset manual scroll when streaming starts
         if (status === 'streaming') {
             setHasManuallyScrolled(false);
-            // Initial scroll to bottom when streaming starts
+            
+            // Different scroll behavior for mobile vs desktop
+            const isMobile = windowWidth < 768;
+            
             if (bottomRef.current) {
                 isAutoScrollingRef.current = true;
-                bottomRef.current.scrollIntoView({ behavior: "smooth" });
+                
+                if (isMobile) {
+                    // Mobile specific scrolling - more aggressive with no animation
+                    // Use a fixed position first to get away from the form
+                    window.scrollTo(0, 300);
+                    
+                    // Then schedule several attempts to ensure the scroll happens
+                    setTimeout(() => {
+                        if (bottomRef.current) {
+                            bottomRef.current.scrollIntoView({ behavior: "auto", block: "start" });
+                        }
+                    }, 300);
+                    
+                    setTimeout(() => {
+                        if (bottomRef.current) {
+                            bottomRef.current.scrollIntoView({ behavior: "auto", block: "start" });
+                        }
+                    }, 1000);
+                    
+                    setTimeout(() => {
+                        if (bottomRef.current) {
+                            bottomRef.current.scrollIntoView({ behavior: "auto", block: "start" });
+                        }
+                    }, 2000);
+                } else {
+                    // Desktop behavior - smooth scrolling works well
+                    bottomRef.current.scrollIntoView({ behavior: "smooth" });
+                }
             }
         }
-    }, [status]);
+    }, [status, windowWidth]);
 
     useEffect(() => {
         let scrollTimeout: NodeJS.Timeout;
@@ -1177,14 +1230,31 @@ const HomeContent = () => {
 
         // Auto-scroll on new content if we haven't manually scrolled
         if (status === 'streaming' && !hasManuallyScrolled && bottomRef.current) {
+            const isMobile = windowWidth < 768;
+            
             scrollTimeout = setTimeout(() => {
                 isAutoScrollingRef.current = true;
-                bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+                
+                if (isMobile) {
+                    // For mobile - use immediate scrolling without animation
+                    bottomRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+                    
+                    // Try multiple times to ensure it works
+                    setTimeout(() => {
+                        if (bottomRef.current) {
+                            window.scrollTo(0, document.body.scrollHeight);
+                        }
+                    }, 500);
+                } else {
+                    // For desktop - smooth scrolling works well
+                    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+                }
+                
                 // Reset auto-scroll flag after animation
                 setTimeout(() => {
                     isAutoScrollingRef.current = false;
-                }, 100);
-            }, 100);
+                }, isMobile ? 50 : 100);
+            }, isMobile ? 50 : 100);
         }
 
         return () => {
@@ -1846,7 +1916,10 @@ const HomeContent = () => {
 
                     <div className="space-y-4 sm:space-y-6 mb-32">
                         {memoizedMessages.map((message, index) => (
-                            <div key={index} className={`${
+                            <div 
+                                key={index} 
+                                data-message={`message-${index}`}
+                                className={`${
                                 // Add border only if this is an assistant message AND there's a next message
                                 message.role === 'assistant' && index < memoizedMessages.length - 1 
                                     ? '!mb-12 border-b border-neutral-200 dark:border-neutral-800' 
@@ -1858,6 +1931,7 @@ const HomeContent = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.5 }}
                                         className="mb-4 px-0"
+                                        data-message-content="user"
                                     >
                                         <div className="flex-grow min-w-0">
                                             {isEditingMessage && editingMessageIndex === index ? (
@@ -1973,7 +2047,7 @@ const HomeContent = () => {
                                 )}
 
                                 {message.role === 'assistant' && (
-                                    <>
+                                    <div data-message-content="assistant">
                                         {message.parts?.map((part, partIndex) =>
                                             renderPart(
                                                 part as MessagePart,
@@ -1984,7 +2058,6 @@ const HomeContent = () => {
                                             )
                                         )}
                                         
-                  
                                         {index === memoizedMessages.length - 1 && suggestedQuestions.length > 0 && (
                                             <motion.div
                                                 initial={{ opacity: 0, y: 20 }}
@@ -2013,7 +2086,7 @@ const HomeContent = () => {
                                                 </div>
                                             </motion.div>
                                         )}
-                                    </>
+                                    </div>
                                 )}
                             </div>
                         ))}
