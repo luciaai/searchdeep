@@ -41,7 +41,7 @@ import {
 import WeatherChart from '@/components/weather-chart';
 import { cn, getUserId, SearchGroupId } from '@/lib/utils';
 import { Wave } from "@foobar404/wave";
-import { CheckCircle, CreditCard, CurrencyDollar as DollarIcon, Flag, History, Info, Memory, RoadHorizon, SoccerBall, StopCircle as StopIcon, TennisBall, XLogo } from '@phosphor-icons/react';
+import { CheckCircle, CreditCard, DollarSign as DollarIcon, Flag, Clock as History, Info, Cpu as Memory, Road as RoadHorizon, Dices as SoccerBall, Square as StopIcon, CircleDot as TennisBall, Twitter as XLogo } from 'lucide-react';
 import { TextIcon } from '@radix-ui/react-icons';
 import { ToolInvocation } from 'ai';
 import { useChat, UseChatOptions } from '@ai-sdk/react';
