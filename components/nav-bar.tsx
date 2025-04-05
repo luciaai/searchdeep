@@ -99,7 +99,7 @@ export function NavBar() {
     >
       {/* Left section - no logo, only buttons */}
       <div className="flex items-center">
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 relative z-[70]">
           <Button
             type="button"
             variant={"default"}
@@ -125,7 +125,7 @@ export function NavBar() {
             }}
           >
             <Plus size={18} className="group-hover:rotate-90 transition-all" />
-            <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
+            <span className="text-sm ml-2 md:opacity-0 md:w-0 md:group-hover:opacity-100 md:group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
               New
             </span>
           </Button>

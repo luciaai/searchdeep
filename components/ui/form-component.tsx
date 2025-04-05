@@ -573,7 +573,7 @@ const ToolbarButton = ({ group, isSelected, onClick }: ToolbarButtonProps) => {
     
     const commonClassNames = cn(
         "relative flex items-center justify-center",
-        "size-8",
+        isMobile ? "size-6" : "size-8",
         "rounded-full",
         "transition-all duration-300",
         "shadow-sm hover:shadow-md",
@@ -594,91 +594,19 @@ const ToolbarButton = ({ group, isSelected, onClick }: ToolbarButtonProps) => {
     };
 
     // Create button for both mobile and desktop
-    const buttonElement = isMobile ? (
-        <button
-            onClick={handleClick}
-            className={commonClassNames}
-            style={{ WebkitTapHighlightColor: 'transparent' }}
-        >
-            <Icon className="size-4" />
-        </button>
-    ) : (
+    const buttonElement = (
         <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleClick}
             className={commonClassNames}
+            style={{ WebkitTapHighlightColor: 'transparent' }}
         >
             <Icon className="size-4" />
         </motion.button>
     );
 
-    // Create card content for both mobile and desktop
-    const cardContent = (
-        <div className="space-y-0.5">
-            <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                {group.name}
-            </h4>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-normal">
-                {group.description}
-            </p>
-        </div>
-    );
-
-    // For mobile, use a Popover component that toggles on click
-    if (isMobile) {
-        return (
-            <Popover>
-                <PopoverTrigger asChild>
-                    {buttonElement}
-                </PopoverTrigger>
-                <PopoverContent
-                    side="bottom"
-                    align="center"
-                    sideOffset={6}
-                    className={cn(
-                        "z-[100]",
-                        "w-44 p-2 rounded-lg",
-                        "border border-neutral-200 dark:border-neutral-700",
-                        "bg-white dark:bg-neutral-800 shadow-md",
-                        "transition-opacity duration-300"
-                    )}
-                >
-                    {cardContent}
-                </PopoverContent>
-            </Popover>
-        );
-    }
-
-    // For desktop, use HoverCard that shows on hover
-    return (
-        <HoverCard openDelay={100} closeDelay={50}>
-            <HoverCardTrigger asChild>
-                {buttonElement}
-            </HoverCardTrigger>
-            <HoverCardContent
-                side="bottom"
-                align="center"
-                sideOffset={6}
-                className={cn(
-                    "z-[100]",
-                    "w-44 p-2 rounded-lg",
-                    "border border-neutral-200 dark:border-neutral-700",
-                    "bg-white dark:bg-neutral-800 shadow-md",
-                    "transition-opacity duration-300"
-                )}
-            >
-                <div className="space-y-0.5">
-                    <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                        {group.name}
-                    </h4>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-normal">
-                        {group.description}
-                    </p>
-                </div>
-            </HoverCardContent>
-        </HoverCard>
-    );
+    return buttonElement;
 };
 
 interface SelectionContentProps {
@@ -696,6 +624,15 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
     const expandTimeoutRef = useRef<NodeJS.Timeout>();
     const containerRef = useRef<HTMLDivElement>(null);
 
+    // Always start expanded on mobile for better visibility
+    useEffect(() => {
+        if (isMobile) {
+            setIsExpanded(true);
+        }
+    }, [isMobile]);
+    
+
+    
     // Notify parent component when expansion state changes
     useEffect(() => {
         if (onExpandChange) {
@@ -751,16 +688,17 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
             layout={false}
             initial={false}
             animate={{
-                width: isExpanded && !isProcessing ? "auto" : "30px",
-                gap: isExpanded && !isProcessing ? "0.5rem" : 0,
-                paddingRight: isExpanded && !isProcessing ? "0.25rem" : 0,
+                width: (isExpanded && !isProcessing) || isMobile ? "auto" : "30px",
+                gap: (isExpanded && !isProcessing) || isMobile ? (isMobile ? "0.25rem" : "0.5rem") : 0,
+                paddingRight: (isExpanded && !isProcessing) || isMobile ? "0.25rem" : 0,
             }}
             transition={{
                 duration: 0.2,
                 ease: "easeInOut",
             }}
             className={cn(
-                "inline-flex items-center min-w-[38px] p-0.5",
+                "inline-flex items-center p-0.5",
+                isMobile ? "min-w-[120px] max-w-[240px] overflow-x-auto" : "min-w-[38px]",
                 "rounded-full border border-neutral-200 dark:border-neutral-800",
                 "bg-white dark:bg-neutral-900 shadow-sm overflow-visible",
                 "relative z-10",
@@ -778,16 +716,17 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
         >
             <AnimatePresence initial={false}>
                 {searchGroups.filter(group => group.show).map((group, index, filteredGroups) => {
-                    const showItem = (isExpanded && !isProcessing) || selectedGroup === group.id;
+                    // On mobile, always show all items. On desktop, follow normal behavior
+                    const showItem = isMobile || (isExpanded && !isProcessing) || selectedGroup === group.id;
                     const isLastItem = index === filteredGroups.length - 1;
                     return (
                         <motion.div
                             key={group.id}
                             layout={false}
                             animate={{
-                                width: showItem ? "28px" : 0,
+                                width: showItem ? (isMobile ? "24px" : "28px") : 0,
                                 opacity: showItem ? 1 : 0,
-                                marginRight: (showItem && isLastItem && isExpanded) ? "2px" : 0
+                                marginRight: showItem ? (isMobile ? "1px" : "2px") : 0
                             }}
                             transition={{
                                 duration: 0.15,
@@ -798,11 +737,46 @@ const SelectionContent = ({ selectedGroup, onGroupSelect, status, onExpandChange
                             )}
                             style={{ margin: 0 }}
                         >
-                            <ToolbarButton
-                                group={group}
-                                isSelected={selectedGroup === group.id}
-                                onClick={() => !isProcessing && handleGroupSelection(group)}
-                            />
+                            <HoverCard openDelay={100} closeDelay={50}>
+                                <HoverCardTrigger asChild>
+                                    <div>
+                                        <ToolbarButton
+                                            group={group}
+                                            isSelected={selectedGroup === group.id}
+                                            onClick={() => {
+                                                if (!isProcessing) {
+                                                    handleGroupSelection(group);
+                                                    // Collapse the group selector on mobile after selection
+                                                    if (isMobile) {
+                                                        setIsExpanded(false);
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </HoverCardTrigger>
+                                <HoverCardContent
+                                    side="bottom"
+                                    align="center"
+                                    sideOffset={6}
+                                    className={cn(
+                                        "z-[100]",
+                                        "w-44 p-2 rounded-lg",
+                                        "border border-neutral-200 dark:border-neutral-700",
+                                        "bg-white dark:bg-neutral-800 shadow-md",
+                                        "transition-opacity duration-300"
+                                    )}
+                                >
+                                    <div className="space-y-0.5">
+                                        <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                            {group.name}
+                                        </h4>
+                                        <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-normal">
+                                            {group.description}
+                                        </p>
+                                    </div>
+                                </HoverCardContent>
+                            </HoverCard>
                         </motion.div>
                     );
                 })}
@@ -1077,6 +1051,42 @@ const FormComponent: React.FC<FormComponentProps> = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [status]);
 
+    // The simplest possible mobile scroll solution - just one effect with fixed positions
+    useEffect(() => {
+        // Only care about mobile devices
+        if (width && width < 768) {
+            let timerId: number;
+          
+            // When streaming status is detected (search results coming in)
+            if (status === 'streaming') {
+                // Handle scrolling with fixed timeouts and positions
+                timerId = window.setTimeout(() => {
+                    // Just force scroll to a reasonable position
+                    // This location should work on most mobile devices
+                    window.scrollTo(0, 400);
+                    
+                    // Try once more with a bigger scroll after everything has rendered
+                    window.setTimeout(() => {
+                        window.scrollTo(0, 650);
+                    }, 1500);
+                }, 300);
+            }
+          
+            // Clean up timeout
+            return () => {
+                window.clearTimeout(timerId);
+            };
+        }
+    }, [status, width]);
+    
+    // Add an additional scroll on mobile form submission
+    const handleMobileScroll = useCallback(() => {
+        if (width && width < 768) {
+            // First scroll to help user see something is happening
+            window.scrollTo(0, 100);
+        }
+    }, [width]);
+
     const onSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         event.stopPropagation();
@@ -1095,6 +1105,9 @@ const FormComponent: React.FC<FormComponentProps> = ({
         if (input.trim() || attachments.length > 0) {
             setHasSubmitted(true);
             lastSubmittedQueryRef.current = input.trim();
+            
+            // Immediately scroll a bit on mobile to provide feedback
+            handleMobileScroll();
 
             handleSubmit(event, {
                 experimental_attachments: attachments,
@@ -1107,7 +1120,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
         } else {
             toast.error("Please enter a search query or attach an image.");
         }
-    }, [input, attachments, handleSubmit, setAttachments, fileInputRef, lastSubmittedQueryRef, status]);
+    }, [input, attachments, handleSubmit, setAttachments, fileInputRef, lastSubmittedQueryRef, status, handleMobileScroll]);
 
     const submitForm = useCallback(() => {
         onSubmit({ preventDefault: () => { }, stopPropagation: () => { } } as React.FormEvent<HTMLFormElement>);
@@ -1116,6 +1129,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
         if (width && width > 768) {
             inputRef.current?.focus();
         }
+        // Note: Mobile scrolling is now handled by the useEffect that watches message changes
     }, [onSubmit, resetSuggestedQuestions, width, inputRef]);
 
     const triggerFileInput = useCallback(() => {
@@ -1237,7 +1251,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                         isFocused ? "!border-primary/60 dark:!border-primary/60" : "",
                         "text-foreground dark:text-foreground",
                         "focus:!ring-1 focus:!ring-primary/40 dark:focus:!ring-primary/40",
-                        "px-4 py-4 pb-16",
+                        isMobile ? "px-4 py-4 pb-20" : "px-4 py-4 pb-16",
                         "overflow-y-auto",
                         "touch-manipulation",
                         "transition-all duration-200"
@@ -1261,16 +1275,17 @@ const FormComponent: React.FC<FormComponentProps> = ({
                 )}
 
                 <div className={cn(
-                    "absolute bottom-0 inset-x-0 flex justify-between items-center p-2 rounded-b-lg",
+                    "absolute bottom-0 inset-x-0 flex justify-between items-center rounded-b-lg",
                     "bg-card dark:bg-card",
-                    "!border !border-t-0 !border-border/60 dark:!border-border/40",
-                    isFocused ? "!border-primary/60 dark:!border-primary/60" : "",
+                    "border-t-0", /* removed border styling that was creating the divider line */
+                    isFocused ? "border-primary/60 dark:border-primary/60" : "",
                     isProcessing ? "!opacity-20 !cursor-not-allowed" : "",
-                    "transition-all duration-200"
+                    "transition-all duration-200",
+                    isMobile ? "p-1.5" : "p-2"
                 )}>
                     <div className={cn(
-                        "flex items-center gap-2",
-                        isMobile && "overflow-visible"
+                        "flex items-center",
+                        isMobile ? "gap-1 flex-wrap max-w-[70%]" : "gap-2"
                     )}>
                         <div className={cn(
                             "transition-all duration-100",
@@ -1335,10 +1350,10 @@ const FormComponent: React.FC<FormComponentProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 z-20">
+                    <div className="flex items-center gap-1 z-20">
                         {hasVisionSupport(selectedModel) && (
                             <Button
-                                className="rounded-full p-1.5 h-8 w-8 bg-muted dark:bg-muted text-foreground/80 dark:text-foreground/80 hover:bg-muted/80 dark:hover:bg-muted/80 z-20 border border-border/60 dark:border-border/40 transition-all duration-200"
+                                className="rounded-full p-1 h-7 w-7 bg-muted dark:bg-muted text-foreground/80 dark:text-foreground/80 hover:bg-muted/80 dark:hover:bg-muted/80 z-20 border border-border/60 dark:border-border/40 transition-all duration-200"
                                 onClick={(event) => {
                                     event.preventDefault();
                                     // If group selector is expanded on mobile, collapse it first
@@ -1367,7 +1382,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                             </Button>
                         ) : (
                             <Button
-                                className="rounded-full p-1.5 h-8 w-8 z-20 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white transition-all duration-200 shadow-sm hover:shadow-md"
+                                className="rounded-full p-1 h-8 w-8 z-20 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white transition-all duration-200 shadow-sm hover:shadow-md"
                                 onClick={(event) => {
                                     event.preventDefault();
                                     // If group selector is expanded on mobile, collapse it first
