@@ -348,7 +348,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-amber-100 dark:bg-amber-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "What are the recent advances in quantum computing?" will prioritize scholarly articles, research papers, and academic publications with proper citations in academic format.
+                        <span className="font-medium">Example:</span> &quot;What are the recent advances in quantum computing?&quot; will prioritize scholarly articles, research papers, and academic publications with proper citations in academic format.
                       </p>
                     </div>
                   </div>
@@ -380,7 +380,7 @@ export default function FAQPage() {
                     </p>
                     <div className="mt-2 bg-rose-100 dark:bg-rose-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> "What are the best restaurants near me?" or "Where can I find hiking trails in my area?" will use your location to provide results specific to your geographic area.
+                        <span className="font-medium">Example:</span> &quot;What are the best restaurants near me?&quot; or &quot;Where can I find hiking trails in my area?&quot; will use your location to provide results specific to your geographic area.
                       </p>
                     </div>
                   </div>
@@ -399,7 +399,7 @@ export default function FAQPage() {
                 </p>
                 
                 <ul className="list-disc pl-6 text-sm space-y-1">
-                  <li>Uses advanced "reason_search" technology</li>
+                  <li>Uses advanced &quot;reason_search&quot; technology</li>
                   <li>Searches web and academic sources simultaneously</li>
                   <li>Provides comprehensive inline citations</li>
                   <li>Supports LaTeX for mathematical equations</li>
@@ -412,7 +412,7 @@ export default function FAQPage() {
                   </p>
                   <div className="mt-2 bg-indigo-100 dark:bg-indigo-800/30 p-2 rounded">
                     <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                      <span className="font-medium">Example:</span> "Explain the implications of quantum computing on modern cryptography" will perform deep research across academic papers, technical blogs, and expert analyses, providing a comprehensive answer with detailed citations and potentially including mathematical formulas in LaTeX format.
+                      <span className="font-medium">Example:</span> &quot;Explain the implications of quantum computing on modern cryptography&quot; will perform deep research across academic papers, technical blogs, and expert analyses, providing a comprehensive answer with detailed citations and potentially including mathematical formulas in LaTeX format.
                     </p>
                   </div>
                 </div>
@@ -438,7 +438,7 @@ export default function FAQPage() {
                   <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
                     <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">Sign In</p>
                     <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
-                      <li>Click "Sign In" in the top right corner</li>
+                      <li>Click &quot;Sign In&quot; in the top right corner</li>
                       <li>Use your Google account for quick access</li>
                       <li>Or sign in with your email and password</li>
                     </ul>
@@ -447,8 +447,8 @@ export default function FAQPage() {
                   <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
                     <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">Create Account</p>
                     <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
-                      <li>Click "Sign In" in the top right corner</li>
-                      <li>Select "Create account" option</li>
+                      <li>Click &quot;Sign In&quot; in the top right corner</li>
+                      <li>Select &quot;Create account&quot; option</li>
                       <li>Follow the simple registration steps</li>
                     </ul>
                   </div>
@@ -468,7 +468,7 @@ export default function FAQPage() {
                   SEARCH HISTORY
                 </h4>
                 <p className="text-sm mb-3">
-                  Your search history is saved when you're signed in, allowing you to revisit and repeat previous searches. <span className="font-medium">Note:</span> Only your search queries are saved, not the search results or content. Use the Memory feature to save important content.
+                  Your search history is saved when you&apos;re signed in, allowing you to revisit and repeat previous searches. <span className="font-medium">Note:</span> Only your search queries are saved, not the search results or content. Use the Memory feature to save important content.
                 </p>
                 
                 <div className="flex items-start space-x-3 mb-3">
@@ -481,7 +481,7 @@ export default function FAQPage() {
                     <p className="text-sm mb-1 font-medium">Accessing Your History:</p>
                     <ol className="list-decimal pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
                       <li>Click the Info icon (ⓘ) in the top navigation bar</li>
-                      <li>Select "History" from the dropdown menu</li>
+                      <li>Select &quot;History&quot; from the dropdown menu</li>
                       <li>View a table of your past searches with options to repeat them</li>
                     </ol>
                   </div>
@@ -595,7 +595,7 @@ export default function FAQPage() {
                   FEEDBACK & SUPPORT
                 </h4>
                 <p className="text-sm mb-3">
-                  We're constantly improving Ziq based on user feedback. If you encounter any issues or have suggestions for new features,
+                  We&apos;re constantly improving Ziq based on user feedback. If you encounter any issues or have suggestions for new features,
                   please contact our support team.
                 </p>
                 

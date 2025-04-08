@@ -6,6 +6,8 @@ import { ChatRequestOptions, CreateMessage, Message } from 'ai';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
+import CopySearchButton from '../copy-search-button';
+import DownloadSearchButton from '../download-search-button';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 import useWindowSize from '@/hooks/use-window-size';
@@ -1351,6 +1353,18 @@ const FormComponent: React.FC<FormComponentProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1 z-20">
+                        {/* Save Search Options - Only show when there are messages and we're not processing */}
+                        {messages.length > 0 && !isProcessing && (
+                            <div className="flex gap-1">
+                                <CopySearchButton 
+                                    messages={messages}
+                                />
+                                <DownloadSearchButton 
+                                    messages={messages}
+                                />
+                            </div>
+                        )}
+                        
                         {hasVisionSupport(selectedModel) && (
                             <Button
                                 className="rounded-full p-1 h-7 w-7 bg-muted dark:bg-muted text-foreground/80 dark:text-foreground/80 hover:bg-muted/80 dark:hover:bg-muted/80 z-20 border border-border/60 dark:border-border/40 transition-all duration-200"
