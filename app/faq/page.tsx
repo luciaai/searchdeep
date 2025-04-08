@@ -565,7 +565,7 @@ export default function FAQPage() {
                   </div>
                   
                   <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-100 dark:border-purple-800">
-                    <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">What We Don't Store</p>
+                    <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">What We Don&apos;t Store</p>
                     <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
                       <li>Permanent search content</li>
                       <li>Personal browsing habits</li>

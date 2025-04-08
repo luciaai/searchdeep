@@ -1354,13 +1354,17 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
                     <div className="flex items-center gap-1 z-20">
                         {/* Save Search Options - Only show when there are messages and we're not processing */}
-                        {messages.length > 0 && !isProcessing && (
+                        {messages.length > 0 && (
                             <div className="flex gap-1">
                                 <CopySearchButton 
                                     messages={messages}
+                                    variant="secondary"
+                                    className="flex items-center px-2 py-1"
                                 />
                                 <DownloadSearchButton 
                                     messages={messages}
+                                    variant="secondary"
+                                    className="flex items-center px-2 py-1"
                                 />
                             </div>
                         )}
