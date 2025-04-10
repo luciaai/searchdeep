@@ -35,7 +35,7 @@ export async function createCheckoutSession(tierId: string, clerkId: string) {
         data: {
           id: clerkId, // Use clerkId as id to ensure uniqueness
           clerkId,
-          credits: Number(process.env.STARTING_CREDITS || 3),
+          credits: Number(process.env.STARTING_CREDITS || 5),
         },
       });
     }

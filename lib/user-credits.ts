@@ -4,7 +4,7 @@ import { getUserId } from './utils';
 import { SearchGroupId } from './utils';
 
 // Environment variable for starting credits
-const STARTING_CREDITS = Number(process.env.STARTING_CREDITS || 3);
+const STARTING_CREDITS = Number(process.env.STARTING_CREDITS || 5);
 
 /**
  * Get or create a user in the database
