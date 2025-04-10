@@ -120,19 +120,104 @@ function sanitizeUrl(url: string): string {
     return url.replace(/\s+/g, '%20');
 }
 
+/**
+ * Extracts a more useful source URL from an image URL
+ * - Handles various URL formats including those with referrers
+ * - Extracts actual webpage URLs from CDN/image server URLs when possible
+ */
+function extractSourceUrl(url: string): string {
+    try {
+        const parsedUrl = new URL(url);
+        
+        // Check for URLs that contain source/referrer information
+        const referrerParams = [
+            'url', 'source', 'src', 'referrer', 'ref', 'original', 'orig',
+            'from', 'destination', 'link', 'href', 'referer'
+        ];
+        
+        // Check query parameters for source URLs
+        for (const param of referrerParams) {
+            const sourceUrl = parsedUrl.searchParams.get(param);
+            if (sourceUrl && sourceUrl.startsWith('http')) {
+                try {
+                    // Validate that it's a proper URL
+                    new URL(sourceUrl);
+                    return sourceUrl;
+                } catch {
+                    // If parsing fails, continue to the next parameter
+                }
+            }
+        }
+        
+        // Handle common image CDNs and extract the source website when possible
+        const hostname = parsedUrl.hostname;
+        
+        // For Pinterest images, try to get the source pin URL
+        if (hostname.includes('pinterest')) {
+            const pathParts = parsedUrl.pathname.split('/');
+            if (pathParts.length > 2 && pathParts[1] === 'pin') {
+                return `https://www.pinterest.com/pin/${pathParts[2]}/`;
+            }
+        }
+        
+        // For image hosting services, try to extract the original page
+        if (hostname.includes('imgur.com')) {
+            const imgurId = parsedUrl.pathname.split('/').pop()?.split('.')[0];
+            if (imgurId) {
+                return `https://imgur.com/gallery/${imgurId}`;
+            }
+        }
+        
+        // For Google images, extract the original URL if available
+        if (hostname.includes('googleusercontent.com') || hostname.includes('gstatic.com')) {
+            // Try to find the original URL in the path
+            const pathMatch = parsedUrl.pathname.match(/proxy\/(.+)/);
+            if (pathMatch && pathMatch[1]) {
+                try {
+                    const decodedUrl = decodeURIComponent(pathMatch[1]);
+                    if (decodedUrl.startsWith('http')) {
+                        return decodedUrl;
+                    }
+                } catch {
+                    // If decoding fails, fall back to origin
+                }
+            }
+        }
+        
+        // Default to the origin (domain) if we couldn't extract a better source
+        return parsedUrl.origin;
+    } catch {
+        // If URL parsing fails, return the original URL
+        return url;
+    }
+}
+
 async function isValidImageUrl(url: string): Promise<boolean> {
     try {
+        // Use a simpler validation approach that's less likely to timeout or fail
+        // Check if the URL ends with a common image extension
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp'];
+        const lowercaseUrl = url.toLowerCase();
+        if (imageExtensions.some(ext => lowercaseUrl.endsWith(ext))) {
+            return true;
+        }
+        
+        // For URLs without extensions, do a quick HEAD request
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
+        const timeout = setTimeout(() => controller.abort(), 3000);
 
-        const response = await fetch(url, {
-            method: 'HEAD',
-            signal: controller.signal,
-        });
-
-        clearTimeout(timeout);
-
-        return response.ok && (response.headers.get('content-type')?.startsWith('image/') ?? false);
+        try {
+            const response = await fetch(url, {
+                method: 'HEAD',
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeout);
+            return response.ok && (response.headers.get('content-type')?.startsWith('image/') ?? false);
+        } catch {
+            // If the request fails, assume it's not a valid image
+            return false;
+        }
     } catch {
         return false;
     }
@@ -421,7 +506,9 @@ export async function POST(req: Request) {
                                                             ? {
                                                                 url: sanitizedUrl,
                                                                 description: description ?? '',
-                                                                sourceUrl: url.startsWith('http') ? new URL(url).origin : null,
+                                                                // Extract the full URL of the page containing the image, not just the domain
+                                                                // For image URLs that include a referrer or source page, use that instead of just the origin
+                                                                sourceUrl: url.startsWith('http') ? extractSourceUrl(url) : null,
                                                             }
                                                             : null;
                                                     },

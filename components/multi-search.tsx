@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 type SearchImage = {
     url: string;
     description: string;
+    sourceUrl: string | null;
 };
 
 type SearchResult = {
@@ -311,16 +312,16 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
 
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2 flex flex-col justify-between">
                             <p className="text-xs text-white line-clamp-2 break-all">
-                                {new URL(image.url).hostname}
+                                {image.sourceUrl ? new URL(image.sourceUrl).hostname : new URL(image.url).hostname}
                             </p>
                             <a 
-                                href={image.url} 
+                                href={image.sourceUrl || image.url} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-1 text-xs text-white hover:text-blue-300 transition-colors mt-auto self-end"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                Visit <ExternalLink className="h-3 w-3" />
+                                Visit Source <ExternalLink className="h-3 w-3" />
                             </a>
                         </div>
                         {!showAll && hasMore && index === displayImages.length - 1 && (
@@ -363,7 +364,7 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
 
                             <div className="absolute inset-0 flex items-center justify-center p-12 mt-[60px] mb-[60px]">
                                 <a 
-                                    href={images[selectedImage].url}
+                                    href={images[selectedImage].sourceUrl || images[selectedImage].url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full h-full flex items-center justify-center cursor-pointer"
@@ -415,13 +416,13 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                             >
                                 <div className="flex flex-col gap-1">
                                     <a 
-                                        href={images[selectedImage].url} 
+                                        href={images[selectedImage].sourceUrl || images[selectedImage].url} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
                                         className="flex items-center gap-1 text-sm text-white hover:text-blue-300 transition-colors group"
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <span className="break-all">{new URL(images[selectedImage].url).hostname}</span>
+                                        <span className="break-all">{images[selectedImage].sourceUrl ? new URL(images[selectedImage].sourceUrl).hostname : new URL(images[selectedImage].url).hostname}</span>
                                         <ExternalLink className="h-3 w-3 opacity-70 group-hover:opacity-100" />
                                     </a>
                                 </div>
@@ -458,7 +459,7 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
 
                             <div className="absolute inset-0 flex items-center justify-center p-12 mt-[60px] mb-[60px]">
                                 <a 
-                                    href={images[selectedImage].url}
+                                    href={images[selectedImage].sourceUrl || images[selectedImage].url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full h-full flex items-center justify-center cursor-pointer"
@@ -510,13 +511,13 @@ const ImageGrid = ({ images, showAll = false }: ImageGridProps) => {
                             >
                                 <div className="flex flex-col gap-1">
                                     <a 
-                                        href={images[selectedImage].url} 
+                                        href={images[selectedImage].sourceUrl || images[selectedImage].url} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
                                         className="flex items-center gap-1 text-sm text-white hover:text-blue-300 transition-colors group"
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <span className="break-all">{new URL(images[selectedImage].url).hostname}</span>
+                                        <span className="break-all">{images[selectedImage].sourceUrl ? new URL(images[selectedImage].sourceUrl).hostname : new URL(images[selectedImage].url).hostname}</span>
                                         <ExternalLink className="h-3 w-3 opacity-70 group-hover:opacity-100" />
                                     </a>
                                 </div>
