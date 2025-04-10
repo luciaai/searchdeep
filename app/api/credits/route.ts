@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { ensureFreeUserCredits } from '@/lib/ensure-free-credits';
 
 // Prevent static generation for this route
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    // Ensure free users have at least 5 credits (runs in background)
+    ensureFreeUserCredits().catch(error => 
+      console.error('Error ensuring free credits:', error)
+    );
+    
     // Get the authenticated user
     const session = await auth();
     const userId = session?.userId;
@@ -26,7 +32,7 @@ export async function GET(req: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { credits: Number(process.env.STARTING_CREDITS || 3) },
+        { credits: Number(process.env.STARTING_CREDITS || 5) },
         { status: 200 }
       );
     }
