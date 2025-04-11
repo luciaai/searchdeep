@@ -55,7 +55,7 @@ export default function FAQPage() {
           </div>
           <div className="pl-14"> {/* Align with the larger icon */}
             <p className="mb-4 text-slate-700 dark:text-slate-300 leading-relaxed">
-              Ziq is an AI-powered search engine designed to help you find accurate information quickly. 
+              Ziq (pronounced "Zeek", meaning "seek") is an AI-powered search engine designed to help you find accurate information quickly. 
               It combines web search capabilities with advanced AI to provide comprehensive answers to your questions.
             </p>
             <p className="text-slate-700 dark:text-slate-300">
@@ -65,6 +65,26 @@ export default function FAQPage() {
         </div>
 
         <Accordion type="single" collapsible className="w-full space-y-4">
+          <AccordionItem value="item-0" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">How is Ziq pronounced?</AccordionTrigger>
+            <AccordionContent>
+              <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
+                <h4 className="font-bold text-sm flex items-center mb-3 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 text-white px-3 py-1.5 rounded-full inline-flex max-w-fit">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                  </svg>
+                  PRONUNCIATION
+                </h4>
+                <p className="text-sm mb-2">Ziq is pronounced "Zeek" (rhymes with "seek").</p>
+                <div className="mt-3 p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-100 dark:border-purple-800">
+                  <p className="text-sm text-purple-700 dark:text-purple-300">
+                    <span className="font-medium">Name Origin:</span> The name Ziq was chosen because it means "seek" – reflecting our mission to help you seek and find accurate information quickly and efficiently.
+                  </p>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
           <AccordionItem value="item-1" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
             <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">How do I start a new search?</AccordionTrigger>
             <AccordionContent>
@@ -102,7 +122,7 @@ export default function FAQPage() {
                   CREDIT SYSTEM
                 </h4>
                 <p className="text-sm mb-3">
-                  Each search you perform uses one credit from your account. Your credit balance is displayed in the top navigation bar.
+                  Each search you perform uses one credit from your account. Your credit balance is displayed in the top navigation bar. Credits properly decrement after each search and your remaining balance is saved between sessions.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
@@ -111,6 +131,7 @@ export default function FAQPage() {
                     <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
                       <li>Limited to 5 credits per month</li>
                       <li>Credits reset at the start of each month</li>
+                      <li>Credits persist across login sessions</li>
                       <li>Access to all search types</li>
                     </ul>
                   </div>
@@ -119,6 +140,7 @@ export default function FAQPage() {
                     <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">Pro Account</p>
                     <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
                       <li>30 credits per month ($10/month)</li>
+                      <li>Credits persist across login sessions</li>
                       <li>Priority support</li>
                       <li>Full access to all search features</li>
                     </ul>
@@ -458,6 +480,51 @@ export default function FAQPage() {
           </AccordionItem>
 
           <AccordionItem value="item-6" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">How do I download or copy my search results?</AccordionTrigger>
+            <AccordionContent>
+              <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
+                <h4 className="font-bold text-sm flex items-center mb-3 bg-gradient-to-r from-blue-600 to-emerald-600 dark:from-blue-400 dark:to-emerald-400 text-white px-3 py-1.5 rounded-full inline-flex max-w-fit">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                  SAVING YOUR RESULTS
+                </h4>
+                <p className="text-sm mb-3">
+                  Ziq provides multiple ways to save and share your search results:
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-800">
+                    <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300 mb-1">Download Feature</p>
+                    <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
+                      <li>Click the download icon in the top right</li>
+                      <li>Saves the entire conversation as a text file</li>
+                      <li>Includes all AI responses and citations</li>
+                      <li>Does not include the top scroll website list</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-800">
+                    <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300 mb-1">Copy Feature</p>
+                    <ul className="list-disc pl-4 text-sm space-y-0.5 text-slate-700 dark:text-slate-300">
+                      <li>Click the copy icon next to any AI response</li>
+                      <li>Copies only that specific response to clipboard</li>
+                      <li>Includes citations from that response</li>
+                      <li>Ready to paste into documents or emails</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    <span className="font-medium">Pro tip:</span> If you need to save the complete list of websites from the top scroll area, you can manually select and copy them before downloading the conversation. This ensures you have access to all discovered sources for your research.
+                  </p>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-7" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
             <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">Can I see my search history?</AccordionTrigger>
             <AccordionContent>
               <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
@@ -530,7 +597,13 @@ export default function FAQPage() {
                   </div>
                 </div>
                 
-                <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-100 dark:border-yellow-800">
+                <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-amber-800 mt-3">
+                  <p className="text-xs text-amber-700 dark:text-amber-300">
+                    <span className="font-medium">How Credits Work:</span> Credits are deducted immediately after each search. Your remaining credits are saved and will be available when you log back in. Credits do not reset until the start of each month, ensuring you get full use of your monthly allocation.
+                  </p>
+                </div>
+                
+                <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-100 dark:border-yellow-800 mt-3">
                   <p className="text-xs text-yellow-700 dark:text-yellow-300">
                     <span className="font-medium">Note:</span> For academic or professional research, we recommend verifying critical information with multiple authoritative sources.
                   </p>
@@ -672,6 +745,55 @@ export default function FAQPage() {
                       <p className="text-xs text-slate-600 dark:text-slate-400">Optimized for touch interaction</p>
                     </div>
                   </div>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-11" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
+              <div className="flex items-center text-left">
+                <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm-1-5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zm1-4a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium">Understanding Search Results and Downloads</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Learn about how search results are displayed and what gets saved when you download</p>
+                </div>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-6 pt-2">
+              <div className="space-y-4">
+                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">What's the difference between the top scroll websites and the websites in the AI's response?</h4>
+                  <p className="text-slate-700 dark:text-slate-300">The top scroll area shows all websites found by our search engine, while the AI's response only includes the most relevant sources as citations. Think of the top scroll as a complete bibliography and the response citations as footnotes for specific information. The top scroll gives you access to additional resources that may contain useful information not directly cited in the AI's response.</p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">Why do I see more websites in the top scroll than in the AI's response?</h4>
+                  <p className="text-slate-700 dark:text-slate-300">The AI only cites sources that directly contributed to answering your question. The top scroll shows all discovered sources, giving you complete transparency and additional resources to explore. This allows you to investigate topics more deeply by accessing sources that may contain related information not specifically included in the AI's answer.</p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">When I download a conversation, what content is included?</h4>
+                  <p className="text-slate-700 dark:text-slate-300">Downloads include the complete conversation between you and the AI, including any citations the AI provided in its responses. The download does not include the complete list of websites from the top scroll area. This makes it easy to save your research while keeping file sizes manageable. If you need the full list of sources, you can manually copy them from the top scroll area before downloading.</p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">How does the copy feature work?</h4>
+                  <p className="text-slate-700 dark:text-slate-300">The copy feature allows you to copy the AI's response to your clipboard. When you click the copy button, only the AI's response text and its direct citations are copied—not your questions or the complete list of websites from the top scroll. This makes it easy to paste the information into documents, emails, or other applications while maintaining source attribution.</p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">If I repeat a search from my history, will I get the same websites?</h4>
+                  <p className="text-slate-700 dark:text-slate-300">Not necessarily. Each search is a fresh request to our search engine, which may return different results based on updated web content, changes to search algorithms, or new available information. This ensures you always get the most current information available.</p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">How many searches do I get with a free account?</h4>
+                  <p className="text-slate-700 dark:text-slate-300">Free accounts come with 5 credits per month. Each search uses 1 credit, regardless of the type of search. Your credits will persist across sessions and only reset at the beginning of each month.</p>
                 </div>
               </div>
             </AccordionContent>
