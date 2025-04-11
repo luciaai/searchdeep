@@ -44,6 +44,7 @@ export async function getOrCreateUser() {
 
     // If user doesn't exist, create a new one
     if (!user) {
+      console.log(`Creating new user with clerkId ${clerkId} and starting credits ${STARTING_CREDITS}`);
       user = await prisma.user.create({
         data: {
           id: combinedUserId,
@@ -60,19 +61,23 @@ export async function getOrCreateUser() {
           subscriptions: true
         }
       });
-    } else if (!user.firstName || !user.lastName || !user.email) {
-      // Update existing user with missing information
-      user = await prisma.user.update({
-        where: { clerkId },
-        data: {
-          firstName: clerkUser.first_name || user.firstName,
-          lastName: clerkUser.last_name || user.lastName,
-          email: clerkUser.email_addresses?.[0]?.email_address || user.email,
-        },
-        include: {
-          subscriptions: true
-        }
-      });
+    } else {
+      // Only update user information, but NEVER modify their credits here
+      // This ensures credits don't reset when a user logs back in
+      if (!user.firstName || !user.lastName || !user.email) {
+        console.log(`Updating user information for existing user ${clerkId} without modifying credits`);
+        user = await prisma.user.update({
+          where: { clerkId },
+          data: {
+            firstName: clerkUser.first_name || user.firstName,
+            lastName: clerkUser.last_name || user.lastName,
+            email: clerkUser.email_addresses?.[0]?.email_address || user.email,
+          },
+          include: {
+            subscriptions: true
+          }
+        });
+      }
     }
 
     if (!user) {

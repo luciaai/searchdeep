@@ -1,43 +1,14 @@
 import prisma from './prisma';
 
 /**
- * Ensures all free users have at least 5 credits
- * This function can be called during application startup
+ * DISABLED: This function has been disabled to prevent credits from resetting to 5 after each search
+ * 
+ * This function was originally intended to update existing free users who still had the old default of 3 credits
+ * to the new default of 5 credits, but it's causing issues with the credit system.
  */
 export async function ensureFreeUserCredits() {
-  try {
-    // Find all free users with less than 5 credits
-    const freeUsers = await prisma.user.findMany({
-      where: {
-        credits: { lt: 5 },
-        // Only update users who don't have an active paid subscription
-        OR: [
-          { stripeSubscriptionStatus: null },
-          { stripeSubscriptionStatus: { not: 'active' } },
-          { tierId: 'free' },
-          { tierId: null }
-        ]
-      }
-    });
-
-    if (freeUsers.length > 0) {
-      console.log(`Found ${freeUsers.length} free users with less than 5 credits`);
-
-      // Update all these users to have 5 credits
-      const updatePromises = freeUsers.map(user => 
-        prisma.user.update({
-          where: { id: user.id },
-          data: { credits: 5 }
-        })
-      );
-
-      await Promise.all(updatePromises);
-      console.log(`Successfully updated ${freeUsers.length} users to have 5 credits`);
-    }
-
-    return { updated: freeUsers.length };
-  } catch (error) {
-    console.error('Error ensuring free user credits:', error);
-    return { error: 'Failed to update user credits', updated: 0 };
-  }
+  // Function is completely disabled to prevent any credit resets
+  console.log('ensureFreeUserCredits has been disabled to prevent credit resets');
+  return { updated: 0 };
 }
+

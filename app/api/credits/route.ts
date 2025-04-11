@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
-import { ensureFreeUserCredits } from '@/lib/ensure-free-credits';
 
 // Prevent static generation for this route
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    // Ensure free users have at least 5 credits (runs in background)
-    ensureFreeUserCredits().catch(error => 
-      console.error('Error ensuring free credits:', error)
-    );
-    
     // Get the authenticated user
     const session = await auth();
     const userId = session?.userId;
@@ -27,16 +21,25 @@ export async function GET(req: NextRequest) {
     // Find the user in our database
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      select: { credits: true }
+      select: { credits: true, id: true }
     });
 
     if (!user) {
-      return NextResponse.json(
-        { credits: Number(process.env.STARTING_CREDITS || 5) },
-        { status: 200 }
-      );
+      // Create a new user with starting credits only if they don't exist in the database
+      // This should only happen for brand new users, not returning users
+      const combinedUserId = `user_${userId}`;
+      const newUser = await prisma.user.create({
+        data: {
+          id: combinedUserId,
+          clerkId: userId,
+          credits: Number(process.env.STARTING_CREDITS || 5),
+        }
+      });
+      
+      return NextResponse.json({ credits: newUser.credits });
     }
 
+    // Simply return the user's current credits without modifying them
     return NextResponse.json({ credits: user.credits });
   } catch (error: any) {
     console.error('Error fetching user credits:', error);
