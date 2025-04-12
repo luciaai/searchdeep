@@ -208,37 +208,6 @@ export default function FAQPage() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {/* Image Search */}
-                <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
-                  <h4 className="font-bold text-sm flex items-center mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 text-white px-3 py-1.5 rounded-full inline-flex max-w-fit">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                    </svg>
-                    IMAGE SEARCH
-                  </h4>
-                  <p className="text-sm mb-2">
-                    AI-generated images based on your search query.
-                  </p>
-                  
-                  <ul className="list-disc pl-6 text-sm space-y-1">
-                    <li>Creates custom AI-generated visuals</li>
-                    <li>Images are not from websites and cannot be clicked through</li>
-                    <li>Great for visual inspiration and concepts</li>
-                    <li>Each image includes a clear &quot;AI Generated&quot; label</li>
-                  </ul>
-                  
-                  <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800 mt-3">
-                    <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">How Image Search Works</p>
-                    <p className="text-xs text-slate-700 dark:text-slate-300">
-                      Uses AI to generate original images based on your search terms. These are not web search results but custom-created visuals to help illustrate your query.
-                    </p>
-                    <div className="mt-2 bg-indigo-100 dark:bg-indigo-800/30 p-2 rounded">
-                      <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> &quot;Mountain lake at sunset&quot; will generate AI images of mountain lakes at sunset, not search results from websites.
-                      </p>
-                    </div>
-                  </div>
-                </div>
                 {/* Web Search */}
                 <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
                   <h4 className="font-bold text-sm flex items-center mb-2 text-blue-600 dark:text-blue-400">
@@ -432,7 +401,7 @@ export default function FAQPage() {
                   <p className="text-xs text-slate-700 dark:text-slate-300">
                     Conducts multi-step research automatically by combining multiple search types in one query. Analyzes and synthesizes information to create structured, citation-rich responses.
                   </p>
-                  <div className="mt-2 bg-indigo-100 dark:bg-indigo-800/30 p-2 rounded">
+                  <div className="mt-2 bg-purple-100 dark:bg-purple-800/30 p-2 rounded">
                     <p className="text-xs italic text-slate-700 dark:text-slate-300">
                       <span className="font-medium">Example:</span> &quot;Explain the implications of quantum computing on modern cryptography&quot; will perform deep research across academic papers, technical blogs, and expert analyses, providing a comprehensive answer with detailed citations and potentially including mathematical formulas in LaTeX format.
                     </p>
@@ -480,6 +449,45 @@ export default function FAQPage() {
           </AccordionItem>
 
           <AccordionItem value="item-6" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">What are the images in my search results?</AccordionTrigger>
+            <AccordionContent>
+              <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
+                <h4 className="font-bold text-sm flex items-center mb-3 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 text-white px-3 py-1.5 rounded-full inline-flex max-w-fit">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                  </svg>
+                  IMAGES IN SEARCH RESULTS
+                </h4>
+                <p className="text-sm mb-2">
+                  Images from websites appear in your search results to provide visual context for your queries.
+                </p>
+                
+                <ul className="list-disc pl-6 text-sm space-y-1">
+                  <li>Images appear across all search types when relevant</li>
+                  <li>Images are sourced from websites found during your search</li>
+                  <li>Each image includes its source website information</li>
+                  <li>Images help provide visual context to text-based answers</li>
+                  <li>You can often click through to view the original source</li>
+                </ul>
+                
+                <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-100 dark:border-purple-800 mt-3">
+                  <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">How Images Appear in Results</p>
+                  <p className="text-xs text-slate-700 dark:text-slate-300">
+                    When you perform a search, Ziq automatically includes relevant images from websites to enhance your understanding of the topic. These images are sourced directly from web pages that Ziq finds during your search.
+                  </p>
+                  <div className="mt-2 bg-purple-100 dark:bg-purple-800/30 p-2 rounded">
+                    <p className="text-xs italic text-slate-700 dark:text-slate-300">
+                      <span className="font-medium">Example:</span> A search for "Mountain lake at sunset" will include images of mountain lakes from travel websites, photography sites, or nature blogs alongside text information.
+                    </p>
+                  </div>
+                </div>
+                
+
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-7" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
             <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">How do I download or copy my search results?</AccordionTrigger>
             <AccordionContent>
               <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
@@ -524,7 +532,7 @@ export default function FAQPage() {
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="item-7" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+          <AccordionItem value="item-8" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
             <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">Can I see my search history?</AccordionTrigger>
             <AccordionContent>
               <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
