@@ -1857,14 +1857,14 @@ const HomeContent = () => {
                                         </h1>
                                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">(pronounced "Zeek")</p>
                                         <p className="text-base text-center max-w-md mt-3 text-gray-700 dark:text-gray-300">
-                                            Let's get straight to the point.
+                                            Dare to ZIQ: Deep dives, zero fluff.
                                         </p>
                                         <ZiqDropdown />
                                     </div>
                                 </div>
                             </div>
                             <h1 className="text-2xl sm:text-4xl mb-6 text-foreground font-syne relative inline-block">
-                                What do you <span className="font-bold text-blue-500">Ziq</span> today?
+                                What will you <span className="font-bold text-blue-500">Ziq</span> today?
                                 <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent opacity-40"></div>
                             </h1>
                         </div>
