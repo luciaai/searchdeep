@@ -805,3 +805,25 @@ export async function POST(req: Request) {
                                             console.error(`Error fetching details for video ${videoId}:`, error);
                                             return baseResult;
                                         }
+                                    }),
+                                );
+
+                                // Filter out null results
+                                const validResults = processedResults.filter(
+                                    (result): result is VideoResult => result !== null,
+                                );
+
+                                return {
+                                    results: validResults,
+                                };
+                            } catch (error) {
+                                console.error('YouTube search error:', error);
+                                throw error;
+                            }
+                        },
+                    }),
+                }),
+            }
+        });
+    }
+}
