@@ -22,21 +22,56 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://healthiliving.com"),
   title: "Ziq ",
   description:
-    "Ziqc AI-powered search engine that helps you find information on the internet.",
+    "Ziq is an AI-powered research assistant for students, researchers, and lifelong learners. It helps you find, synthesize, and cite reliable information from across the web for academic, educational, and professional needs.",
   openGraph: {
     url: "https://healthiliving.com",
     siteName: "Deep Search",
+    title: "Ziq – AI Research Assistant for Students & Learners",
+    description: "Ziq helps students, researchers, and lifelong learners find and synthesize reliable information from the web, with citations and educational tools.",
+    images: [
+      {
+        url: "https://healthiliving.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Ziq AI Research Assistant Preview"
+      }
+    ],
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@ziqsearch",
+    title: "Ziq – AI Research Assistant for Students & Learners",
+    description: "Ziq helps students, researchers, and lifelong learners find and synthesize reliable information from the web, with citations and educational tools.",
+    images: ["https://healthiliving.com/og-image.png"]
   },
   keywords: [
-    "Homeschool research",
-    "research",
-    "school",
-    "reality",
-    "fiction",
-    "schooling",
-    "ai search engine",
-    "search engine",
+    "Study Aid",
+    "Academic Research",
+    "Homework Helper",
+    "Literature Review",
+    "Scholarly Search",
+    "Citation Generator",
+    "Knowledge Builder",
+    "Learning Insights",
+    "Educational Tool",
+    "Lesson Planning",
+    "Classroom Resource",
+    "Research Assistant",
+    "Source Finder",
+    "Paper Summaries",
+    "Fact-Checked",
+    "Source Transparency",
+    "Critical Thinking",
+    "Student Learning",
+    "Research Synthesis",
+    "Academic Support",
+    "Exam Prep",
+    "Students",
+    "Researchers",
+    "Education",
     "AI",
+    "search engine"
   ],
 };
 

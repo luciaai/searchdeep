@@ -39,12 +39,12 @@ const nextConfig = {
         return [
             {
                 source: '/ph',
-                destination: 'https://www.producthunt.com/posts/scira',
+                destination: 'https://www.producthunt.com/posts/ziq',
                 permanent: true,
             },
             {
                 source: '/raycast',
-                destination: 'https://www.raycast.com/zaidmukaddam/scira',
+                destination: 'https://www.raycast.com/zaidmukaddam/ziq',
                 permanent: true,
             }
         ]

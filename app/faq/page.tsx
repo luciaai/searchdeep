@@ -76,10 +76,35 @@ export default function FAQPage() {
                   PRONUNCIATION
                 </h4>
                 <p className="text-sm mb-2">Ziq is pronounced "Zeek" (rhymes with "seek").</p>
+                
                 <div className="mt-3 p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-100 dark:border-purple-800">
                   <p className="text-sm text-purple-700 dark:text-purple-300">
                     <span className="font-medium">Name Origin:</span> The name Ziq was chosen because it means "seek" – reflecting our mission to help you seek and find accurate information quickly and efficiently.
                   </p>
+                </div>
+                
+                <h4 className="font-bold text-sm mt-5 mb-2">What ZIQ Stands For</h4>
+                <div className="grid grid-cols-1 gap-2">
+                  <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800">
+                    <p className="text-sm">
+                      <span className="font-medium text-blue-700 dark:text-blue-300">Z – Zenith:</span> 
+                      <span className="text-slate-700 dark:text-slate-300">The highest point. ZIQ aims for excellence, delivering the most refined and relevant results—not just what's popular, but what's best.</span>
+                    </p>
+                  </div>
+                  
+                  <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-100 dark:border-purple-800">
+                    <p className="text-sm">
+                      <span className="font-medium text-purple-700 dark:text-purple-300">I – Intelligence:</span> 
+                      <span className="text-slate-700 dark:text-slate-300">Built on artificial intelligence, ZIQ learns, adapts, and delivers smart results with context, depth, and precision.</span>
+                    </p>
+                  </div>
+                  
+                  <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-800">
+                    <p className="text-sm">
+                      <span className="font-medium text-emerald-700 dark:text-emerald-300">Q – Quest:</span> 
+                      <span className="text-slate-700 dark:text-slate-300">Every search is a journey for truth. ZIQ helps users dive deep—cutting through noise to uncover quality answers that matter.</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </AccordionContent>

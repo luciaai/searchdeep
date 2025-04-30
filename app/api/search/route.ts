@@ -26,13 +26,13 @@ import { geolocation } from '@vercel/functions';
 import MemoryClient from 'mem0ai';
 import { hasEnoughCredits, decrementCredit } from '@/lib/user-credits';
 
-const scira = customProvider({
+const ziq = customProvider({
     languageModels: {
-        'scira-default': xai('grok-2-1212'),
-        'scira-vision': xai('grok-2-vision-1212'),
-        'scira-llama': cerebras('llama-3.3-70b'),
-        'scira-sonnet': anthropic('claude-3-7-sonnet-20250219'),
-        'scira-r1': wrapLanguageModel({
+        'ziq-default': xai('grok-2-1212'),
+        'ziq-vision': xai('grok-2-vision-1212'),
+        'ziq-llama': cerebras('llama-3.3-70b'),
+        'ziq-sonnet': anthropic('claude-3-7-sonnet-20250219'),
+        'ziq-r1': wrapLanguageModel({
             model: groq('deepseek-r1-distill-llama-70b'),
             middleware: extractReasoningMiddleware({ tagName: 'think' })
         }),
@@ -277,7 +277,7 @@ export async function POST(req: Request) {
         return createDataStreamResponse({
             execute: async (dataStream) => {
                 const toolsResult = streamText({
-                    model: scira.languageModel(model),
+                    model: ziq.languageModel(model),
                     messages: convertToCoreMessages(messages),
                     temperature: 0,
                     experimental_activeTools: [...activeTools],
@@ -405,7 +405,7 @@ export async function POST(req: Request) {
                             }),
                             execute: async ({ text, to }: { text: string; to: string }) => {
                                 const { object: translation } = await generateObject({
-                                    model: scira.languageModel(model),
+                                    model: ziq.languageModel(model),
                                     system: `You are a helpful assistant that translates text from one language to another.`,
                                     prompt: `Translate the following text to ${to} language: ${text}`,
                                     schema: z.object({
@@ -2238,7 +2238,7 @@ export async function POST(req: Request) {
                         const tool = tools[toolCall.toolName as keyof typeof tools];
 
                         const { object: repairedArgs } = await generateObject({
-                            model: scira.languageModel("scira-default"),
+                            model: ziq.languageModel("ziq-default"),
                             schema: tool.parameters,
                             prompt: [
                                 `The model tried to call the tool "${toolCall.toolName}"` +
@@ -2287,7 +2287,7 @@ export async function POST(req: Request) {
                 console.log("we got here");
 
                 const response = streamText({
-                    model: scira.languageModel(model),
+                    model: ziq.languageModel(model),
                     system: responseGuidelines,
                     experimental_transform: smoothStream({
                         chunking: 'word',
@@ -2316,7 +2316,7 @@ export async function POST(req: Request) {
         return createDataStreamResponse({
             execute: async (dataStream) => {
                 const result = streamText({
-                    model: scira.languageModel(model),
+                    model: ziq.languageModel(model),
                     maxSteps: 5,
                     providerOptions: {
                         groq: {
@@ -2442,7 +2442,7 @@ export async function POST(req: Request) {
                         const tool = tools[toolCall.toolName as keyof typeof tools];
 
                         const { object: repairedArgs } = await generateObject({
-                            model: scira.languageModel("scira-default"),
+                            model: ziq.languageModel("ziq-default"),
                             schema: tool.parameters,
                             prompt: [
                                 `The model tried to call the tool "${toolCall.toolName}"` +

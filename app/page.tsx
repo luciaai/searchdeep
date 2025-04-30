@@ -138,6 +138,7 @@ import ReasonSearch from '@/components/reason-search';
 import he from 'he';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MemoryManager from '@/components/memory-manager';
+import ZiqDropdown from '@/components/ziq-dropdown';
 
 export const maxDuration = 120;
 
@@ -560,7 +561,7 @@ const MemoizedYouTubeCard = React.memo(YouTubeCard, (prevProps, nextProps) => {
 const HomeContent = () => {
     const [query] = useQueryState('query', parseAsString.withDefault(''))
     const [q] = useQueryState('q', parseAsString.withDefault(''))
-    const [model] = useQueryState('model', parseAsString.withDefault('scira-default'))
+    const [model] = useQueryState('model', parseAsString.withDefault('ziq-default'))
     const [userCredits, setUserCredits] = useState<number | null>(null);
     const [isLoadingCredits, setIsLoadingCredits] = useState(true);
 
@@ -1719,7 +1720,7 @@ const HomeContent = () => {
                                         <div className="p-4 bg-white dark:bg-neutral-900">
                                             <div className={cn(
                                                 "text-sm text-neutral-600 dark:text-neutral-400",
-                                                "prose prose-neutral dark:prose-invert max-w-none",
+                                                "prose prose-neutral dark:prose-invert prose-sm max-w-none",
                                                 "prose-p:my-2 prose-p:leading-relaxed"
                                             )}>
                                                 {part.details ? (
@@ -1852,14 +1853,13 @@ const HomeContent = () => {
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <h1 className="text-3xl sm:text-5xl font-syne font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent dark:from-primary dark:to-accent">
-                                            Ziq Search
+                                            Welcome to Ziq!
                                         </h1>
-                                        <div className="mt-3 flex flex-wrap justify-center gap-2">
-                                            <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 dark:bg-primary/20 dark:border-primary/30 transition-all hover:bg-primary/20">Professional</span>
-                                            <span className="text-xs px-3 py-1 rounded-full bg-accent/10 text-accent border border-accent/20 dark:bg-accent/20 dark:border-accent/30 transition-all hover:bg-accent/20">Academic</span>
-                                            <span className="text-xs px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 dark:bg-blue-500/20 dark:border-blue-500/30 transition-all hover:bg-blue-500/20">Research</span>
-                                            <span className="text-xs px-3 py-1 rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20 dark:bg-purple-500/20 dark:border-purple-500/30 transition-all hover:bg-purple-500/20">Education</span>
-                                        </div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">(pronounced "Zeek")</p>
+                                        <p className="text-base text-center max-w-md mt-3 text-gray-700 dark:text-gray-300">
+                                            Let's get straight to the point.
+                                        </p>
+                                        <ZiqDropdown />
                                     </div>
                                 </div>
                             </div>

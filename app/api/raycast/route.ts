@@ -10,9 +10,9 @@ import {
 import Exa from 'exa-js';
 import { z } from 'zod';
 
-const scira = customProvider({
+const ziq = customProvider({
     languageModels: {
-        'scira-default': xai('grok-2-1212'),
+        'ziq-default': xai('grok-2-1212'),
     }
 })
 
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
     const activeTools = group === 'x' ? ["x_search" as const] : group === 'web' ? ["web_search" as const] : ["web_search" as const, "x_search" as const];
 
     const { text, steps } = await generateText({
-        model: scira.languageModel(model),
+        model: ziq.languageModel(model),
         system: systemPrompt,
         maxSteps: 5,
         messages: convertToCoreMessages(messages),

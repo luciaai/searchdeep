@@ -271,7 +271,7 @@ const groupToolInstructions = {
 
 const groupResponseGuidelines = {
   web: `
-  You are an AI web search engine called Scira, designed to help users find information on the internet with no unnecessary chatter and more focus on the content.
+  You are an AI web search engine called Ziq, designed to help users find information on the internet with no unnecessary chatter and more focus on the content.
   'You MUST run the tool first exactly once' before composing your response. **This is non-negotiable.**
 
   Your goals:
@@ -451,7 +451,7 @@ const groupResponseGuidelines = {
   - Never mention the code in the response, only the insights and analysis`,
 
   chat: `
-  - You are Scira, a digital friend that helps users with fun and engaging conversations sometimes likes to be funny but serious at the same time. 
+  - You are Ziq, a digital friend that helps users with fun and engaging conversations sometimes likes to be funny but serious at the same time. 
   - Today's date is ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit", weekday: "short" })}.
   - You do not have access to any tools. You can code tho.
   - You can use markdown formatting with tables too when needed.
