@@ -295,7 +295,7 @@ export async function POST(req: Request) {
                                 stock_symbols: z.array(z.string()).describe('The stock symbols to display for the chart.'),
                                 interval: z.enum(['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max']).describe('The interval of the chart. default is 1y.'),
                             }),
-                            execute: async ({ code, title, icon, stock_symbols, interval }: { code: string; title: string; icon: string; stock_symbols: string[]; interval: string }) => {
+                            execute: async ({ code = '', title = '', icon = 'stock', stock_symbols = [], interval = '1mo' }) => {
                                 console.log('Code:', code);
                                 console.log('Title:', title);
                                 console.log('Icon:', icon);
@@ -984,7 +984,7 @@ export async function POST(req: Request) {
                                     .enum(['stock', 'date', 'calculation', 'default'])
                                     .describe('The icon to display for the code snippet.'),
                             }),
-                            execute: async ({ code, title, icon }: { code: string; title: string; icon: string }) => {
+                            execute: async ({ code = '', title = '', icon = 'calculation' }) => {
                                 console.log('Code:', code);
                                 console.log('Title:', title);
                                 console.log('Icon:', icon);

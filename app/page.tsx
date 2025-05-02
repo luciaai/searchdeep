@@ -1857,7 +1857,7 @@ const HomeContent = () => {
                                         </h1>
                                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">(pronounced "Zeek")</p>
                                         <p className="text-base text-center max-w-md mt-3 text-gray-700 dark:text-gray-300">
-                                            Dare to ZIQ: Deep dives, zero fluff.
+                                            Empower your Curiosity: Search Less, Discover More
                                         </p>
                                         <ZiqDropdown />
                                     </div>
