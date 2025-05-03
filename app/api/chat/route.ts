@@ -765,4 +765,60 @@ export async function POST(req: Request) {
                                         try {
                                             // Fetch detailed info from our endpoints
                                             const [detailsResponse, captionsResponse, timestampsResponse] = await Promise.all([
-                                                fetch(`${serverEnv.Y
+                                                fetch(`${serverEnv.YT_ENDPOINT}/video-data`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                    },
+                                                    body: JSON.stringify({
+                                                        url: result.url,
+                                                    }),
+                                                }).then((res) => (res.ok ? res.json() : null)),
+                                                fetch(`${serverEnv.YT_ENDPOINT}/video-captions`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                    },
+                                                    body: JSON.stringify({
+                                                        url: result.url,
+                                                    }),
+                                                }).then((res) => (res.ok ? res.text() : null)),
+                                                fetch(`${serverEnv.YT_ENDPOINT}/video-timestamps`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                    },
+                                                    body: JSON.stringify({
+                                                        url: result.url,
+                                                    }),
+                                                }).then((res) => (res.ok ? res.json() : null))
+                                            ]);
+
+                                            // Return combined data
+                                            return {
+                                                ...baseResult,
+                                                details: detailsResponse || undefined,
+                                                captions: captionsResponse || undefined,
+                                                timestamps: timestampsResponse || undefined,
+                                            };
+                                        } catch (error) {
+                                            console.error(`Error fetching details for video ${videoId}:`, error);
+                                            return baseResult;
+                                        }
+                                    }),
+                                );
+
+                                // Filter out null results
+                                const validResults = processedResults.filter(
+                                    (result): result is VideoResult => result !== null,
+                                );
+
+                                return {
+                                    results: validResults,
+                                };
+                            } catch (error) {
+                                console.error('YouTube search error:', error);
+                                throw error;
+                            }
+                        },
+                    }),
