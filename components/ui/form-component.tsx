@@ -1053,24 +1053,28 @@ const FormComponent: React.FC<FormComponentProps> = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [status]);
 
-    // The simplest possible mobile scroll solution - just one effect with fixed positions
+    // Handle scrolling during streaming responses
     useEffect(() => {
-        // Only care about mobile devices
-        if (width && width < 768) {
+        // Only apply automatic scrolling for the initial search
+        // This prevents unwanted scrolling during follow-up searches
+        if (messages.length <= 1) {
             let timerId: number;
           
             // When streaming status is detected (search results coming in)
             if (status === 'streaming') {
                 // Handle scrolling with fixed timeouts and positions
                 timerId = window.setTimeout(() => {
-                    // Just force scroll to a reasonable position
-                    // This location should work on most mobile devices
-                    window.scrollTo(0, 400);
-                    
-                    // Try once more with a bigger scroll after everything has rendered
-                    window.setTimeout(() => {
-                        window.scrollTo(0, 650);
-                    }, 1500);
+                    // Only scroll on mobile devices
+                    if (width && width < 768) {
+                        // Just force scroll to a reasonable position
+                        // This location should work on most mobile devices
+                        window.scrollTo(0, 400);
+                        
+                        // Try once more with a bigger scroll after everything has rendered
+                        window.setTimeout(() => {
+                            window.scrollTo(0, 650);
+                        }, 1500);
+                    }
                 }, 300);
             }
           
@@ -1079,19 +1083,34 @@ const FormComponent: React.FC<FormComponentProps> = ({
                 window.clearTimeout(timerId);
             };
         }
-    }, [status, width]);
+        // For follow-up searches, we don't do any automatic scrolling
+        // This allows users to maintain their current position
+    }, [status, width, messages.length]);
     
-    // Add an additional scroll on mobile form submission
+    // Handle scroll behavior on form submission
     const handleMobileScroll = useCallback(() => {
-        if (width && width < 768) {
-            // First scroll to help user see something is happening
+        // We're removing the forced scroll to allow users to stay at their current position
+        // This prevents the page from jumping to the top during follow-up searches
+        
+        // Only scroll if this is the first search (no messages yet)
+        if (width && width < 768 && messages.length === 0) {
+            // Only scroll for the initial search
             window.scrollTo(0, 100);
         }
-    }, [width]);
+        // For follow-up searches, we don't modify the scroll position
+    }, [width, messages.length]);
+
+    // Create a ref to store the current scroll position
+    const scrollPositionRef = useRef<number>(0);
 
     const onSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         event.stopPropagation();
+
+        // Store current scroll position for follow-up searches
+        if (messages.length > 0) {
+            scrollPositionRef.current = window.scrollY;
+        }
 
         if (status !== 'ready') {
             toast.error("Please wait for the current response to complete!");
@@ -1108,8 +1127,10 @@ const FormComponent: React.FC<FormComponentProps> = ({
             setHasSubmitted(true);
             lastSubmittedQueryRef.current = input.trim();
             
-            // Immediately scroll a bit on mobile to provide feedback
-            handleMobileScroll();
+            // Only scroll for initial queries, not follow-ups
+            if (messages.length === 0) {
+                handleMobileScroll();
+            }
 
             handleSubmit(event, {
                 experimental_attachments: attachments,
@@ -1118,6 +1139,27 @@ const FormComponent: React.FC<FormComponentProps> = ({
             setAttachments([]);
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
+            }
+            
+            // For follow-up searches, restore scroll position after a short delay
+            if (messages.length > 0) {
+                console.log('[ScrollDebug] Form: Saving scroll position for follow-up search:', scrollPositionRef.current);
+                
+                // Use multiple attempts with increasing delays to ensure scroll position is restored
+                setTimeout(() => {
+                    console.log('[ScrollDebug] Form: Restoring scroll position (250ms):', scrollPositionRef.current);
+                    window.scrollTo(0, scrollPositionRef.current);
+                }, 250);
+                
+                setTimeout(() => {
+                    console.log('[ScrollDebug] Form: Restoring scroll position (500ms):', scrollPositionRef.current);
+                    window.scrollTo(0, scrollPositionRef.current);
+                }, 500);
+                
+                setTimeout(() => {
+                    console.log('[ScrollDebug] Form: Restoring scroll position (1000ms):', scrollPositionRef.current);
+                    window.scrollTo(0, scrollPositionRef.current);
+                }, 1000);
             }
         } else {
             toast.error("Please enter a search query or attach an image.");

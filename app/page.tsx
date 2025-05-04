@@ -1178,7 +1178,9 @@ const HomeContent = () => {
             if (bottomRef.current) {
                 isAutoScrollingRef.current = true;
                 
-                if (isMobile) {
+                // Only scroll on initial search (when there are no previous messages)
+                // This prevents unwanted scrolling on follow-up searches
+                if (isMobile && messages.length <= 1) {
                     // Mobile specific scrolling - more aggressive with no animation
                     // Use a fixed position first to get away from the form
                     window.scrollTo(0, 300);
@@ -1210,7 +1212,7 @@ const HomeContent = () => {
     }, [status, windowWidth]);
 
     useEffect(() => {
-        let scrollTimeout: NodeJS.Timeout;
+        let scrollTimeout: NodeJS.Timeout | undefined = undefined;
 
         const handleScroll = () => {
             // Clear any pending timeout
@@ -1229,46 +1231,53 @@ const HomeContent = () => {
 
         window.addEventListener('scroll', handleScroll);
 
-        // Auto-scroll on new content if we haven't manually scrolled
-        if (status === 'streaming' && !hasManuallyScrolled && bottomRef.current) {
-            const isMobile = windowWidth < 768;
-            
-            scrollTimeout = setTimeout(() => {
-                isAutoScrollingRef.current = true;
-                
-                if (isMobile) {
-                    // For mobile - use immediate scrolling without animation
-                    bottomRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
-                    
-                    // Try multiple times to ensure it works
-                    setTimeout(() => {
-                        if (bottomRef.current) {
-                            window.scrollTo(0, document.body.scrollHeight);
-                        }
-                    }, 500);
-                } else {
-                    // For desktop - smooth scrolling works well
-                    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-                }
-                
-                // Reset auto-scroll flag after animation
-                setTimeout(() => {
-                    isAutoScrollingRef.current = false;
-                }, isMobile ? 50 : 100);
-            }, isMobile ? 50 : 100);
-        }
+    // Auto-scroll on new content - but ONLY for the initial search, never for follow-ups
+    // CRITICAL: messages.length === 0 means this is the very first message being added
+    // This ensures we NEVER scroll for follow-up searches
+    if (status === 'streaming' && !hasManuallyScrolled && bottomRef.current && messages.length === 0) {
+        const isMobile = windowWidth < 768;
 
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            if (scrollTimeout) {
-                clearTimeout(scrollTimeout);
-            }
-        };
-    }, [messages, suggestedQuestions, status, hasManuallyScrolled]);
+        if (isMobile) {
+            console.log('[ScrollDebug] Triggering MOBILE scroll. status:', status, 'messages.length:', messages.length, 'hasManuallyScrolled:', hasManuallyScrolled);
+            window.scrollTo(0, 300);
+            setTimeout(() => {
+                if (bottomRef.current) {
+                    console.log('[ScrollDebug] MOBILE scrollIntoView 300ms');
+                    bottomRef.current.scrollIntoView({ behavior: "auto", block: "start" });
+                }
+            }, 300);
+            setTimeout(() => {
+                if (bottomRef.current) {
+                    console.log('[ScrollDebug] MOBILE scrollIntoView 1000ms');
+                    bottomRef.current.scrollIntoView({ behavior: "auto", block: "start" });
+                }
+            }, 1000);
+            setTimeout(() => {
+                if (bottomRef.current) {
+                    console.log('[ScrollDebug] MOBILE scrollIntoView 2000ms');
+                    bottomRef.current.scrollIntoView({ behavior: "auto", block: "start" });
+                }
+            }, 2000);
+        } else {
+            console.log('[ScrollDebug] Triggering DESKTOP scroll. status:', status, 'messages.length:', messages.length, 'hasManuallyScrolled:', hasManuallyScrolled);
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    } else {
+        if (status === 'streaming') {
+            console.log('[ScrollDebug] NO scroll. status:', status, 'messages.length:', messages.length, 'hasManuallyScrolled:', hasManuallyScrolled);
+        }
+    }
+
+    return () => {
+        window.removeEventListener('scroll', handleScroll);
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+        }
+    };
+}, [status, windowWidth, messages.length, hasManuallyScrolled]);
 
     const handleSuggestedQuestionClick = useCallback(async (question: string) => {
         setSuggestedQuestions([]);
-
         await append({
             content: question.trim(),
             role: 'user'
