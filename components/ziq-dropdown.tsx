@@ -14,7 +14,7 @@ const ZIQ_DETAILS = [
   },
   {
     letter: 'I',
-    word: 'Intelect',
+    word: 'Intellect',
     description: 'Built on artificial intelligence, ZIQ learns, adapts, and delivers smart results with context and precision.',
     textClass: 'text-accent',
     borderClass: 'border-accent/20',
