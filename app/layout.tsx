@@ -20,9 +20,17 @@ import AuthHandler from "@/components/auth/auth-handler";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://healthiliving.com"),
-  title: "Ziq ",
+  title: "Ziq",
   description:
     "Ziq is an AI-powered research assistant for students, researchers, and lifelong learners. It helps you find, synthesize, and cite reliable information from across the web for academic, educational, and professional needs.",
+  icons: {
+    icon: [
+      { url: "/new-icons/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "32x32" }
+    ],
+    shortcut: "/new-icons/favicon.svg",
+    apple: { url: "/logo.png" },
+  },
   openGraph: {
     url: "https://healthiliving.com",
     siteName: "Deep Search",

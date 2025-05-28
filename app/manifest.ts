@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
  
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Ziq - AI-powered Search Engine",
-    short_name: "Ziq - AI-powered Search Engine",
-    description: "A minimalistic AI-powered search engine that helps you find information on the internet using advanced AI models like GPT-4, Claude, and Grok",
+    name: "Ziq - AI Research Assistant",
+    short_name: "Ziq Research",
+    description: "Your AI research companion designed for students, teachers, entrepreneurs, and business professionals",
     start_url: "/",
     display: "standalone",
     categories: ["search", "ai", "productivity"],
@@ -12,17 +12,17 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#171717",
     icons: [
       {
-        src: "/favicon.ico",
+        src: "/logo.png",
         sizes: "any",
-        type: "image/x-icon"
+        type: "image/png"
       },
       {
-        src: "/icon.png",
+        src: "/logo.png",
         sizes: "192x192",
         type: "image/png"
       },
       {
-        src: "/apple-icon.png",
+        src: "/logo.png",
         sizes: "180x180",
         type: "image/png"
       }
