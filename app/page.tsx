@@ -1851,9 +1851,10 @@ const HomeContent = () => {
                 <div className={`w-full max-w-[90%] sm:max-w-2xl space-y-6 p-0 mx-auto transition-all duration-300`}>
                     {status === 'ready' && messages.length === 0 && (
                         <div className="text-center !font-sans">
-                            <div className="w-full bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg mb-8">
-                                <div className="flex flex-col items-center justify-center">
-                                    <div className="relative h-48 w-48 mb-0 animate-pulse-subtle">
+                            <div className="w-full bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-4 sm:p-8 md:p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg mb-4 sm:mb-8">
+                                {/* Mobile layout (stacked) */}
+                                <div className="sm:hidden flex flex-col items-center justify-center gap-2">
+                                    <div className="relative h-20 w-20 mb-0 animate-pulse-subtle">
                                         <img 
                                             src="/logo.png" 
                                             alt="Ziq Logo" 
@@ -1861,23 +1862,47 @@ const HomeContent = () => {
                                         />
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <h1 className="text-3xl sm:text-5xl font-syne font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent dark:from-primary dark:to-accent">
+                                        <div className="flex items-center gap-1">
+                                            <h1 className="text-2xl font-syne font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent dark:from-primary dark:to-accent">
+                                                Welcome to Ziq!
+                                            </h1>
+                                            <span className="text-xs text-gray-500 dark:text-gray-400">("Zeek")</span>
+                                        </div>
+                                        <p className="text-sm text-center max-w-md mt-1 text-gray-700 dark:text-gray-300">
+                                            Empower your Curiosity: Search Less, Discover More
+                                        </p>
+                                        <div className="mt-2">
+                                            <ZiqDropdown />
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {/* Desktop layout (centered) */}
+                                <div className="hidden sm:flex flex-col items-center justify-center">
+                                    <div className="relative h-36 w-36 md:h-48 md:w-48 mb-0 animate-pulse-subtle">
+                                        <img 
+                                            src="/logo.png" 
+                                            alt="Ziq Logo" 
+                                            className="object-contain h-full w-full drop-shadow-md"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <h1 className="text-4xl md:text-5xl font-syne font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent dark:from-primary dark:to-accent">
                                             Welcome to Ziq!
                                         </h1>
                                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">(pronounced "Zeek")</p>
                                         <p className="text-base text-center max-w-md mt-3 text-gray-700 dark:text-gray-300">
                                             Empower your Curiosity: Search Less, Discover More
                                         </p>
-                                        <ZiqDropdown />
+                                        <div className="mt-3">
+                                            <ZiqDropdown />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <h1 className="text-2xl sm:text-4xl mb-6 text-foreground font-syne relative inline-block">
-                                What will you <span className="font-bold text-blue-500">Ziq</span> today?
-                                <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent opacity-40"></div>
-                            </h1>
                         </div>
                     )}
+
                     <AnimatePresence>
                         {messages.length === 0 && (
                             <motion.div
