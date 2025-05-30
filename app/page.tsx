@@ -1499,6 +1499,23 @@ const HomeContent = () => {
     const WidgetSection = memo(() => {
         const [currentTime, setCurrentTime] = useState(new Date());
         const timerRef = useRef<NodeJS.Timeout>();
+        const [isMobile, setIsMobile] = useState(false);
+        
+        // Check if mobile on mount and when window resizes
+        useEffect(() => {
+            const checkIfMobile = () => {
+                setIsMobile(window.innerWidth < 768);
+            };
+            
+            // Initial check
+            checkIfMobile();
+            
+            // Add resize listener
+            window.addEventListener('resize', checkIfMobile);
+            
+            // Cleanup
+            return () => window.removeEventListener('resize', checkIfMobile);
+        }, []);
 
         useEffect(() => {
             // Sync with the nearest second
@@ -1557,7 +1574,7 @@ const HomeContent = () => {
         }, []);
 
         return (
-            <div className="mt-8 w-full">
+            <div className={`w-full ${isMobile ? 'fixed bottom-0 left-0 right-0 pb-2 pt-2 bg-gradient-to-t from-white to-transparent dark:from-slate-900 dark:to-transparent z-10' : 'mt-8'}`}>
                 <div className="flex flex-wrap gap-3 justify-center">
                     {/* Time Widget */}
                     <Button
@@ -1845,10 +1862,10 @@ const HomeContent = () => {
     return (
         <div className="flex flex-col !font-sans items-center min-h-screen bg-background text-foreground transition-all duration-500">
             <div className={`w-full p-2 sm:p-4 ${status === 'ready' && messages.length === 0
-                ? 'min-h-screen flex flex-col items-center justify-center' // Center everything when no messages
+                ? 'min-h-screen flex flex-col items-center justify-center pt-16' // Center everything when no messages with top padding
                 : 'mt-20 sm:mt-16' // Add top margin when showing messages
                 }`}>
-                <div className={`w-full max-w-[90%] sm:max-w-2xl space-y-6 p-0 mx-auto transition-all duration-300`}>
+                <div className={`w-full max-w-[95%] sm:max-w-3xl space-y-10 p-0 mx-auto transition-all duration-300`}>
                     {status === 'ready' && messages.length === 0 && (
                         <div className="text-center !font-sans">
                             <div className="w-full bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-4 sm:p-8 md:p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg mb-4 sm:mb-8">
@@ -1943,7 +1960,7 @@ const HomeContent = () => {
 
                     {/* Add the widget section below form when no messages */}
                     {messages.length === 0 && (
-                        <div>
+                        <div className="relative mb-24 sm:mb-0">
                             <WidgetSection />
                         </div>
                     )}
