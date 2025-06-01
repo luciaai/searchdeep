@@ -1574,7 +1574,7 @@ const HomeContent = () => {
         }, []);
 
         return (
-            <div className={`w-full ${isMobile ? 'fixed bottom-0 left-0 right-0 pb-2 pt-2 bg-gradient-to-t from-white to-transparent dark:from-slate-900 dark:to-transparent z-10' : 'mt-8'}`}>
+            <div className={`w-full ${isMobile ? 'mt-6 mb-16 pb-2 pt-2 bg-gradient-to-t from-white/80 to-transparent dark:from-slate-900/80 dark:to-transparent z-10' : 'mt-10'}`}>
                 <div className="flex flex-wrap gap-3 justify-center">
                     {/* Time Widget */}
                     <Button
@@ -1865,10 +1865,14 @@ const HomeContent = () => {
                 ? 'min-h-screen flex flex-col items-center justify-center pt-16' // Center everything when no messages with top padding
                 : 'mt-20 sm:mt-16' // Add top margin when showing messages
                 }`}>
+<<<<<<< HEAD
                 <div className={`w-full max-w-[95%] sm:max-w-3xl space-y-10 p-0 mx-auto transition-all duration-300`}>
+=======
+                <div className={`w-full max-w-[95%] sm:max-w-3xl space-y-8 p-0 mx-auto transition-all duration-300`}>
+>>>>>>> fix-mobile-layout
                     {status === 'ready' && messages.length === 0 && (
                         <div className="text-center !font-sans">
-                            <div className="w-full bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-4 sm:p-8 md:p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg mb-4 sm:mb-8">
+                            <div className="w-full bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 p-4 sm:p-8 md:p-10 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg mb-8 sm:mb-10">
                                 {/* Mobile layout (stacked) */}
                                 <div className="sm:hidden flex flex-col items-center justify-center gap-2">
                                     <div className="relative h-20 w-20 mb-0 animate-pulse-subtle">
@@ -1960,7 +1964,11 @@ const HomeContent = () => {
 
                     {/* Add the widget section below form when no messages */}
                     {messages.length === 0 && (
+<<<<<<< HEAD
                         <div className="relative mb-24 sm:mb-0">
+=======
+                        <div className="relative mb-28 sm:mb-6">
+>>>>>>> fix-mobile-layout
                             <WidgetSection />
                         </div>
                     )}
