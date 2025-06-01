@@ -1277,7 +1277,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                 </div>
             )}
 
-            <div className="relative rounded-lg bg-gradient-to-br from-white to-blue-50 dark:from-neutral-900 dark:to-blue-950/20 shadow-sm border border-blue-100/50 dark:border-blue-900/30">
+            <div className="relative rounded-lg bg-gradient-to-br from-white to-blue-50 dark:from-neutral-900 dark:to-blue-950/20 shadow-sm border border-blue-100/50 dark:border-blue-900/30" style={{ minHeight: `${MIN_HEIGHT + 40}px`, marginBottom: isMobile ? '1.5rem' : '1rem' }}>
                 <Textarea
                     ref={inputRef}
                     placeholder={hasInteracted ? "Ask a new question..." : "Ask a question..."}
@@ -1295,10 +1295,12 @@ const FormComponent: React.FC<FormComponentProps> = ({
                         isFocused ? "!border-primary/60 dark:!border-primary/60" : "",
                         "text-foreground dark:text-foreground",
                         "focus:!ring-1 focus:!ring-primary/40 dark:focus:!ring-primary/40",
-                        isMobile ? "px-4 py-4 pb-20" : "px-4 py-4 pb-16",
+                        "px-4 py-4", // Use consistent padding for all devices
+                        isMobile ? "pb-20" : "pb-16", // Only vary the bottom padding
                         "overflow-y-auto",
                         "touch-manipulation",
-                        "transition-all duration-200"
+                        "will-change-auto", // Hint to browser about upcoming changes
+                        isMobile ? "text-base" : "text-base" // Consistent font size
                     )}
                     style={{
                         maxHeight: `${MAX_HEIGHT}px`,
@@ -1321,11 +1323,11 @@ const FormComponent: React.FC<FormComponentProps> = ({
                 <div className={cn(
                     "absolute bottom-0 inset-x-0 flex justify-between items-center rounded-b-lg",
                     "bg-card dark:bg-card",
-                    "border-t-0", /* removed border styling that was creating the divider line */
+                    "border-t border-border/10 dark:border-border/10", /* Added subtle border for visual separation */
                     isFocused ? "border-primary/60 dark:border-primary/60" : "",
                     isProcessing ? "!opacity-20 !cursor-not-allowed" : "",
-                    "transition-all duration-200",
-                    isMobile ? "p-1.5" : "p-2"
+                    isMobile ? "p-1.5" : "p-2",
+                    "z-10" /* Ensure toolbar is on top but not too aggressive */
                 )}>
                     <div className={cn(
                         "flex items-center",
