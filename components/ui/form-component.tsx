@@ -188,7 +188,7 @@ const ModelSwitcher: React.FC<ModelSwitcherProps> = ({ selectedModel, setSelecte
                             mass: 0.5
                         }}
                     >
-                        {selectedModelData?.label || ""}
+                        {"AI"}
                     </TextMorph>
                 </span>
             </DropdownMenuTrigger>
@@ -1403,32 +1403,41 @@ const FormComponent: React.FC<FormComponentProps> = ({
                                 ? "opacity-50 scale-90"
                                 : "opacity-100 visible w-auto"
                         )}>
-                            <button
-                                onClick={() => {
-                                    setSelectedGroup(selectedGroup === 'extreme' ? 'web' : 'extreme');
-                                    // Show toast notification on mobile devices
-                                    if (isMobile) {
-                                        const newMode = selectedGroup === 'extreme' ? 'Web Search' : 'Extreme Mode';
-                                        const description = selectedGroup === 'extreme' 
-                                            ? 'Enhanced deep research mode'
-                                            : 'Standard web search mode';
-                                        toast(`Switched to ${newMode}: ${description}`, {
-                                            duration: 2000,
-                                        });
-                                    }
-                                }}
-                                className={cn(
-                                    "flex items-center gap-2 p-2 sm:px-3 h-8",
-                                    "rounded-full transition-all duration-300",
-                                    "hover:shadow-md",
-                                    selectedGroup === 'extreme'
-                                        ? "bg-gradient-to-r from-purple-500 to-indigo-600 text-white dark:from-purple-700 dark:to-indigo-800 dark:text-white border border-purple-400 dark:border-purple-700 shadow-md"
-                                        : "bg-gradient-to-r from-purple-50 to-indigo-50 text-purple-800 dark:from-purple-900/30 dark:to-indigo-900/30 dark:text-purple-200 hover:from-purple-100 hover:to-indigo-100 dark:hover:from-purple-800/40 dark:hover:to-indigo-800/40 border border-purple-200 dark:border-purple-800/50",
-                                )}
-                            >
-                                <Mountain className="h-3.5 w-3.5" />
-                                <span className="hidden sm:block text-xs font-medium">Extreme</span>
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        className="sr-only peer" 
+                                        checked={selectedGroup === 'extreme'}
+                                        onChange={() => {
+                                            setSelectedGroup(selectedGroup === 'extreme' ? 'web' : 'extreme');
+                                            // Show toast notification on mobile devices
+                                            if (isMobile) {
+                                                const newMode = selectedGroup === 'extreme' ? 'Web Search' : 'Ziq Deep Mode';
+                                                const description = selectedGroup === 'extreme' 
+                                                    ? 'Enhanced deep research mode'
+                                                    : 'Standard web search mode';
+                                                toast(`Switched to ${newMode}: ${description}`, {
+                                                    duration: 2000,
+                                                });
+                                            }
+                                        }} 
+                                    />
+                                    <div className={cn(
+                                        "w-9 h-5 rounded-full transition-all duration-300",
+                                        "after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white",
+                                        "after:rounded-full after:h-4 after:w-4 after:transition-all after:duration-300",
+                                        "after:shadow-sm",
+                                        "peer-checked:after:translate-x-full peer-checked:after:border-white",
+                                        selectedGroup === 'extreme'
+                                            ? "bg-gradient-to-r from-green-400 to-green-600 dark:from-green-500 dark:to-green-700 shadow-md"
+                                            : "bg-gray-300 dark:bg-gray-600"
+                                    )}></div>
+                                </label>
+                                <span className="text-xs font-medium">
+                                    Ziq Deep
+                                </span>
+                            </div>
                         </div>
                     </div>
 

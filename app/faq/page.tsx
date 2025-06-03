@@ -408,7 +408,7 @@ export default function FAQPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                   </svg>
-                  EXTREME MODE
+                  ZIQ DEEP MODE
                 </h4>
                 <p className="text-sm mb-2">
                   Our most powerful search option, designed for in-depth research and complex topics.
@@ -422,7 +422,7 @@ export default function FAQPage() {
                 </ul>
                 
                 <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800 mt-3">
-                  <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">How Extreme Mode Works</p>
+                  <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">How Ziq Deep Mode Works</p>
                   <p className="text-xs text-slate-700 dark:text-slate-300">
                     Conducts multi-step research automatically by combining multiple search types in one query. Analyzes and synthesizes information to create structured, citation-rich responses.
                   </p>

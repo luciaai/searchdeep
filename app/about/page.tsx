@@ -170,6 +170,9 @@ export default function AboutPage() {
                                 <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Students</span>
                             </div>
                             
+                            <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-3">
+                                Empower your Curiosity: Search Less, Discover More
+                            </h2>
                             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                                 Ziq helps students, teachers, entrepreneurs, and professionals find reliable information, synthesize knowledge, and gain deeper insights - all in seconds.
                             </p>
