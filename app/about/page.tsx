@@ -65,18 +65,18 @@ export default function AboutPage() {
                                 Welcome to Ziq Research Assistant
                             </DialogTitle>
                             <DialogDescription className="text-gray-600 dark:text-gray-300 text-center mt-2 text-base">
-                                Your AI research companion designed for students, teachers, entrepreneurs, and business professionals.
+                                Your AI research companion that delivers deep insights and verified information for all your search needs.
                             </DialogDescription>
                         </DialogHeader>
                         
                         <div className="grid grid-cols-2 gap-4 mb-8">
                             <div className="flex flex-col items-center p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
-                                <GraduationCap className="h-7 w-7 text-blue-500 mb-2" />
-                                <p className="text-sm text-gray-600 dark:text-gray-300 text-center">Academic Research</p>
+                                <Search className="h-7 w-7 text-blue-500 mb-2" />
+                                <p className="text-sm text-gray-600 dark:text-gray-300 text-center">Deep Research</p>
                             </div>
                             <div className="flex flex-col items-center p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
                                 <BookOpen className="h-7 w-7 text-blue-500 mb-2" />
-                                <p className="text-sm text-gray-600 dark:text-gray-300 text-center">Lesson Planning</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-300 text-center">Quality Sources</p>
                             </div>
                             <div className="flex flex-col items-center p-4 rounded-xl bg-gray-50 dark:bg-gray-800">
                                 <BarChart className="h-7 w-7 text-blue-500 mb-2" />
@@ -164,17 +164,17 @@ export default function AboutPage() {
                             </h1>
                             
                             <div className="mt-3 mb-4 flex flex-wrap gap-2">
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Professionals</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Researchers</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Teachers</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Students</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Deep Research</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Quality Sources</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Smart Synthesis</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Instant Insights</span>
                             </div>
                             
                             <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-3">
                                 Empower your Curiosity: Search Less, Discover More
                             </h2>
                             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                                Ziq helps students, teachers, entrepreneurs, and professionals find reliable information, synthesize knowledge, and gain deeper insights - all in seconds.
+                                Ziq helps you find reliable information, synthesize complex topics, and gain deeper insights - all in seconds. Get quality answers backed by verified sources.
                             </p>
                             
                             <form onSubmit={handleSearch} className="mb-8 relative max-w-xl">
@@ -313,7 +313,7 @@ export default function AboutPage() {
                             {
                                 icon: Search,
                                 title: "Deep Research",
-                                description: "Access information from academic journals, books, and trusted publications with precise citations",
+                                description: "Access information from quality sources and trusted publications with precise citations",
                                 color: "blue"
                             },
                             {
@@ -330,8 +330,8 @@ export default function AboutPage() {
                             },
                             {
                                 icon: BookOpen,
-                                title: "Academic Excellence",
-                                description: "Literature reviews, research paper assistance, and proper citation support for students",
+                                title: "Research Excellence",
+                                description: "Comprehensive information gathering, detailed analysis, and proper citation support for your projects",
                                 color: "cyan"
                             },
                             {
@@ -393,7 +393,7 @@ export default function AboutPage() {
                             },
                             {
                                 title: "Knowledge Retrieval",
-                                description: "Ziq searches academic databases, professional journals, books, and trusted sources to gather relevant information.",
+                                description: "Ziq searches professional sources, industry publications, and trusted websites to gather relevant information.",
                                 icon: BookOpen
                             },
                             {
@@ -531,17 +531,17 @@ export default function AboutPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
                             {
-                                quote: "Ziq has completely transformed my research process. I can find relevant academic sources in seconds rather than hours.",
+                                quote: "Ziq has completely transformed my research process. I can find relevant information in seconds rather than hours, with sources I can trust.",
                                 name: "Nick Kukaj",
-                                title: "CEO"
+                                title: "Product Manager"
                             },
                             {
-                                quote: "As a high school teacher, Ziq helps me create research-backed lesson plans and stay current with educational best practices.",
+                                quote: "The Ziq Deep mode is a game-changer. It provides comprehensive answers with verified sources that I can actually cite in my work.",
                                 name: "Ross Cohen",
-                                title: "Science Teacher"
+                                title: "Content Strategist"
                             },
                             {
-                               quote: "Ziq has been instrumental in developing our startup's go-to-market strategy.",
+                               quote: "Ziq has been instrumental in our research process. The quality of information and depth of analysis saves us countless hours.",
                                 name: "Lucia",
                                 title: "Founder & CEO"
                             }
@@ -585,22 +585,26 @@ export default function AboutPage() {
                 </div>
             </section>
             
-            {/* Stats */}
+            {/* Why Choose Ziq */}
             <section className="py-20 bg-blue-600 dark:bg-blue-900">
                 <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-10">
+                        <h2 className="text-3xl font-bold text-white mb-4">Why Choose Ziq</h2>
+                        <p className="text-blue-100 max-w-3xl mx-auto">Experience the difference with our research-focused approach</p>
+                    </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                         {[
-                            { value: "10M+", label: "Questions Answered" },
-                            { value: "500K+", label: "Active Users" },
-                            { value: "1,000+", label: "Academic Institutions" },
-                            { value: "98%", label: "Satisfaction Rate" }
-                        ].map((stat, i) => (
+                            { icon: <Clock className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Save Hours on Research" },
+                            { icon: <CheckCircle className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Quality Sources" },
+                            { icon: <Lightbulb className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Deeper Insights" },
+                            { icon: <BookOpen className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Academic Quality" }
+                        ].map((feature, i) => (
                             <div key={i} className="space-y-2">
-                                <div className="text-4xl md:text-5xl font-bold text-white">
-                                    {stat.value}
+                                <div className="text-white">
+                                    {feature.icon}
                                 </div>
                                 <div className="text-blue-100">
-                                    {stat.label}
+                                    {feature.label}
                                 </div>
                             </div>
                         ))}
@@ -616,7 +620,7 @@ export default function AboutPage() {
                             Ready to Transform Your Research?
                         </h2>
                         <p className="text-lg text-gray-600 dark:text-gray-400">
-                            Join thousands of students, educators, and professionals who use Ziq to make their research process faster, deeper, and more effective.
+                            Discover how Ziq can make your research process faster, deeper, and more effective. Join our growing community of users who are transforming the way they find and synthesize information.
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -660,8 +664,8 @@ export default function AboutPage() {
                                 answer: "Unlike traditional search engines that return a list of links, Ziq processes information from multiple sources to provide comprehensive, synthesized answers with proper citations. It understands the context of your question and delivers research-quality responses."
                             },
                             {
-                                question: "Is Ziq suitable for academic research?",
-                                answer: "Yes! Ziq is designed with academic standards in mind. It provides citations for information sources, helping students and researchers maintain academic integrity while accelerating their research process."
+                                question: "Is Ziq suitable for in-depth research?",
+                                answer: "Yes! Ziq is designed to support rigorous research. It provides citations for information sources, helping you maintain accuracy and credibility while accelerating your research process."
                             },
                             {
                                 question: "How accurate is the information Ziq provides?",
