@@ -2379,14 +2379,31 @@ const ToolInvocationListView = memo(
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{
-                                        repeat: Infinity,
+                                        repeat: post.tweetId === 'unavailable' ? 0 : Infinity,
                                         duration: 0.8,
                                         delay: index * 0.1,
                                         repeatType: "reverse",
                                     }}
                                     className='[&>div]:m-0'
                                 >
-                                    <Tweet id={post.tweetId} />
+                                    {post.tweetId === 'unavailable' ? (
+                                        <Card className="p-4 border-2 border-violet-200 dark:border-violet-900">
+                                            <CardHeader className="pb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <XLogo className="h-5 w-5 text-violet-600" />
+                                                    <CardTitle className="text-lg">{post.title}</CardTitle>
+                                                </div>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <p className="text-muted-foreground">{post.text}</p>
+                                                <p className="text-sm mt-4 text-violet-600">
+                                                    Twitter/X content is not currently available through our search provider.
+                                                </p>
+                                            </CardContent>
+                                        </Card>
+                                    ) : (
+                                        <Tweet id={post.tweetId} />
+                                    )}
                                 </motion.div>
                             ))}
                         </div>
@@ -2403,7 +2420,11 @@ const ToolInvocationListView = memo(
                                     </div>
                                     <div>
                                         <CardTitle>Latest from X</CardTitle>
-                                        <p className="text-sm text-muted-foreground">Found {result.length} tweets</p>
+                                        {result[0]?.tweetId === 'unavailable' ? (
+                                            <p className="text-sm text-amber-600">Service unavailable</p>
+                                        ) : (
+                                            <p className="text-sm text-muted-foreground">Found {result.length} tweets</p>
+                                        )}
                                     </div>
                                 </div>
                             </CardHeader>
@@ -2421,7 +2442,21 @@ const ToolInvocationListView = memo(
                                                     delay: index * 0.1
                                                 }}
                                             >
-                                                <Tweet id={post.tweetId} />
+                                                {post.tweetId === 'unavailable' ? (
+                                                    <Card className="p-4 border-2 border-violet-200 dark:border-violet-900 h-full">
+                                                        <CardHeader className="pb-2">
+                                                            <div className="flex items-center gap-2">
+                                                                <XLogo className="h-5 w-5 text-violet-600" />
+                                                                <CardTitle className="text-lg">{post.title}</CardTitle>
+                                                            </div>
+                                                        </CardHeader>
+                                                        <CardContent>
+                                                            <p className="text-muted-foreground">{post.text}</p>
+                                                        </CardContent>
+                                                    </Card>
+                                                ) : (
+                                                    <Tweet id={post.tweetId} />
+                                                )}
                                             </motion.div>
                                         ))}
                                     </div>

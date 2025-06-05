@@ -74,12 +74,12 @@ export const searchGroups = [
     name: 'X',
     description: 'Search X posts and content powered by Exa',
     icon: XLogo,
-    show: true,
+    show: false, // Hidden until we find an affordable alternative for X/Twitter API
   },
   {
     id: 'analysis' as const,
     name: 'Analysis',
-    description: 'Code, stock and currency stuff',
+    description: 'Data analysis, code execution, and financial tools',
     icon: Code,
     show: true,
   },
@@ -93,7 +93,7 @@ export const searchGroups = [
   {
     id: 'academic' as const,
     name: 'Academic',
-    description: 'Search academic papers powered by Exa',
+    description: 'Access scholarly articles, research papers, and academic publications',
     icon: Book,
     show: true,
   },

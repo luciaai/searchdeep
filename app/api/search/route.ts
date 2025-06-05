@@ -555,18 +555,38 @@ export async function POST(req: Request) {
                                 endDate?: string;
                             }) => {
                                 try {
+                                    console.log('X search requested with query:', query);
+                                    
+                                    // Return a special message result since Exa no longer supports Twitter/X data
+                                    // This creates a single "fake" result that will display the service unavailability message
+                                    return [{
+                                        id: 'twitter-unavailable',
+                                        url: 'https://twitter.com',
+                                        title: 'Twitter/X Search Unavailable',
+                                        text: 'Twitter/X search is currently unavailable. Exa API no longer supports pulling data from Twitter/X.',
+                                        highlights: ['Twitter/X search is currently unavailable'],
+                                        tweetId: 'unavailable',
+                                        publishedDate: new Date().toISOString(),
+                                        author: 'System Notification'
+                                    }];
+                                    
+                                    /* Previous implementation removed - Exa no longer supports Twitter/X data
                                     const exa = new Exa(serverEnv.EXA_API_KEY as string);
-
-                                    const result = await exa.searchAndContents(query, {
-                                        type: 'keyword',
+                                    
+                                    const searchParams = {
+                                        category: "tweet" as "tweet",
+                                        type: "auto" as "auto",
+                                        useAutoprompt: true,
                                         numResults: 15,
-                                        text: true,
-                                        highlights: true,
+                                        text: true as true,
+                                        highlights: true as true,
                                         includeDomains: ['twitter.com', 'x.com'],
                                         startPublishedDate: startDate,
                                         endPublishedDate: endDate,
-                                    });
-
+                                    };
+                                    
+                                    const result = await exa.searchAndContents(query, searchParams);
+                                    
                                     // Extract tweet ID from URL
                                     const extractTweetId = (url: string): string | null => {
                                         const match = url.match(/(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/);
@@ -574,7 +594,7 @@ export async function POST(req: Request) {
                                     };
 
                                     // Process and filter results
-                                    const processedResults = result.results.reduce<Array<XResult>>((acc, post) => {
+                                    const processedResults = result.results.reduce<Array<XResult>>((acc: Array<XResult>, post: any) => {
                                         const tweetId = extractTweetId(post.url);
                                         if (tweetId) {
                                             acc.push({
@@ -585,10 +605,22 @@ export async function POST(req: Request) {
                                         }
                                         return acc;
                                     }, []);
-
+                                    
                                     return processedResults;
+                                    */
                                 } catch (error) {
                                     console.error('X search error:', error);
+                                    // Type guard for error object
+                                    if (error && typeof error === 'object') {
+                                        const err = error as Error;
+                                        console.error('Error details:', JSON.stringify({
+                                            message: err.message,
+                                            name: err.name,
+                                            stack: err.stack
+                                        }, null, 2));
+                                    } else {
+                                        console.error('Unknown error type:', typeof error);
+                                    }
                                     throw error;
                                 }
                             },
@@ -1549,7 +1581,7 @@ export async function POST(req: Request) {
 
                                 // Now generate the research plan
                                 const { object: researchPlan } = await generateObject({
-                                    model: xai("grok-beta"),
+                                    model: xai("grok-2-1212"),
                                     temperature: 0,
                                     schema: z.object({
                                         search_queries: z.array(z.object({
@@ -1730,7 +1762,7 @@ export async function POST(req: Request) {
                                         }).filter(tweet => tweet.tweetId); // Only include tweets with valid IDs
 
                                         searchResults.push({
-                                            type: 'x',
+                                            type: step.type, // which is 'x'
                                             query: step.query,
                                             results: processedTweets
                                         });
@@ -1782,7 +1814,7 @@ export async function POST(req: Request) {
                                     });
 
                                     const { object: analysisResult } = await generateObject({
-                                        model: xai("grok-beta"),
+                                        model: xai("grok-2-1212"),
                                         temperature: 0.5,
                                         schema: z.object({
                                             findings: z.array(z.object({
@@ -1832,7 +1864,7 @@ export async function POST(req: Request) {
 
                                 // After all analyses are complete, analyze limitations and gaps
                                 const { object: gapAnalysis } = await generateObject({
-                                    model: xai("grok-beta"),
+                                    model: xai("grok-2-1212"),
                                     temperature: 0,
                                     schema: z.object({
                                         limitations: z.array(z.object({
@@ -2075,17 +2107,21 @@ export async function POST(req: Request) {
 
                                             // Execute X/Twitter search
                                             const xResults = await exa.searchAndContents(query.query, {
-                                                type: 'keyword',
+                                                type: 'neural', // Changed from 'keyword'
+                                                useAutoprompt: true, // Added
                                                 numResults: 5,
                                                 text: true,
                                                 highlights: true,
                                                 includeDomains: ['twitter.com', 'x.com']
                                             });
 
+                                            console.log("Direct Exa 'keyword' search results for X (raw from Exa API):", JSON.stringify(xResults.results, null, 2));
+
                                             // Process tweets to include tweet IDs - properly handling undefined
                                             const processedTweets = xResults.results
                                                 .map(result => {
                                                     const tweetId = extractTweetId(result.url);
+                                                    console.log(`Direct X Processing URL: ${result.url}, Extracted tweetId: ${tweetId}, Title: ${result.title}, Text: ${result.text ? result.text.substring(0,100) : 'N/A'}`);
                                                     if (!tweetId) return null; // Skip entries without valid tweet IDs
                                                     
                                                     return {
@@ -2099,6 +2135,8 @@ export async function POST(req: Request) {
                                                 .filter((tweet): tweet is { source: 'x', title: string, url: string, content: string, tweetId: string } => 
                                                     tweet !== null
                                                 );
+
+                                            console.log("Direct X processedTweets (after filter and ready for frontend):", JSON.stringify(processedTweets, null, 2));
 
                                             // Add to search results
                                             searchResults.push({
@@ -2146,7 +2184,7 @@ export async function POST(req: Request) {
 
                                     // Perform final synthesis of all findings
                                     const { object: finalSynthesis } = await generateObject({
-                                        model: xai("grok-beta"),
+                                        model: xai("grok-2-1212"),
                                         temperature: 0,
                                         schema: z.object({
                                             key_findings: z.array(z.object({
