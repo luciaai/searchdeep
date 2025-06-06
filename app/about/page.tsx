@@ -2,7 +2,8 @@
 "use client";
 
 import { GithubLogo, XLogo } from '@phosphor-icons/react';
-import { Bot, Brain, Command, GraduationCap, Image, Search, Share2, Sparkles, Star, Trophy, Users, AlertTriangle, Github, Twitter, ArrowRight, ChevronRight, FileText, BookOpen, BarChart, Briefcase, Lightbulb, Clock, ExternalLink, CheckCircle } from 'lucide-react';
+import { Bot, Brain, Command, GraduationCap, ImageIcon, Search, Share2, Sparkles, Star, Trophy, Users, AlertTriangle, Github, Twitter, ArrowRight, ChevronRight, FileText, BookOpen, BarChart, Briefcase, Lightbulb, Clock, ExternalLink, CheckCircle, MessageCircle, FileCheck } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { TextLoop } from '@/components/core/text-loop';
@@ -65,7 +66,7 @@ export default function AboutPage() {
                                 Welcome to Ziq Research Assistant
                             </DialogTitle>
                             <DialogDescription className="text-gray-600 dark:text-gray-300 text-center mt-2 text-base">
-                                Your AI research companion that delivers deep insights and verified information for all your search needs.
+                                Your AI research companion that delivers deep insights with cited sources for all your search needs.
                             </DialogDescription>
                         </DialogHeader>
                         
@@ -155,26 +156,26 @@ export default function AboutPage() {
                             transition={{ duration: 0.6 }}
                         >
                             <div className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-6">
-                                Powered by AI Research Technology
+                                Specialized for Students of All Ages, Educators & Homeschoolers
                             </div>
                             
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">
-                                Research Smarter, <br/>
-                                Not Harder
+                                From Questions <br/>
+                                to Discoveries
                             </h1>
                             
                             <div className="mt-3 mb-4 flex flex-wrap gap-2">
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Deep Research</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Quality Sources</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Smart Synthesis</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Instant Insights</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Scholarly Research</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Curriculum Development</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Homeschool Resources</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Academic Excellence</span>
                             </div>
                             
                             <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-3">
-                                Empower your Curiosity: Search Less, Discover More
+                                Curiosity Refined: Find What Truly Matters
                             </h2>
                             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                                Ziq helps you find reliable information, synthesize complex topics, and gain deeper insights - all in seconds. Get quality answers backed by verified sources.
+                                Ziq transforms how educators, students of all ages, and homeschooling families discover and utilize knowledge. Access scholarly sources, find curriculum materials, and discover engaging learning experiences with clickable source links that let you explore the original information.
                             </p>
                             
                             <form onSubmit={handleSearch} className="mb-8 relative max-w-xl">
@@ -301,10 +302,10 @@ export default function AboutPage() {
                 <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-3xl mx-auto mb-16">
                         <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">
-                            Your Complete Research Assistant
+                            Discover More, Search Less
                         </h2>
                         <p className="text-lg text-gray-600 dark:text-gray-400">
-                            Ziq combines advanced AI with comprehensive knowledge sources to streamline your research process
+                            Ziq empowers curious minds to find, explore, and synthesize valuable information from diverse quality sources across the web
                         </p>
                     </div>
                     
@@ -312,38 +313,38 @@ export default function AboutPage() {
                         {[
                             {
                                 icon: Search,
-                                title: "Deep Research",
-                                description: "Access information from quality sources and trusted publications with precise citations",
+                                title: "Everyday Research",
+                                description: "Find answers to everyday questions with AI-powered search that cuts through the noise to deliver quality information",
                                 color: "blue"
                             },
                             {
-                                icon: Brain,
-                                title: "Intelligent Synthesis",
-                                description: "Ziq doesn't just search - it analyzes, compares, and generates insights across multiple sources",
+                                icon: BookOpen,
+                                title: "Scholarly Research",
+                                description: "Find and access peer-reviewed academic papers, research journals, and scholarly publications with source attribution",
                                 color: "violet"
                             },
                             {
-                                icon: Clock,
-                                title: "Time-Saving Summaries",
-                                description: "Get concise, easy-to-understand summaries of complex topics in seconds",
+                                icon: Users,
+                                title: "Homeschool Resources",
+                                description: "Find age-appropriate learning materials, curriculum options, and educational activities aligned with educational standards",
                                 color: "indigo"
                             },
                             {
-                                icon: BookOpen,
-                                title: "Research Excellence",
-                                description: "Comprehensive information gathering, detailed analysis, and proper citation support for your projects",
+                                icon: Brain,
+                                title: "Information Synthesis",
+                                description: "Get AI-powered summaries that connect information from multiple sources to answer complex questions",
                                 color: "cyan"
                             },
                             {
-                                icon: BarChart,
-                                title: "Market Intelligence",
-                                description: "Analyze industry trends, competitive landscapes, and business opportunities",
+                                icon: FileText,
+                                title: "Source Links",
+                                description: "Responses include clickable links to source websites, making it easy to access and verify original information",
                                 color: "emerald"
                             },
                             {
                                 icon: Lightbulb,
-                                title: "Creative Ideation",
-                                description: "Generate research questions, outline structures, and develop conceptual frameworks",
+                                title: "Professional Research",
+                                description: "Support for business, technical, and professional research needs with focused, relevant information gathering",
                                 color: "amber"
                             }
                         ].map((feature, i) => (
@@ -375,10 +376,10 @@ export default function AboutPage() {
                 <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-3xl mx-auto mb-16">
                         <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">
-                            How Ziq Works
+                            How Ziq Works: From Question to Answer
                         </h2>
                         <p className="text-lg text-gray-600 dark:text-gray-400">
-                            Powered by advanced AI technology and comprehensive knowledge sources
+                            Powered by advanced search technology and AI to help you find quality information
                         </p>
                     </div>
                     
@@ -388,23 +389,28 @@ export default function AboutPage() {
                         {[
                             {
                                 title: "Ask Your Question",
-                                description: "Type your research question in natural language - just like you'd ask a human research assistant.",
+                                description: "Enter any question about a topic you're researching, whether it's academic, professional, or personal interest.",
                                 icon: Search
                             },
                             {
-                                title: "Knowledge Retrieval",
-                                description: "Ziq searches professional sources, industry publications, and trusted websites to gather relevant information.",
+                                title: "Smart Search Technology",
+                                description: "Ziq searches across the web, news sources, and scholarly resources to find the most relevant information for your query.",
                                 icon: BookOpen
                             },
                             {
-                                title: "AI Analysis & Synthesis",
-                                description: "Multiple AI models work together to analyze, compare, and synthesize information from different sources.",
+                                title: "Information Synthesis",
+                                description: "Advanced AI analyzes and organizes the search results to create a comprehensive response to your question.",
                                 icon: Brain
                             },
                             {
-                                title: "Comprehensive Answer",
-                                description: "Receive a detailed, well-structured response with proper citations and sources for further reading.",
-                                icon: FileText
+                                title: "Sourced Answers",
+                                description: "Receive clear, concise answers with links to source websites so you can verify information and explore further.",
+                                icon: FileCheck
+                            },
+                            {
+                                title: "Deeper Exploration",
+                                description: "Ask follow-up questions to dig deeper into your topic or explore related concepts and connections.",
+                                icon: MessageCircle
                             }
                         ].map((step, i) => (
                             <motion.div 
@@ -437,47 +443,47 @@ export default function AboutPage() {
             <section id="use-cases" className="py-20 bg-gray-50 dark:bg-gray-900/50">
                 <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                            Made For Every Research Need
+                        <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">
+                            Specialized Research Tools for Everyone
                         </h2>
                         <p className="text-lg text-gray-600 dark:text-gray-400">
-                            See how different professionals use Ziq to accelerate their work
+                            Ziq helps Students of All Ages, Educators, and Homeschooling Families find the information they need
                         </p>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                         {[
                             {
-                                icon: GraduationCap,
-                                title: "For Students",
-                                description: "From essay research to thesis support, Ziq helps students find reliable sources, synthesize information, and develop well-structured arguments.",
-                                features: [
-                                    "Literature reviews",
-                                    "Research paper assistance",
-                                    "Citation support",
-                                    "Exam preparation"
-                                ]
-                            },
-                            {
                                 icon: BookOpen,
-                                title: "For Educators",
-                                description: "Teachers and professors use Ziq to develop curriculum materials, create lesson plans, and stay updated on educational research and best practices.",
+                                title: "For Students of All Ages",
+                                description: "Access quality information sources, learning materials, and publications with Ziq's comprehensive search capabilities for any topic you want to explore deeply.",
                                 features: [
-                                    "Curriculum development",
-                                    "Instructional material creation",
-                                    "Educational research",
-                                    "Student support materials"
+                                    "Age-appropriate resources",
+                                    "Learning materials",
+                                    "Source links",
+                                    "Comprehensive coverage"
                                 ]
                             },
                             {
-                                icon: Briefcase,
-                                title: "For Professionals",
-                                description: "Entrepreneurs and business people leverage Ziq for market research, competitive analysis, and strategic planning with reliable business intelligence.",
+                                icon: GraduationCap,
+                                title: "For Academic Educators",
+                                description: "Find engaging curriculum materials, discover lesson plans aligned with standards, and access the latest educational research and teaching methodologies.",
                                 features: [
-                                    "Market analysis",
-                                    "Competitive intelligence",
-                                    "Industry trend reports",
-                                    "Strategy development"
+                                    "Educational resource discovery",
+                                    "Academic research access",
+                                    "Teaching methodology information",
+                                    "Curriculum planning assistance"
+                                ]
+                            },
+                            {
+                                icon: Users,
+                                title: "For Homeschooling Families",
+                                description: "Find age-appropriate learning materials, explore curriculum options to meet individual learning needs, and discover resources that connect educational concepts across subjects.",
+                                features: [
+                                    "Homeschool curriculum resources",
+                                    "Educational activities and materials",
+                                    "Grade-level appropriate content",
+                                    "Multi-subject learning resources"
                                 ]
                             }
                         ].map((useCase, i) => (
@@ -541,9 +547,9 @@ export default function AboutPage() {
                                 title: "Content Strategist"
                             },
                             {
-                               quote: "Ziq has been instrumental in our research process. The quality of information and depth of analysis saves us countless hours.",
-                                name: "Lucia",
-                                title: "Founder & CEO"
+                               quote: "As I was looking for info on a class I was teaching, I found ZIQ directly clear and concise answered my questions and was instrumental in my successful teaching of the class. I recommend ZIQ to anyone who is looking for info on a topic without all the links.",
+                                name: "Steven Walker",
+                                title: "Electrician & Homeschool Dad"
                             }
                         ].map((testimonial, i) => (
                             <motion.div
@@ -585,6 +591,44 @@ export default function AboutPage() {
                 </div>
             </section>
             
+            {/* Founder's Perspective */}
+            <section className="py-20 bg-gray-50 dark:bg-gray-900/50">
+                <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-3xl mx-auto">
+                        <div className="text-center mb-10">
+                            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Founder's Perspective</h2>
+                            <p className="text-lg text-gray-600 dark:text-gray-400">Why I created Ziq</p>
+                        </div>
+                        
+                        <div className="flex flex-col md:flex-row gap-8 items-center mb-10">
+                            <div className="w-32 h-32 rounded-full overflow-hidden flex-shrink-0 border-2 border-blue-500 dark:border-blue-400">
+                                {/* Replace the src with your actual image path once you add your photo */}
+                                <Image 
+                                    src="/images/founder.jpg" 
+                                    alt="Lucia Walker, Founder of Ziq" 
+                                    width={128} 
+                                    height={128} 
+                                    className="object-cover w-full h-full"
+                                />
+                            </div>
+                            
+                            <div>
+                                <blockquote className="text-lg text-gray-700 dark:text-gray-300 mb-4 italic">
+                                    "As both the founder of Ziq and a homeschool mom, I've seen firsthand how challenging it can be to find quality educational resources efficiently. I created Ziq because I wanted to create a way for my boys to quickly find quality information and spend less time searching and more time learning. Now they can explore topics deeply with reliable sources, while I can easily find age-appropriate materials for their studies. It's my mission to make learning more engaging and efficient for students of all ages, educators, and homeschooling families everywhere."
+                                </blockquote>
+                                
+                                <div className="font-semibold text-gray-900 dark:text-white">
+                                    Lucia Walker
+                                </div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                    Founder & CEO, Homeschool Mom
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
             {/* Why Choose Ziq */}
             <section className="py-20 bg-blue-600 dark:bg-blue-900">
                 <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -594,10 +638,10 @@ export default function AboutPage() {
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                         {[
-                            { icon: <Clock className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Save Hours on Research" },
-                            { icon: <CheckCircle className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Quality Sources" },
-                            { icon: <Lightbulb className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Deeper Insights" },
-                            { icon: <BookOpen className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Academic Quality" }
+                            { icon: <Clock className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Find Information Faster" },
+                            { icon: <CheckCircle className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Access to Source Links" },
+                            { icon: <Lightbulb className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Organized Results" },
+                            { icon: <BookOpen className="h-8 w-8 mx-auto mb-3 text-blue-200" />, label: "Scholarly Resources" }
                         ].map((feature, i) => (
                             <div key={i} className="space-y-2">
                                 <div className="text-white">
@@ -661,23 +705,27 @@ export default function AboutPage() {
                         {[
                             {
                                 question: "How is Ziq different from regular search engines?",
-                                answer: "Unlike traditional search engines that return a list of links, Ziq processes information from multiple sources to provide comprehensive, synthesized answers with proper citations. It understands the context of your question and delivers research-quality responses."
+                                answer: "Unlike traditional search engines that return a list of links, Ziq processes information from multiple sources to provide comprehensive, synthesized answers with links to original sources. It helps students of all ages, educators, and homeschoolers find relevant information faster by organizing search results into a coherent response."
                             },
                             {
-                                question: "Is Ziq suitable for in-depth research?",
-                                answer: "Yes! Ziq is designed to support rigorous research. It provides citations for information sources, helping you maintain accuracy and credibility while accelerating your research process."
+                                question: "How can homeschooling families benefit from Ziq?",
+                                answer: "Homeschooling families can use Ziq to find age-appropriate learning materials and educational resources across all subjects. It helps parents discover content for curriculum development, research teaching approaches, and access educational materials while providing links to original sources for deeper exploration."
                             },
                             {
-                                question: "How accurate is the information Ziq provides?",
-                                answer: "Ziq draws information from reputable academic and professional sources. While we strive for maximum accuracy, we always recommend verifying critical information through the provided citations and sources."
+                                question: "How can students use Ziq for their studies?",
+                                answer: "High school and college students can use Ziq to research topics for assignments, find study materials, and explore subjects in greater depth. The organized responses help students gather information efficiently, while source links allow them to verify information and cite original sources in their work."
                             },
                             {
-                                question: "Can I use Ziq for my business research needs?",
-                                answer: "Absolutely. Ziq is equipped to handle market research, competitive analysis, and industry trend research to support business strategy and decision-making processes."
+                                question: "How can educators use Ziq?",
+                                answer: "Educators can use Ziq to find teaching resources, research subject matter, and discover educational content across various topics. The organized responses with source links help save time when preparing lessons or expanding knowledge on educational topics."
+                            },
+                            {
+                                question: "How does Ziq support students of all ages?",
+                                answer: "Students of all ages can use Ziq to explore topics they're curious about, research subjects for assignments, and find learning materials at their level. The organized responses make information more accessible, while source links allow students to verify information and explore topics more deeply at their own pace."
                             },
                             {
                                 question: "What kind of data privacy does Ziq offer?",
-                                answer: "We take data privacy seriously. Your research queries are not used to train our models without explicit consent, and we follow strict data protection standards to ensure your intellectual property remains secure."
+                                answer: "We take data privacy seriously. Your research queries are handled according to our privacy policy, and we follow data protection standards to ensure your information remains secure."
                             }
                         ].map((faq, i) => (
                             <motion.div 
@@ -714,24 +762,16 @@ export default function AboutPage() {
                             <p className="text-sm text-gray-600 dark:text-gray-400">
                                 Your AI-powered research assistant that helps you find, analyze, and synthesize information with speed and accuracy.
                             </p>
-                            <div className="flex space-x-4">
-                                <Link href="#" className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
-                                    <XLogo weight="fill" className="h-5 w-5" />
-                                </Link>
-                                <Link href="#" className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
-                                    <GithubLogo weight="fill" className="h-5 w-5" />
-                                </Link>
-                            </div>
                         </div>
                         
                         <div>
                             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h3>
                             <ul className="space-y-3">
-                                {['Features', 'Pricing', 'Use Cases', 'Testimonials', 'API'].map((item, i) => (
+                                {['Features', 'Use Cases', 'Testimonials'].map((item, i) => (
                                     <li key={i}>
-                                        <Link href="#" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
-                                            {item}
-                                        </Link>
+                                        {item === 'Features' && <Link href="#features" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">{item}</Link>}
+                                        {item === 'Use Cases' && <Link href="#use-cases" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">{item}</Link>}
+                                        {item === 'Testimonials' && <Link href="#testimonials" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">{item}</Link>}
                                     </li>
                                 ))}
                             </ul>
@@ -742,9 +782,9 @@ export default function AboutPage() {
                             <ul className="space-y-3">
                                 {['Documentation', 'Blog', 'Tutorials', 'Support', 'FAQ'].map((item, i) => (
                                     <li key={i}>
-                                        <Link href="#" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">
                                             {item}
-                                        </Link>
+                                        </span>
                                     </li>
                                 ))}
                             </ul>
@@ -755,9 +795,9 @@ export default function AboutPage() {
                             <ul className="space-y-3">
                                 {['About Us', 'Careers', 'Privacy Policy', 'Terms of Service', 'Contact'].map((item, i) => (
                                     <li key={i}>
-                                        <Link href="#" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">
                                             {item}
-                                        </Link>
+                                        </span>
                                     </li>
                                 ))}
                             </ul>
@@ -769,15 +809,15 @@ export default function AboutPage() {
                             &copy; {new Date().getFullYear()} Ziq Research Assistant. All rights reserved.
                         </p>
                         <div className="flex space-x-6">
-                            <Link href="#" className="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
                                 Privacy Policy
-                            </Link>
-                            <Link href="#" className="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
+                            </span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
                                 Terms of Service
-                            </Link>
-                            <Link href="#" className="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
+                            </span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
                                 Cookies
-                            </Link>
+                            </span>
                         </div>
                     </div>
                 </div>
