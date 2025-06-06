@@ -160,19 +160,19 @@ export default function AboutPage() {
                             </div>
                             
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">
-                                From Questions <br/>
-                                to Discoveries
+                                Smart Search for <br/>
+                                Curious Minds
                             </h1>
                             
                             <div className="mt-3 mb-4 flex flex-wrap gap-2">
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Scholarly Research</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Curriculum Development</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Homeschool Resources</span>
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Academic Excellence</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Deep Research</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Quality Sources</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Smart Synthesis</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Instant Insights</span>
                             </div>
                             
                             <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400 mb-3">
-                                Curiosity Refined: Find What Truly Matters
+                                Discover More With Less Searching
                             </h2>
                             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                                 Ziq transforms how educators, students of all ages, and homeschooling families discover and utilize knowledge. Access scholarly sources, find curriculum materials, and discover engaging learning experiences with clickable source links that let you explore the original information.
@@ -319,25 +319,25 @@ export default function AboutPage() {
                             },
                             {
                                 icon: BookOpen,
-                                title: "Scholarly Research",
+                                title: "Deep Research",
                                 description: "Find and access peer-reviewed academic papers, research journals, and scholarly publications with source attribution",
                                 color: "violet"
                             },
                             {
                                 icon: Users,
-                                title: "Homeschool Resources",
+                                title: "Quality Sources",
                                 description: "Find age-appropriate learning materials, curriculum options, and educational activities aligned with educational standards",
                                 color: "indigo"
                             },
                             {
                                 icon: Brain,
-                                title: "Information Synthesis",
+                                title: "Smart Synthesis",
                                 description: "Get AI-powered summaries that connect information from multiple sources to answer complex questions",
                                 color: "cyan"
                             },
                             {
                                 icon: FileText,
-                                title: "Source Links",
+                                title: "Instant Insights",
                                 description: "Responses include clickable links to source websites, making it easy to access and verify original information",
                                 color: "emerald"
                             },
@@ -398,7 +398,7 @@ export default function AboutPage() {
                                 icon: BookOpen
                             },
                             {
-                                title: "Information Synthesis",
+                                title: "Smart Synthesis",
                                 description: "Advanced AI analyzes and organizes the search results to create a comprehensive response to your question.",
                                 icon: Brain
                             },
