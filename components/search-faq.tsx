@@ -63,6 +63,15 @@ export default function SearchFAQ() {
               Free accounts come with 5 credits. Each search uses 1 credit, regardless of the type of search.
             </AccordionContent>
           </AccordionItem>
+          
+          <AccordionItem value="item-6">
+            <AccordionTrigger>
+              What is the Homeschool search group and how does it help homeschooling families?
+            </AccordionTrigger>
+            <AccordionContent>
+              The Homeschool search group is specifically designed for homeschooling families and educators. It combines web search and academic research tools to provide educational resources, curriculum materials, lesson plans, and teaching methods organized by subject area, grade level, and learning approach. It also includes information about legal requirements and adaptations for different learning styles to support your homeschooling journey.
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
       </CardContent>
     </Card>

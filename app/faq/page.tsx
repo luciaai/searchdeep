@@ -11,9 +11,23 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 
 export default function FAQPage() {
+  const [openItems, setOpenItems] = useState<string[]>([]);
+  const accordionItems = [
+    "item-0", "item-1", "item-2", "item-3", "item-4", "item-5", 
+    "item-6", "item-7", "item-8", "item-9", "item-10"
+  ];
+  
+  const expandAll = () => {
+    setOpenItems(accordionItems);
+  };
+  
+  const collapseAll = () => {
+    setOpenItems([]);
+  };
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <div className="container max-w-5xl mx-auto px-4 py-16"> {/* Increased top padding from py-8 to py-16 */}
@@ -30,10 +44,10 @@ export default function FAQPage() {
           <div className="flex flex-col items-center">
             <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500 dark:from-blue-400 dark:to-teal-300">Frequently Asked Questions</h1>
             <div className="mt-3 flex flex-wrap gap-2 justify-center">
-              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Professionals</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Researchers</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Teachers</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Students</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">Deep Research</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">Quality Sources</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">Smart Synthesis</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">Instant Insights</span>
             </div>
             <div className="mt-4">
               <Link href="/" className="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg">
@@ -63,8 +77,34 @@ export default function FAQPage() {
             </p>
           </div>
         </div>
+        
+        <div className="flex justify-end mb-4 gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={expandAll} 
+            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+          >
+            <ChevronDown size={16} />
+            Expand All
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={collapseAll} 
+            className="flex items-center gap-1 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+          >
+            <ChevronUp size={16} />
+            Collapse All
+          </Button>
+        </div>
 
-        <Accordion type="single" collapsible className="w-full space-y-4">
+        <Accordion 
+          type="multiple" 
+          className="w-full space-y-4" 
+          value={openItems} 
+          onValueChange={setOpenItems}
+        >
           <AccordionItem value="item-0" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
             <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">How is Ziq pronounced?</AccordionTrigger>
             <AccordionContent>
@@ -218,18 +258,35 @@ export default function FAQPage() {
           </AccordionItem>
 
           <AccordionItem value="item-4" className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-            <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">What search groups are available?</AccordionTrigger>
+            <AccordionTrigger className="px-4 py-3 text-lg font-medium hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">What search options are available?</AccordionTrigger>
             <AccordionContent>
               <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700 mb-4">
                 <h4 className="font-bold text-sm flex items-center mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 text-white px-3 py-1.5 rounded-full inline-flex max-w-fit">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
-                  SEARCH GROUPS
+                  SEARCH OPTIONS
                 </h4>
                 <p className="text-sm mb-3">
-                  Ziq offers different search groups to optimize your results for specific types of queries. Select a search group from the dropdown menu in the input area. On mobile, tap the group icon first to expand the selection options.
+                  Ziq offers the following search options to optimize your results for specific needs:
                 </p>
+                <ul className="list-disc pl-6 text-sm space-y-1 mb-3">
+                  <li><strong>Web Search</strong> - Our standard search mode for general research and information gathering</li>
+                  <li><strong>Academic</strong> - Access scholarly articles, research papers, and academic publications</li>
+                  <li><strong>Homeschool</strong> - Educational resources and curriculum materials for homeschooling families</li>
+                  <li><strong>Chat</strong> - Talk directly to the model for conversational assistance</li>
+                  <li><strong>Memory Feature</strong> - Save important information across sessions for later retrieval</li>
+                  <li><strong>Ziq Deep Mode</strong> - Toggle button that works across all search options for more comprehensive research with multiple sources and in-depth analysis</li>
+                </ul>
+                <p className="text-sm mb-3">
+                  Select a search option from the dropdown menu in the input area. On mobile, tap the option icon first to expand the selection menu. Read below to learn more about each option.
+                </p>
+                <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-800 mt-3">
+                  <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">Continuous Improvement</p>
+                  <p className="text-xs text-slate-700 dark:text-slate-300">
+                    We're constantly working to expand our search capabilities. More specialized search options will be added in the future to enhance your search experience and provide even more targeted results for specific needs.
+                  </p>
+                </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -265,47 +322,110 @@ export default function FAQPage() {
                   </div>
                 </div>
                 
-                {/* News Search */}
+                {/* Academic Search */}
                 <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
-                  <h4 className="font-bold text-sm flex items-center mb-2 text-green-600 dark:text-green-400">
+                  <h4 className="font-bold text-sm flex items-center mb-2 text-amber-600 dark:text-amber-400">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clipRule="evenodd" />
-                      <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z" />
+                      <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                     </svg>
-                    NEWS SEARCH
+                    ACADEMIC SEARCH
                   </h4>
                   <p className="text-sm mb-2">
-                    Focused on current events and recent information from news sources.
+                    Access scholarly articles, research papers, and academic publications.
                   </p>
                   
                   <ul className="list-disc pl-6 text-sm space-y-1">
-                    <li>Prioritizes recent news articles and blogs</li>
-                    <li>Focuses on timely and current information</li>
-                    <li>Includes sources from major news outlets</li>
-                    <li>Best for staying updated on current events</li>
+                    <li>Focuses on scholarly and academic sources</li>
+                    <li>Provides access to research papers and publications</li>
+                    <li>Includes proper academic citations</li>
+                    <li>Best for academic research and study</li>
                   </ul>
                   
-                  <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded border border-green-100 dark:border-green-800 mt-3">
-                    <p className="text-xs font-medium text-green-700 dark:text-green-300 mb-1">How News Search Works</p>
+                  <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-amber-800 mt-3">
+                    <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">How Academic Search Works</p>
                     <p className="text-xs text-slate-700 dark:text-slate-300">
-                      Filters search results to focus on news outlets and recent publications. Prioritizes timeliness and relevance to current events, with special attention to publication dates.
+                      Searches academic databases and scholarly sources to find peer-reviewed content and research publications. Results are presented with proper academic citations to help with research papers and scholarly work.
                     </p>
-                    <div className="mt-2 bg-green-100 dark:bg-green-800/30 p-2 rounded">
+                    <div className="mt-2 bg-amber-100 dark:bg-amber-800/30 p-2 rounded">
                       <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> &quot;What are the latest developments in renewable energy policy?&quot; will return recent news articles and press releases about policy changes, focusing on content published within the last few days or weeks.
+                        <span className="font-medium">Example:</span> &quot;What are the recent advances in quantum computing research?&quot; will return scholarly articles and academic papers from reputable academic sources with proper citations.
                       </p>
                     </div>
                   </div>
                 </div>
                 
-                {/* Memory Group */}
+                {/* Homeschool Search */}
+                <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
+                  <h4 className="font-bold text-sm flex items-center mb-2 text-green-600 dark:text-green-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                    </svg>
+                    HOMESCHOOL SEARCH
+                  </h4>
+                  <p className="text-sm mb-2">
+                    Educational resources and curriculum materials specifically for homeschooling families.
+                  </p>
+                  
+                  <ul className="list-disc pl-6 text-sm space-y-1">
+                    <li>Specialized search for homeschool curriculum and educational resources</li>
+                    <li>Combines web search and academic research for comprehensive results</li>
+                    <li>Organizes content by subject area, grade level, and learning approach</li>
+                    <li>Best for homeschooling families and alternative education</li>
+                  </ul>
+                  
+                  <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded border border-green-100 dark:border-green-800 mt-3">
+                    <p className="text-xs font-medium text-green-700 dark:text-green-300 mb-1">How Homeschool Search Works</p>
+                    <p className="text-xs text-slate-700 dark:text-slate-300">
+                      Combines web search and academic search tools to provide comprehensive educational resources tailored for homeschooling. Results include curriculum materials, lesson plans, educational activities, and research on homeschooling methods and approaches.
+                    </p>
+                    <div className="mt-2 bg-green-100 dark:bg-green-800/30 p-2 rounded">
+                      <p className="text-xs italic text-slate-700 dark:text-slate-300">
+                        <span className="font-medium">Example:</span> &quot;What are some effective math curricula for a 10-year-old homeschooler?&quot; or &quot;How can I create a homeschool science lab with household materials?&quot;
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Chat Search */}
+                <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
+                  <h4 className="font-bold text-sm flex items-center mb-2 text-violet-600 dark:text-violet-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                    </svg>
+                    CHAT
+                  </h4>
+                  <p className="text-sm mb-2">
+                    Talk directly to the model for conversational assistance.
+                  </p>
+                  
+                  <ul className="list-disc pl-6 text-sm space-y-1">
+                    <li>Direct conversation with the AI model</li>
+                    <li>Perfect for follow-up questions</li>
+                    <li>Helpful for brainstorming and ideation</li>
+                    <li>Best for conversational assistance</li>
+                  </ul>
+                  
+                  <div className="p-2 bg-violet-50 dark:bg-violet-900/20 rounded border border-violet-100 dark:border-violet-800 mt-3">
+                    <p className="text-xs font-medium text-violet-700 dark:text-violet-300 mb-1">How Chat Works</p>
+                    <p className="text-xs text-slate-700 dark:text-slate-300">
+                      Connects you directly to the AI model for a conversational experience. Unlike other search options, Chat doesn't search the web but relies on the model's training to provide responses.
+                    </p>
+                    <div className="mt-2 bg-violet-100 dark:bg-violet-800/30 p-2 rounded">
+                      <p className="text-xs italic text-slate-700 dark:text-slate-300">
+                        <span className="font-medium">Example:</span> &quot;Can you help me draft an email to reschedule a meeting?&quot; or &quot;What are some creative ways to explain photosynthesis to children?&quot;
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Memory Feature */}
                 <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
                   <h4 className="font-bold text-sm flex items-center mb-2 text-purple-600 dark:text-purple-400">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v10H5V5z" />
                       <path d="M7 7h2v2H7V7zm0 4h2v2H7v-2zm4-4h2v2h-2V7zm4 0h2v2h-2V7zm-4 4h2v2h-2v-2zm4 0h2v2h-2v-2z" />
                     </svg>
-                    MEMORY GROUP
+                    MEMORY FEATURE
                   </h4>
                   <p className="text-sm mb-2">
                     Your personal memory companion that creates a persistent knowledge base from your searches.
@@ -319,7 +439,7 @@ export default function FAQPage() {
                   </ul>
                   
                   <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded border border-purple-100 dark:border-purple-800 mt-3">
-                    <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">How Memory Works</p>
+                    <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">How Memory Feature Works</p>
                     <p className="text-xs text-slate-700 dark:text-slate-300">
                       Ask Ziq to remember specific information. Your memories are saved to your personal database and persist across search sessions. All saved memories are private and only accessible to your account. Retrieve memories anytime by asking related questions.
                     </p>
@@ -338,69 +458,7 @@ export default function FAQPage() {
                   </div>
                 </div>
                 
-                {/* Academic Search */}
-                <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
-                  <h4 className="font-bold text-sm flex items-center mb-2 text-amber-600 dark:text-amber-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-                    </svg>
-                    ACADEMIC SEARCH
-                  </h4>
-                  <p className="text-sm mb-2">
-                    Designed for scholarly research and educational content.
-                  </p>
-                  
-                  <ul className="list-disc pl-6 text-sm space-y-1">
-                    <li>Prioritizes scholarly articles and papers</li>
-                    <li>Focuses on educational and academic content</li>
-                    <li>Provides more detailed citations</li>
-                    <li>Best for homework, research papers, and studying</li>
-                  </ul>
-                  
-                  <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-amber-800 mt-3">
-                    <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mb-1">How Academic Search Works</p>
-                    <p className="text-xs text-slate-700 dark:text-slate-300">
-                      Targets scholarly databases and educational resources to find academic content. Emphasizes peer-reviewed sources and includes detailed citations in academic format for research papers.
-                    </p>
-                    <div className="mt-2 bg-amber-100 dark:bg-amber-800/30 p-2 rounded">
-                      <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> &quot;What are the recent advances in quantum computing?&quot; will prioritize scholarly articles, research papers, and academic publications with proper citations in academic format.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Local Search */}
-                <div className="bg-white/50 dark:bg-slate-800/50 p-6 rounded-lg border-t border-slate-200 dark:border-slate-700">
-                  <h4 className="font-bold text-sm flex items-center mb-2 text-rose-600 dark:text-rose-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                    </svg>
-                    LOCAL SEARCH
-                  </h4>
-                  <p className="text-sm mb-2">
-                    Provides location-specific information and results.
-                  </p>
-                  
-                  <ul className="list-disc pl-6 text-sm space-y-1">
-                    <li>Focuses on location-relevant information</li>
-                    <li>Helps find nearby services and businesses</li>
-                    <li>Provides region-specific details</li>
-                    <li>Best for travel planning and local information</li>
-                  </ul>
-                  
-                  <div className="p-2 bg-rose-50 dark:bg-rose-900/20 rounded border border-rose-100 dark:border-rose-800 mt-3">
-                    <p className="text-xs font-medium text-rose-700 dark:text-rose-300 mb-1">How Local Search Works</p>
-                    <p className="text-xs text-slate-700 dark:text-slate-300">
-                      Uses your location data (with permission) to find relevant local information. Prioritizes nearby businesses, services, and region-specific content to help you find what you need in your area.
-                    </p>
-                    <div className="mt-2 bg-rose-100 dark:bg-rose-800/30 p-2 rounded">
-                      <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                        <span className="font-medium">Example:</span> &quot;What are the best restaurants near me?&quot; or &quot;Where can I find hiking trails in my area?&quot; will use your location to provide results specific to your geographic area.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+
               </div>
               
               <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg mt-4 border border-slate-200 dark:border-slate-800">
@@ -415,20 +473,20 @@ export default function FAQPage() {
                 </p>
                 
                 <ul className="list-disc pl-6 text-sm space-y-1">
-                  <li>Uses advanced &quot;reason_search&quot; technology</li>
-                  <li>Searches web and academic sources simultaneously</li>
+                  <li>Uses advanced reasoning technology</li>
+                  <li>Searches multiple professional sources simultaneously</li>
                   <li>Provides comprehensive inline citations</li>
-                  <li>Supports LaTeX for mathematical equations</li>
+                  <li>Delivers deeper insights with quality information</li>
                 </ul>
                 
                 <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800 mt-3">
                   <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">How Ziq Deep Mode Works</p>
                   <p className="text-xs text-slate-700 dark:text-slate-300">
-                    Conducts multi-step research automatically by combining multiple search types in one query. Analyzes and synthesizes information to create structured, citation-rich responses.
+                    Conducts multi-step research automatically by combining multiple search types in one query. Analyzes and synthesizes information to create structured, citation-rich responses with quality sources.
                   </p>
                   <div className="mt-2 bg-purple-100 dark:bg-purple-800/30 p-2 rounded">
                     <p className="text-xs italic text-slate-700 dark:text-slate-300">
-                      <span className="font-medium">Example:</span> &quot;Explain the implications of quantum computing on modern cryptography&quot; will perform deep research across academic papers, technical blogs, and expert analyses, providing a comprehensive answer with detailed citations and potentially including mathematical formulas in LaTeX format.
+                      <span className="font-medium">Example:</span> &quot;Explain the implications of quantum computing on modern cryptography&quot; will perform deep research across professional sources, technical blogs, and expert analyses, providing a comprehensive answer with detailed citations from quality sources.
                     </p>
                   </div>
                 </div>
@@ -589,7 +647,7 @@ export default function FAQPage() {
                 
                 <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded border border-orange-100 dark:border-orange-800">
                   <p className="text-xs text-orange-700 dark:text-orange-300">
-                    <span className="font-medium">How Search History Works:</span> Only your search queries are saved (not the results or content). History includes the query text, search type, and timestamp. To save important content from your searches, you can: 1) Use the Memory Group feature to save content within the app, or 2) Copy and paste important text to your own documents.
+                    <span className="font-medium">How Search History Works:</span> Only your search queries are saved (not the results or content). History includes the query text, search type, and timestamp. To save important content from your searches, you can: 1) Use the Memory Feature to save content within the app, or 2) Copy and paste important text to your own documents.
                   </p>
                 </div>
               </div>
@@ -738,8 +796,8 @@ export default function FAQPage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-violet-700 dark:text-violet-300">Group Selection</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">Tap to expand before selecting a search group</p>
+                      <p className="text-xs font-medium text-violet-700 dark:text-violet-300">Option Selection</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">Tap to expand before selecting a search option</p>
                     </div>
                   </div>
                   

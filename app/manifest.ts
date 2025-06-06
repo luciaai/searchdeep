@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Ziq - AI Research Assistant",
     short_name: "Ziq Research",
-    description: "Your AI research companion designed for students, teachers, entrepreneurs, and business professionals",
+    description: "Your AI research companion that delivers deep insights and verified information for all your search needs",
     start_url: "/",
     display: "standalone",
     categories: ["search", "ai", "productivity"],
