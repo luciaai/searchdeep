@@ -26,7 +26,7 @@ export const serverEnv = createEnv({
     MEM0_API_KEY: z.string().min(1),
     MEM0_ORG_NAME: z.string().min(1),
     MEM0_PROJECT_NAME: z.string().min(1),
-    GEMINI_API_KEY: z.string().min(1),
+    // GEMINI_API_KEY removed since we no longer use Gemini
   },
   experimental__runtimeEnv: process.env,
 })
