@@ -25,16 +25,20 @@ import { z } from 'zod';
 import { geolocation } from '@vercel/functions';
 import MemoryClient from 'mem0ai';
 
+import { generateWithGemini } from '@/lib/gemini';
+
+// We'll handle Gemini directly in the POST function
+
 const ziq = customProvider({
     languageModels: {
         'ziq-default': xai('grok-2-1212'),
         'ziq-vision': xai('grok-2-vision-1212'),
-        'ziq-llama': cerebras('llama-3.3-70b'),
+        'ziq-llama': cerebras('llama-3-70b'),
         'ziq-sonnet': anthropic('claude-3-7-sonnet-20250219'),
         'ziq-r1': wrapLanguageModel({
             model: groq('deepseek-r1-distill-llama-70b'),
             middleware: extractReasoningMiddleware({ tagName: 'think' })
-        }),
+        })
     }
 })
 
@@ -71,6 +75,21 @@ export async function POST(req: Request) {
         console.log(`Enhanced system prompt for Sonnet with search depth instruction: ${group} mode`);
     }
 
+    // Special handling for Gemini model - temporarily disabled
+    if (model === "gemini-flash" || model.includes("gemini")) {
+        console.log("Gemini model is temporarily disabled");
+        
+        return createDataStreamResponse({
+            execute: async (dataStream) => {
+                dataStream.writeMessageAnnotation({
+                    kind: 'text',
+                    text: "The Gemini model is temporarily unavailable. Please select another model such as Grok 2.0 or Claude 3.7 Sonnet."
+                });
+            }
+        });
+    }
+    
+    // Standard handling for other models
     return createDataStreamResponse({
         execute: async (dataStream) => {
             const result = streamText({
@@ -106,3 +125,5 @@ export async function POST(req: Request) {
         }
     })
 }
+
+// We'll create a separate API route for Gemini
