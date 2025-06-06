@@ -1,7 +1,7 @@
 // /lib/utils.ts
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { Globe, Book, YoutubeIcon, Mountain, Brain } from 'lucide-react'
+import { Globe, Book, YoutubeIcon, Mountain, Brain, GraduationCap } from 'lucide-react'
 import { ChatsCircle, Code, Memory, XLogo } from '@phosphor-icons/react'
 import React from 'react'
 
@@ -63,6 +63,27 @@ export const searchGroups = [
     show: true,
   },
   {
+    id: 'academic' as const,
+    name: 'Academic',
+    description: 'Access scholarly articles, research papers, and academic publications',
+    icon: Book,
+    show: true,
+  },
+  {
+    id: 'homeschool' as const,
+    name: 'Homeschool',
+    description: 'Educational resources and curriculum for homeschooling families',
+    icon: GraduationCap,
+    show: true,
+  },
+  {
+    id: 'chat' as const,
+    name: 'Chat',
+    description: 'Talk to the model directly.',
+    icon: ChatsCircle,
+    show: true,
+  },
+  {
     id: 'buddy' as const,
     name: 'Buddy',
     description: 'Your personal memory companion',
@@ -81,28 +102,14 @@ export const searchGroups = [
     name: 'Analysis',
     description: 'Data analysis, code execution, and financial tools',
     icon: Code,
-    show: true,
-  },
-  {
-    id: 'chat' as const,
-    name: 'Chat',
-    description: 'Talk to the model directly.',
-    icon: ChatsCircle,
-    show: true,
-  },
-  {
-    id: 'academic' as const,
-    name: 'Academic',
-    description: 'Access scholarly articles, research papers, and academic publications',
-    icon: Book,
-    show: true,
+    show: false, // Hidden until issues with code interpreter and financial tools are fixed
   },
   {
     id: 'youtube' as const,
     name: 'YouTube',
     description: 'Search YouTube videos in real-time powered by Exa',
     icon: YoutubeIcon,
-    show: true,
+    show: false, // Hidden until YouTube search implementation is completed
   },
   {
     id: 'extreme' as const,
