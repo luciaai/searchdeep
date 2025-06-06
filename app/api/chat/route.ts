@@ -25,9 +25,8 @@ import { z } from 'zod';
 import { geolocation } from '@vercel/functions';
 import MemoryClient from 'mem0ai';
 
-import { generateWithGemini } from '@/lib/gemini';
-
-// We'll handle Gemini directly in the POST function
+// Gemini implementation removed
+// We'll handle AI models directly in the POST function
 
 const ziq = customProvider({
     languageModels: {
