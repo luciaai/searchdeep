@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getUserCredits } from '@/lib/user-credits';
 import { useEffect, useState } from 'react';
-import { Coins, CreditCard, HelpCircle, History, Info, Plus } from 'lucide-react';
+import { Coins, CreditCard, HelpCircle, History, Info, MessageSquare, Plus, Settings, Shield, ShieldAlert } from 'lucide-react';
+import { FeedbackModal } from './feedback-modal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,8 @@ export function NavBar() {
   const router = useRouter();
   const [userCredits, setUserCredits] = useState<number | null>(null);
   const [isLoadingCredits, setIsLoadingCredits] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   
   useEffect(() => {
     async function fetchCredits() {
@@ -35,6 +38,11 @@ export function NavBar() {
         // Set credits directly
         setUserCredits(data.credits);
         console.log("Set userCredits to:", data.credits);
+        
+        // Check if user is admin
+        if (data.isAdmin) {
+          setIsAdmin(true);
+        }
       } catch (error) {
         console.error('Error fetching credits:', error);
       } finally {
@@ -63,7 +71,7 @@ export function NavBar() {
           <DropdownMenuItem asChild>
             <Link href="/history" className="flex items-center cursor-pointer">
               <History className="mr-2 h-4 w-4" />
-              <span>History</span>
+              <span>Search History</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
@@ -74,7 +82,7 @@ export function NavBar() {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/faq" className="flex items-center cursor-pointer">
-              <Info className="mr-2 h-4 w-4" />
+              <HelpCircle className="mr-2 h-4 w-4" />
               <span>FAQ</span>
             </Link>
           </DropdownMenuItem>
@@ -82,6 +90,18 @@ export function NavBar() {
             <Link href="/about" className="flex items-center cursor-pointer">
               <Info className="mr-2 h-4 w-4" />
               <span>About</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/privacy" className="flex items-center cursor-pointer">
+              <Info className="mr-2 h-4 w-4" />
+              <span>Privacy Policy</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/terms" className="flex items-center cursor-pointer">
+              <Info className="mr-2 h-4 w-4" />
+              <span>Terms of Service</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -141,6 +161,18 @@ export function NavBar() {
               FAQ
             </span>
           </Button>
+          
+          <Button
+            type="button"
+            variant={"outline"}
+            className="rounded-full bg-background hover:bg-muted/50 text-foreground backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto flex items-center transition-all duration-300 shadow-sm"
+            onClick={() => setIsFeedbackModalOpen(true)}
+          >
+            <MessageSquare size={18} className="transition-all" />
+            <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
+              Feedback
+            </span>
+          </Button>
         </div>
       </div>
 
@@ -157,6 +189,22 @@ export function NavBar() {
               {isLoadingCredits ? '...' : userCredits !== null ? userCredits : '0'}
             </span>
           </div>
+          
+          {/* User menu dropdown */}
+          
+          {/* Admin dashboard access - conditionally rendered */}
+          {isAdmin && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="rounded-full mr-2"
+              onClick={() => router.push('/admin')}
+            >
+              <Info className="mr-2 h-4 w-4" />
+            </Button>
+          )}
+          
+          
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
@@ -184,6 +232,12 @@ export function NavBar() {
         <AboutButton />
         <ThemeToggle />
       </div>
+
+      {/* Feedback Modal */}
+      <FeedbackModal 
+        isOpen={isFeedbackModalOpen} 
+        onClose={() => setIsFeedbackModalOpen(false)} 
+      />
 
       <style jsx global>{`
         @keyframes gradient-animation {

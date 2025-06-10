@@ -16,6 +16,7 @@ import {
 import "./globals.css";
 import { Providers } from "./providers";
 import { NavBar } from "@/components/nav-bar";
+import { Footer } from "@/components/footer";
 import AuthHandler from "@/components/auth/auth-handler";
 
 export const metadata: Metadata = {
@@ -116,7 +117,10 @@ export default function RootLayout({
               <AuthHandler />
               <NavBar />
               <Toaster position="top-center" richColors theme="system" />
-              {children}
+              <div className="flex flex-col min-h-screen">
+                {children}
+                <Footer />
+              </div>
             </Providers>
           </NuqsAdapter>
           <Analytics />
