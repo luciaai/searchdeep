@@ -94,18 +94,8 @@ export function NavBar() {
               <span>About</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/privacy" className="flex items-center cursor-pointer">
-              <Info className="mr-2 h-4 w-4" />
-              <span>Privacy Policy</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/terms" className="flex items-center cursor-pointer">
-              <Info className="mr-2 h-4 w-4" />
-              <span>Terms of Service</span>
-            </Link>
-          </DropdownMenuItem>
+          {/* Privacy Policy and Terms of Service links removed from dropdown menu
+              as they are already available in the footer, following industry best practices */}
         </DropdownMenuContent>
       </DropdownMenu>
     );
