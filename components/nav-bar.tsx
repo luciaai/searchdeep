@@ -9,7 +9,8 @@ import { cn } from '@/lib/utils';
 import { getUserCredits } from '@/lib/user-credits';
 import { useEffect, useState } from 'react';
 import { Coins, CreditCard, HelpCircle, History, Info, MessageSquare, Plus, Settings, Shield, ShieldAlert } from 'lucide-react';
-import { FeedbackModal } from './feedback-modal';
+// Temporarily removing feedback modal import to fix build issues
+// import { FeedbackModal } from './feedback-modal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +25,8 @@ export function NavBar() {
   const [userCredits, setUserCredits] = useState<number | null>(null);
   const [isLoadingCredits, setIsLoadingCredits] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  // Temporarily removed feedback modal state
+  // const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   
   useEffect(() => {
     async function fetchCredits() {
@@ -166,7 +168,7 @@ export function NavBar() {
             type="button"
             variant={"outline"}
             className="rounded-full bg-background hover:bg-muted/50 text-foreground backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto flex items-center transition-all duration-300 shadow-sm"
-            onClick={() => setIsFeedbackModalOpen(true)}
+            onClick={() => window.location.href = '/feedback'}
           >
             <MessageSquare size={18} className="transition-all" />
             <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
@@ -233,11 +235,7 @@ export function NavBar() {
         <ThemeToggle />
       </div>
 
-      {/* Feedback Modal */}
-      <FeedbackModal 
-        isOpen={isFeedbackModalOpen} 
-        onClose={() => setIsFeedbackModalOpen(false)} 
-      />
+      {/* Feedback Modal temporarily removed to fix build issues */}
 
       <style jsx global>{`
         @keyframes gradient-animation {
