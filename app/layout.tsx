@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://healthiliving.com"),
   title: "Ziq",
   description:
-    "Ziq is an AI-powered research assistant for students, researchers, and lifelong learners. It helps you find, synthesize, and cite reliable information from across the web for academic, educational, and professional needs.",
+    "Ziq is an AI-powered research assistant for students, homeschoolers, researchers, and lifelong learners. It helps you find, synthesize, and cite reliable information from across the web for academic, educational, and professional needs.",
   icons: {
     icon: [
       { url: "/new-icons/favicon.svg", type: "image/svg+xml" },
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     url: "https://healthiliving.com",
     siteName: "Deep Search",
     title: "Ziq – AI Research Assistant for Students & Learners",
-    description: "Ziq helps students, researchers, and lifelong learners find and synthesize reliable information from the web, with citations and educational tools.",
+    description: "Ziq helps students, homeschoolers, researchers, and lifelong learners find and synthesize reliable information from the web, with citations and educational tools.",
     images: [
       {
         url: "https://healthiliving.com/og-image.png",
