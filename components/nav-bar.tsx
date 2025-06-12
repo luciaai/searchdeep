@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getUserCredits } from '@/lib/user-credits';
 import { useEffect, useState } from 'react';
-import { Coins, CreditCard, HelpCircle, History, Info, MessageSquare, Plus, Settings, Shield, ShieldAlert } from 'lucide-react';
+import { Coins, CreditCard, HelpCircle, History, Info, Menu, MessageSquare, Plus, Settings, Shield, ShieldAlert } from 'lucide-react';
 // Temporarily removing feedback modal import to fix build issues
 // import { FeedbackModal } from './feedback-modal';
 import {
@@ -66,7 +66,7 @@ export function NavBar() {
             size="icon"
             className="rounded-full w-8 h-8 bg-background dark:bg-muted border-border dark:border-muted hover:bg-muted/50 dark:hover:bg-muted/80 transition-all"
           >
-            <Info className="h-5 w-5 text-foreground/70 dark:text-foreground/70" />
+            <Menu className="h-5 w-5 text-foreground/70 dark:text-foreground/70" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[180px] mt-1" sideOffset={8}>
@@ -192,7 +192,7 @@ export function NavBar() {
               className="rounded-full mr-2"
               onClick={() => router.push('/admin')}
             >
-              <Info className="mr-2 h-4 w-4" />
+              <Shield className="mr-2 h-4 w-4" />
             </Button>
           )}
           

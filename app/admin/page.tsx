@@ -20,8 +20,6 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState<any[]>([]);
   const [feedback, setFeedback] = useState<any[]>([]);
-  const [betaTesters, setBetaTesters] = useState<any[]>([]);
-  const [betaTasks, setBetaTasks] = useState<any[]>([]);
   const [creditHistory, setCreditHistory] = useState<any[]>([]);
   const [creditAmount, setCreditAmount] = useState<number>(5);
   const [creditReason, setCreditReason] = useState<string>('Admin award');
@@ -30,6 +28,7 @@ export default function AdminPage() {
   const [creditAction, setCreditAction] = useState<'add' | 'remove'>('add');
   const [feedbackCreditAmount, setFeedbackCreditAmount] = useState<number>(5);
   const [feedbackFilter, setFeedbackFilter] = useState<string>('all');
+  const [reviewFilter, setReviewFilter] = useState<number | null>(null);
 
   // Define loadTabData with useCallback to prevent recreation on each render
   const loadTabData = useCallback(async () => {
@@ -94,25 +93,6 @@ export default function AdminPage() {
             console.error('Error fetching feedback from admin API:', adminError);
             toast.error('Error loading feedback data');
           }
-        }
-      } else if (activeTab === 'beta') {
-        // Fetch beta testers with optimized caching strategy
-        const testersResponse = await fetch(`/api/admin/beta-testers${queryParam}`);
-        const tasksResponse = await fetch(`/api/admin/beta-tasks${queryParam}`);
-        
-        if (testersResponse.ok) {
-          const data = await testersResponse.json();
-          setBetaTesters(data.betaTesters || []);
-        } else if (testersResponse.status === 401 || testersResponse.status === 403) {
-          setIsAdmin(false);
-          toast.error('Admin session expired');
-          router.push('/');
-          return;
-        }
-        
-        if (tasksResponse.ok) {
-          const data = await tasksResponse.json();
-          setBetaTasks(data.betaTasks || []);
         }
       } else if (activeTab === 'credits') {
         // Fetch credit history with optimized caching strategy
@@ -185,8 +165,8 @@ export default function AdminPage() {
     }
   }, [activeTab, isAdmin, loadTabData]);
 
-  // Award or remove credits from a user
-  const handleUserCredits = async (userId: string, email: string, action: 'add' | 'remove' = 'add') => {
+  // Award credits to user
+  const awardCredits = async (userId: string, action: 'add' | 'remove') => {
     try {
       if (!creditAmount || creditAmount <= 0) {
         toast.error('Please enter a valid credit amount');
@@ -197,16 +177,12 @@ export default function AdminPage() {
         toast.error('Please enter a reason for this credit change');
         return;
       }
-
-      // Set the selected user for the modal
-      setSelectedUserId(userId);
-      setSelectedUserEmail(email);
-      setCreditAction(action);
-      
-      // Calculate the actual amount to send to the API (negative for removal)
-      const finalAmount = action === 'add' ? creditAmount : -creditAmount;
       
       setIsLoading(true);
+      console.log('Awarding credits to user:', userId, 'Amount:', creditAmount, 'Action:', action, 'Reason:', creditReason);
+      
+      const finalAmount = action === 'remove' ? -Math.abs(creditAmount) : Math.abs(creditAmount);
+      
       const response = await fetch('/api/admin/award-credits', {
         method: 'POST',
         headers: {
@@ -215,24 +191,27 @@ export default function AdminPage() {
         body: JSON.stringify({
           userId,
           amount: finalAmount,
-          reason: creditReason || (action === 'add' ? 'Admin award' : 'Admin deduction'),
+          reason: creditReason,
         }),
       });
 
+      const data = await response.json();
+      console.log('Award credits response:', data);
+      
       if (response.ok) {
-        toast.success(`${creditAmount} credits ${action === 'add' ? 'awarded to' : 'removed from'} ${email}`);
-        // Refresh users data and credit history
+        toast.success(`${action === 'add' ? 'Added' : 'Removed'} ${Math.abs(creditAmount)} credits ${action === 'add' ? 'to' : 'from'} user`);
+        // Reset form
+        setCreditAmount(5);
+        setCreditReason('Admin award');
+        // Refresh data
         loadTabData();
-        
-        // Reset reason field after successful operation
-        setCreditReason('');
       } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || `Failed to ${action} credits`);
+        console.error('Error awarding credits:', data);
+        toast.error(data.error || 'Failed to award credits');
       }
     } catch (error) {
-      console.error(`Error ${creditAction} credits:`, error);
-      toast.error(`Error ${creditAction} credits`);
+      console.error('Error awarding credits:', error);
+      toast.error('Error awarding credits. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -329,13 +308,6 @@ export default function AdminPage() {
             Feedback
           </Button>
           <Button
-            variant={activeTab === 'beta' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('beta')}
-            size="sm"
-          >
-            Beta Program
-          </Button>
-          <Button
             variant={activeTab === 'credits' ? 'default' : 'outline'}
             onClick={() => setActiveTab('credits')}
             size="sm"
@@ -343,8 +315,8 @@ export default function AdminPage() {
             Credit History
           </Button>
           <Button
-            variant={activeTab === 'admins' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('admins')}
+            variant={activeTab === 'admin' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('admin')}
             size="sm"
           >
             Admin Management
@@ -419,14 +391,14 @@ export default function AdminPage() {
                               <Button 
                                 size="sm"
                                 variant="default"
-                                onClick={() => handleUserCredits(user.id, user.email, 'add')}
+                                onClick={() => awardCredits(user.id, 'add')}
                               >
                                 Add Credits
                               </Button>
                               <Button 
                                 size="sm"
                                 variant="destructive"
-                                onClick={() => handleUserCredits(user.id, user.email, 'remove')}
+                                onClick={() => awardCredits(user.id, 'remove')}
                               >
                                 Remove Credits
                               </Button>
@@ -448,50 +420,84 @@ export default function AdminPage() {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
               <h2 className="text-xl font-semibold mb-4">User Feedback ({feedback.length})</h2>
               
-              <div className="mb-6 flex flex-wrap gap-2">
-                <Button 
-                  size="sm" 
-                  variant={feedbackFilter === 'all' ? 'default' : 'outline'}
-                  onClick={() => setFeedbackFilter('all')}
-                >
-                  All Feedback
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant={feedbackFilter === 'pending' ? 'default' : 'outline'}
-                  onClick={() => setFeedbackFilter('pending')}
-                >
-                  Pending
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant={feedbackFilter === 'reviewed' ? 'default' : 'outline'}
-                  onClick={() => setFeedbackFilter('reviewed')}
-                >
-                  Reviewed
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant={feedbackFilter === 'resolved' ? 'default' : 'outline'}
-                  onClick={() => setFeedbackFilter('resolved')}
-                >
-                  Implemented
-                </Button>
+              <div className="flex flex-col space-y-3 mb-4">
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant={feedbackFilter === 'all' ? 'default' : 'outline'}
+                    onClick={() => setFeedbackFilter('all')}
+                  >
+                    All Feedback
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={feedbackFilter === 'pending' ? 'default' : 'outline'}
+                    onClick={() => setFeedbackFilter('pending')}
+                  >
+                    Pending
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={feedbackFilter === 'reviewed' ? 'default' : 'outline'}
+                    onClick={() => setFeedbackFilter('reviewed')}
+                  >
+                    Reviewed
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={feedbackFilter === 'resolved' ? 'default' : 'outline'}
+                    onClick={() => setFeedbackFilter('resolved')}
+                  >
+                    Implemented
+                  </Button>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">Filter by rating:</span>
+                  <div className="flex gap-1">
+                    {[null, 5, 4, 3, 2, 1].map((stars) => (
+                      <Button
+                        key={stars === null ? 'all' : stars}
+                        size="sm"
+                        variant={reviewFilter === stars ? 'default' : 'outline'}
+                        className="px-2 py-1 h-7 min-w-[28px]"
+                        onClick={() => setReviewFilter(stars)}
+                      >
+                        {stars === null ? 'All' : `${stars}★`}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </div>
               
               {feedback.length > 0 ? (
                 <div className="space-y-6">
-                  {[...feedback].reverse().filter((item) => {
-                    if (feedbackFilter === 'all') return true;
-                    // Handle both 'resolved' and 'implemented' as the same for UI consistency
-                    if (feedbackFilter === 'resolved' && (item.status === 'resolved' || item.status === 'implemented')) {
-                      return true;
+                  {[...feedback]
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                    .filter((item) => {
+                    // First filter by status
+                    let statusMatch = true;
+                    if (feedbackFilter !== 'all') {
+                      // Handle both 'resolved' and 'implemented' as the same for UI consistency
+                      if (feedbackFilter === 'resolved' && (item.status === 'resolved' || item.status === 'implemented')) {
+                        statusMatch = true;
+                      }
+                      // Handle 'pending' which might be stored as 'new' or 'pending'
+                      else if (feedbackFilter === 'pending' && (item.status === 'pending' || item.status === 'new')) {
+                        statusMatch = true;
+                      }
+                      else {
+                        statusMatch = item.status === feedbackFilter;
+                      }
                     }
-                    // Handle 'pending' which might be stored as 'new' or 'pending'
-                    if (feedbackFilter === 'pending' && (item.status === 'pending' || item.status === 'new')) {
-                      return true;
+                    
+                    // Then filter by rating
+                    let ratingMatch = true;
+                    if (reviewFilter !== null) {
+                      ratingMatch = item.rating === reviewFilter;
                     }
-                    return item.status === feedbackFilter;
+                    
+                    return statusMatch && ratingMatch;
                   }).map((item) => (
                     <div key={item.id} className="border dark:border-gray-700 rounded-lg p-4 transition-shadow hover:shadow-md">
                       <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
@@ -505,6 +511,23 @@ export default function AdminPage() {
                             <p className="text-sm font-medium capitalize">{item.status || 'Pending'}</p>
                           </div>
                           <h3 className="text-lg font-medium">{item.subject || 'No Subject'}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            {item.rating ? (
+                              <div className="flex items-center">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <svg 
+                                    key={i} 
+                                    className={`w-4 h-4 ${i < item.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                  </svg>
+                                ))}
+                                <span className="ml-1 text-sm font-medium">{item.rating}/5</span>
+                              </div>
+                            ) : null}
+                          </div>
                           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             From: {item.email || 'Anonymous'} • {new Date(item.createdAt).toLocaleString()}
                           </p>
@@ -565,7 +588,14 @@ export default function AdminPage() {
                         </div>
                       </div>
                       <div className="bg-gray-50 dark:bg-gray-700 rounded p-4 mt-2">
-                        <p className="whitespace-pre-wrap">{item.message}</p>
+                        {item.message && <p className="whitespace-pre-wrap">{item.message}</p>}
+                        
+                        {item.review && (
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                            <p className="font-medium mb-1">Review:</p>
+                            <p className="whitespace-pre-wrap">{item.review}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -579,62 +609,18 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* Beta Program Tab */}
-          {activeTab === 'beta' && (
-            <>
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-xl font-semibold mb-4">Beta Testers</h2>
-                {betaTesters.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                      <thead className="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Joined</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        {betaTesters.map((tester) => (
-                          <tr key={tester.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{tester.email}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{tester.status}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                              {new Date(tester.createdAt).toLocaleString()}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <p className="text-gray-500 dark:text-gray-400">No beta testers found</p>
-                )}
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-xl font-semibold mb-4">Beta Tasks</h2>
-                {betaTasks.length > 0 ? (
-                  <div className="space-y-4">
-                    {betaTasks.map((task) => (
-                      <div key={task.id} className="border dark:border-gray-700 rounded-lg p-4">
-                        <h3 className="font-medium">{task.title}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Status: {task.status}</p>
-                        <p className="mt-2">{task.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 dark:text-gray-400">No beta tasks found</p>
-                )}
-              </div>
-            </>
+          {/* Admin Management Tab */}
+          {activeTab === 'admin' && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+              <h2 className="text-xl font-semibold mb-4">Admin Management</h2>
+              <AdminManagement />
+            </div>
           )}
 
           {/* Credit History Tab */}
           {activeTab === 'credits' && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-              <h2 className="text-xl font-semibold mb-4">Credit History</h2>
+              <h2 className="text-xl font-semibold mb-4">Credit History ({creditHistory.length})</h2>
               {creditHistory.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -689,14 +675,6 @@ export default function AdminPage() {
               ) : (
                 <p className="text-gray-500 dark:text-gray-400">No credit history found</p>
               )}
-            </div>
-          )}
-
-          {/* Admin Management Tab */}
-          {activeTab === 'admins' && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-              <h2 className="text-xl font-semibold mb-4">Admin Management</h2>
-              <AdminManagement />
             </div>
           )}
         </>

@@ -11,9 +11,14 @@ export async function POST(request: Request) {
     
     // Parse the request body
     const body = await request.json();
-    const { name, email, type, message } = body;
+    const { name, email, type, message, subject, rating, review } = body;
     
-    if (!message || !type) {
+    // Validate based on submission type
+    // For regular feedback, require message and type
+    // For reviews, require rating and type
+    const isReview = rating && rating >= 1 && rating <= 5;
+    
+    if ((!message && !isReview) || (!review && isReview) || !type) {
       return new NextResponse(JSON.stringify({ error: 'Missing required fields' }), { 
         status: 400,
         headers: { 'Content-Type': 'application/json' }
@@ -40,97 +45,58 @@ export async function POST(request: Request) {
       id: feedbackId,
       type,
       message,
+      subject: subject || '',
       name: userId ? `${userData?.firstName || ''} ${userData?.lastName || ''}`.trim() : name || '',
       email: userId ? userData?.email || '' : email || '',
       userId: userData?.id || null,
+      rating: typeof rating === 'number' && rating >= 1 && rating <= 5 ? rating : null,
+      review: review || '',
       status: 'pending',
       isReward: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
     
-    // Path to the feedback JSON file
-    const feedbackFilePath = path.join(process.cwd(), 'data', 'feedback.json');
+    // Ensure the data directory exists
+    const dataDir = path.join(process.cwd(), 'data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
     
-    try {
-      // Read existing feedback data
-      let feedbackArray = [];
-      if (fs.existsSync(feedbackFilePath)) {
-        const fileContent = fs.readFileSync(feedbackFilePath, 'utf8');
-        feedbackArray = JSON.parse(fileContent);
-      } else {
-        // Create the data directory if it doesn't exist
-        const dataDir = path.join(process.cwd(), 'data');
-        if (!fs.existsSync(dataDir)) {
-          console.log('Creating data directory...');
-          fs.mkdirSync(dataDir, { recursive: true });
-        }
-        console.log('Feedback file does not exist, creating new one');
-      }
-      
-      // Add new feedback
-      feedbackArray.push(feedbackData);
-      
-      // Write back to file
-      console.log('Writing feedback to file:', feedbackFilePath);
-      fs.writeFileSync(feedbackFilePath, JSON.stringify(feedbackArray, null, 2));
-      
-      console.log('Feedback saved to JSON file:', feedbackId);
-    } catch (error) {
-      console.error('Error storing feedback in JSON file:', error);
-      // Try to provide more detailed error information
-      if (error instanceof Error) {
-        console.error('Error details:', error.message, error.stack);
-      }
-      
-      // Check if directory exists and is writable
-      const dataDir = path.join(process.cwd(), 'data');
-      console.log('Data directory exists:', fs.existsSync(dataDir));
-      
+    // Path to feedback.json
+    const feedbackFilePath = path.join(dataDir, 'feedback.json');
+    
+    // Read existing feedback or create new array
+    let feedbackList = [];
+    if (fs.existsSync(feedbackFilePath)) {
       try {
-        // Test write permissions with a temporary file
-        const testFile = path.join(dataDir, 'test-write.txt');
-        fs.writeFileSync(testFile, 'test');
-        fs.unlinkSync(testFile);
-        console.log('Directory is writable');
-      } catch (writeError) {
-        console.error('Directory is not writable:', writeError);
+        const fileContent = fs.readFileSync(feedbackFilePath, 'utf8');
+        feedbackList = JSON.parse(fileContent);
+      } catch (error) {
+        console.error('Error reading feedback file:', error);
       }
     }
     
-    // Also try to store in database if it exists
-    try {
-      // @ts-ignore - Prisma client might not have the feedback model yet
-      await prisma.feedback?.create({
-        data: {
-          id: feedbackId,
-          type,
-          message,
-          name: userId ? `${userData?.firstName || ''} ${userData?.lastName || ''}`.trim() : name || '',
-          email: userId ? userData?.email || '' : email || '',
-          userId: userData?.id || null,
-          status: 'pending',
-          isReward: false
-        }
-      });
-      console.log('Feedback also saved to database');
-    } catch (error: any) {
-      console.log('Could not save feedback to database (expected if table doesn\'t exist yet):', error.message);
-    }
+    // Add new feedback to the list
+    feedbackList.unshift(feedbackData);
     
-    const feedback = feedbackData;
+    // Write updated feedback list back to file
+    fs.writeFileSync(feedbackFilePath, JSON.stringify(feedbackList, null, 2), 'utf8');
     
     return new NextResponse(JSON.stringify({ 
-      success: true,
-      feedbackId: feedback.id
+      success: true, 
+      message: 'Feedback submitted successfully',
+      feedback: feedbackData
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
     
   } catch (error) {
-    console.error('Error submitting feedback:', error);
-    return new NextResponse(JSON.stringify({ error: 'Internal server error' }), { 
+    console.error('Error processing feedback submission:', error);
+    return new NextResponse(JSON.stringify({ 
+      error: 'Failed to submit feedback. Please try again later.' 
+    }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });

@@ -11,7 +11,7 @@ model User {
   id                       String         @id
   clerkId                  String         @unique
   email                    String?
-  credits                  Int            @default(5)
+  credits                  Int            @default(3)
   createdAt                DateTime       @default(now())
   updatedAt                DateTime       @updatedAt
   stripeCustomerId         String?        @unique
@@ -70,3 +70,5 @@ model ErrorLog {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// Beta program models have been removed to simplify the admin dashboard
