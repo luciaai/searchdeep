@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,17 @@ import StarRating from '@/components/star-rating';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function FeedbackPage() {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn, userId } = useAuth();
   const router = useRouter();
+  
+  // Always proceed with the form regardless of auth state
+  // This allows both authenticated and anonymous feedback
+  useEffect(() => {
+    if (isLoaded && isSignedIn && userId) {
+      // If user is signed in, ensure their ID is stored in localStorage
+      localStorage.setItem('clerk_user_id', userId);
+    }
+  }, [isLoaded, isSignedIn, userId]);
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -29,9 +38,15 @@ export default function FeedbackPage() {
     e.preventDefault();
     
     // Validate based on active tab
-    if (activeTab === 'feedback' && !message.trim()) {
-      toast.error('Please enter your feedback message');
-      return;
+    if (activeTab === 'feedback') {
+      if (!message.trim()) {
+        toast.error('Please enter your feedback message');
+        return;
+      }
+      if (!feedbackType) {
+        toast.error('Please select a feedback type');
+        return;
+      }
     }
     
     if (activeTab === 'review') {
@@ -43,10 +58,29 @@ export default function FeedbackPage() {
         toast.error('Please enter your review');
         return;
       }
+      if (!feedbackType) {
+        toast.error('Please select a feedback type');
+        return;
+      }
     }
     
     try {
       setIsSubmitting(true);
+      
+      // Ensure we have authentication if the user is signed in
+      if (isSignedIn && userId) {
+        localStorage.setItem('clerk_user_id', userId);
+      }
+      
+      console.log('Submitting form with data:', {
+        activeTab,
+        feedbackType,
+        hasMessage: !!message,
+        hasSubject: !!subject,
+        rating,
+        hasReview: !!review,
+        isAuthenticated: isSignedIn
+      });
       
       const response = await fetch('/api/feedback', {
         method: 'POST',
@@ -67,8 +101,11 @@ export default function FeedbackPage() {
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit feedback');
+        console.error('Feedback submission failed:', data);
+        throw new Error(data.error || data.details || 'Failed to submit feedback');
       }
+      
+      console.log('Feedback submitted successfully:', data);
       
       toast.success(activeTab === 'review' ? 'Thank you for your review!' : 'Thank you for your feedback!');
       setMessage('');
@@ -81,11 +118,22 @@ export default function FeedbackPage() {
       
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      toast.error('Failed to submit feedback. Please try again later.');
+      toast.error(error instanceof Error ? error.message : 'Failed to submit feedback. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
   };
+  
+  // Show loading state only while Clerk is initializing
+  if (!isLoaded) {
+    return (
+      <div className="container mx-auto px-4 py-16 max-w-4xl flex justify-center items-center">
+        <div className="animate-pulse text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="container mx-auto px-4 py-16 max-w-4xl">
