@@ -18,6 +18,7 @@ import { Providers } from "./providers";
 import { NavBar } from "@/components/nav-bar";
 import { Footer } from "@/components/footer";
 import AuthHandler from "@/components/auth/auth-handler";
+import { EmailVerificationPrompt } from "@/components/email-verification-prompt";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://healthiliving.com"),
@@ -117,6 +118,7 @@ export default function RootLayout({
               <AuthHandler />
               <NavBar />
               <Toaster position="top-center" richColors theme="system" />
+              <EmailVerificationPrompt />
               <div className="flex flex-col min-h-screen">
                 {children}
                 <Footer />
