@@ -109,14 +109,18 @@ export async function hasEnoughCredits() {
  */
 export async function decrementCredit() {
   try {
+    console.log('Starting credit deduction process...');
     const user = await getOrCreateUser();
+    console.log('User retrieved for credit deduction:', user.id, 'Current credits:', user.credits);
     
     // Check if user has enough credits
     if (user.credits < 1) {
+      console.error('User has insufficient credits:', user.credits);
       throw new Error('Not enough credits');
     }
     
     // Update the user's credits
+    console.log('Updating user credits in database...');
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -125,6 +129,27 @@ export async function decrementCredit() {
         }
       }
     });
+    
+    console.log('Credit deduction successful. User:', user.id, 'New balance:', updatedUser.credits);
+    
+    // Log the credit deduction to credit history if the table exists
+    try {
+      if ('creditHistory' in prisma) {
+        await (prisma as any).creditHistory.create({
+          data: {
+            userId: user.id,
+            amount: -1,
+            reason: 'Search credit deduction',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        });
+        console.log('Credit history entry created for deduction');
+      }
+    } catch (historyError) {
+      // Don't fail the whole operation if just the history logging fails
+      console.error('Failed to create credit history entry:', historyError);
+    }
     
     return updatedUser;
   } catch (error) {

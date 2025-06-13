@@ -257,20 +257,31 @@ export async function POST(req: Request) {
     console.log("Group: ", group);
 
     // Check if user has enough credits
-    const { hasCredits } = await hasEnoughCredits();
-    if (!hasCredits) {
-        return new Response(
-            JSON.stringify({
-                error: "You don't have enough credits to perform this search.",
-                results: []
-            }),
-            { status: 403 }
-        );
-    }
+    try {
+        console.log('Checking if user has enough credits...');
+        const { hasCredits } = await hasEnoughCredits();
+        console.log('Credit check result:', hasCredits);
+        
+        if (!hasCredits) {
+            console.log('User does not have enough credits');
+            return new Response(
+                JSON.stringify({
+                    error: "You don't have enough credits to perform this search.",
+                    results: []
+                }),
+                { status: 403 }
+            );
+        }
 
-    // Decrement user credits for this search
-    // This is already handled in logSearch, so we don't need to call it here
-    // await decrementCredit();
+        // Decrement user credits for this search
+        console.log('Decrementing user credit...');
+        const updatedUser = await decrementCredit();
+        console.log('Credit decremented successfully. New credit balance:', updatedUser.credits);
+    } catch (error) {
+        console.error('Error in credit handling:', error);
+        // Continue with the search even if credit deduction fails
+        // This ensures the app doesn't break for users, but we'll know there's an issue
+    }
 
     if (group !== 'chat' && group !== 'buddy') {
         console.log("Running inside part 1");
