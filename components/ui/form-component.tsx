@@ -836,14 +836,30 @@ const FormComponent: React.FC<FormComponentProps> = ({
 
     const autoResizeInput = (target: HTMLTextAreaElement) => {
         if (!target) return;
+        
+        // Store current scroll position before resizing
+        const scrollPos = window.scrollY;
+        
+        // Use requestAnimationFrame to batch DOM updates
         requestAnimationFrame(() => {
+            // Reset height to auto to get accurate scrollHeight
             target.style.height = 'auto';
+            
+            // Calculate new height within min/max constraints
             const newHeight = Math.min(Math.max(target.scrollHeight, MIN_HEIGHT), MAX_HEIGHT);
             target.style.height = `${newHeight}px`;
+            
+            // On mobile, prevent scroll position from changing
+            if (width && width < 768) {
+                window.scrollTo(0, scrollPos);
+            }
         });
     };
 
     const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        // Store scroll position before any changes
+        const scrollPos = window.scrollY;
+        
         event.preventDefault();
         const newValue = event.target.value;
 
@@ -859,11 +875,30 @@ const FormComponent: React.FC<FormComponentProps> = ({
             setInput(newValue);
         }
 
+        // Resize the textarea
         autoResizeInput(event.target);
+        
+        // For mobile devices, ensure we maintain scroll position
+        if (width && width < 768) {
+            // Use a small timeout to ensure the browser has processed the input
+            setTimeout(() => {
+                window.scrollTo(0, scrollPos);
+            }, 10);
+        }
     };
 
     const handleFocus = () => {
         setIsFocused(true);
+        
+        // For mobile devices, prevent unwanted scrolling when focusing the input
+        if (width && width < 768) {
+            // Store current position to restore after focus
+            const currentPos = window.scrollY;
+            // Use a small timeout to let the browser handle the focus first
+            setTimeout(() => {
+                window.scrollTo(0, currentPos);
+            }, 50);
+        }
     };
 
     const handleBlur = () => {
@@ -1299,6 +1334,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                         isMobile ? "pb-20" : "pb-16", // Only vary the bottom padding
                         "overflow-y-auto",
                         "touch-manipulation",
+                        "scroll-position-lock", // Custom class for scroll position locking
                         "will-change-auto", // Hint to browser about upcoming changes
                         isMobile ? "text-base" : "text-base" // Consistent font size
                     )}
