@@ -72,20 +72,20 @@ model ErrorLog {
 }
 
 model Feedback {
-  id        String    @id @default(cuid())
-  type      String    // general, bug, feature, etc.
-  message   String    // feedback message content
-  subject   String?   // optional subject line
-  name      String?   // submitter's name (if provided)
-  email     String?   // submitter's email (if provided)
-  userId    String?   // linked user ID if authenticated
-  rating    Int?      // optional star rating (1-5)
-  review    String?   // optional review text
-  status    String    @default("pending") // pending, reviewed, resolved
-  isReward  Boolean   @default(false) // whether credits were awarded
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  
+  id        String   @id @default(cuid())
+  type      String
+  message   String
+  subject   String?
+  name      String?
+  email     String?
+  userId    String?
+  rating    Int?
+  review    String?
+  status    String   @default("pending")
+  isReward  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
   @@index([status])
   @@index([type])
