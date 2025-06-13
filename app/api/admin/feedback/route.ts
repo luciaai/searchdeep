@@ -4,6 +4,24 @@ import prisma from '@/lib/prisma';
 import { isAdmin } from '@/lib/admin';
 import fs from 'fs';
 import path from 'path';
+import { Feedback } from '@prisma/client';
+
+// Define a type for feedback items that might come from the JSON file
+type FeedbackItem = {
+  id: string;
+  type: string;
+  message: string;
+  subject?: string;
+  name?: string;
+  email?: string;
+  userId?: string;
+  rating?: number;
+  review?: string;
+  status: string;
+  isReward: boolean;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
 
 // Prevent static generation for this route
 export const dynamic = 'force-dynamic';
@@ -30,8 +48,8 @@ export async function GET() {
     }
     
     // Try to fetch feedback from both database and JSON file
-    let feedbackFromDb = [];
-    let feedbackFromFile = [];
+    let feedbackFromDb: Feedback[] = [];
+    let feedbackFromFile: FeedbackItem[] = [];
     
     // Try to fetch from database first (primary source)
     try {
@@ -53,22 +71,22 @@ export async function GET() {
       if (fs.existsSync(feedbackFilePath)) {
         console.log('Admin Feedback API: Feedback file exists, reading content');
         const fileContent = fs.readFileSync(feedbackFilePath, 'utf8');
-        feedbackFromFile = JSON.parse(fileContent);
+        feedbackFromFile = JSON.parse(fileContent) as FeedbackItem[];
         console.log(`Admin Feedback API: Found ${feedbackFromFile.length} feedback entries in JSON file`);
       } else {
         console.log('Admin Feedback API: Feedback file does not exist');
       }
     } catch (fileError) {
-      console.error('Admin Feedback API: Error reading feedback from JSON file:', fileError);
+      console.error('Admin Feedback API: Error reading feedback file:', fileError);
     }
     
     // Combine feedback from both sources, removing duplicates by ID
-    const allFeedbackMap = new Map();
+    const allFeedbackMap = new Map<string, Feedback | FeedbackItem>();
     
     // Add database feedback first (primary source)
     if (Array.isArray(feedbackFromDb) && feedbackFromDb.length > 0) {
       console.log(`Admin Feedback API: Processing ${feedbackFromDb.length} database feedback items`);
-      feedbackFromDb.forEach((item: any) => {
+      feedbackFromDb.forEach((item: Feedback) => {
         allFeedbackMap.set(item.id, item);
       });
     }
@@ -76,7 +94,7 @@ export async function GET() {
     // Add file feedback, but only if not already in database
     if (Array.isArray(feedbackFromFile) && feedbackFromFile.length > 0) {
       console.log(`Admin Feedback API: Processing ${feedbackFromFile.length} file feedback items`);
-      feedbackFromFile.forEach((item: any) => {
+      feedbackFromFile.forEach((item: FeedbackItem) => {
         if (!allFeedbackMap.has(item.id)) {
           allFeedbackMap.set(item.id, item);
         }
@@ -84,7 +102,7 @@ export async function GET() {
     }
     
     // Convert map back to array and sort by createdAt
-    const combinedFeedback = Array.from(allFeedbackMap.values())
+    const combinedFeedback: (Feedback | FeedbackItem)[] = Array.from(allFeedbackMap.values())
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       
     console.log(`Admin Feedback API: Returning ${combinedFeedback.length} combined feedback items`);
