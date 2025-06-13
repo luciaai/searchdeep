@@ -1174,7 +1174,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
             inputRef.current?.focus();
         }
         // Note: Mobile scrolling is now handled by the useEffect that watches message changes
-    }, [onSubmit, resetSuggestedQuestions, width, inputRef]);
+    }, [onSubmit, resetSuggestedQuestions, width, inputRef, messages.length, setHasSubmitted]);
 
     const triggerFileInput = useCallback(() => {
         if (attachments.length >= MAX_IMAGES) {
