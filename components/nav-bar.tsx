@@ -28,12 +28,46 @@ export function NavBar() {
   // Temporarily removed feedback modal state
   // const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   
+  // Function to get the user ID from localStorage or cookies
+  const getUserId = () => {
+    if (typeof window === 'undefined') return null;
+    
+    // Try to get from localStorage first
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      console.log('Found userId in localStorage:', storedUserId);
+      return storedUserId;
+    }
+    
+    // Try to get from cookies
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === 'userId') {
+        console.log('Found userId in cookies:', value);
+        return value;
+      }
+    }
+    
+    return null;
+  };
+  
   useEffect(() => {
     async function fetchCredits() {
       try {
         setIsLoadingCredits(true);
         console.log("Fetching credits...");
-        const response = await fetch('/api/credits');
+        
+        // Get the user ID
+        const userId = getUserId();
+        
+        // Prepare headers with authentication if we have a user ID
+        const headers: HeadersInit = {};
+        if (userId) {
+          headers['Authorization'] = `Bearer ${userId}`;
+        }
+        
+        const response = await fetch('/api/credits', { headers });
         const data = await response.json();
         console.log("Credits API response:", data);
         

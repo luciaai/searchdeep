@@ -71,4 +71,33 @@ model ErrorLog {
   updatedAt DateTime @updatedAt
 }
 
-// Beta program models have been removed to simplify the admin dashboard
+model Feedback {
+  id        String    @id @default(cuid())
+  type      String    // general, bug, feature, etc.
+  message   String    // feedback message content
+  subject   String?   // optional subject line
+  name      String?   // submitter's name (if provided)
+  email     String?   // submitter's email (if provided)
+  userId    String?   // linked user ID if authenticated
+  rating    Int?      // optional star rating (1-5)
+  review    String?   // optional review text
+  status    String    @default("pending") // pending, reviewed, resolved
+  isReward  Boolean   @default(false) // whether credits were awarded
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+}
+
+model CreditHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+}

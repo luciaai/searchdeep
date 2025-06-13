@@ -39,13 +39,39 @@ function PricingContent() {
       if (isSignedIn) {
         try {
           setIsLoading(true);
+          
+          // Get user ID from localStorage or cookies for authentication
+          let userId = null;
+          if (typeof window !== 'undefined') {
+            // Try localStorage first
+            userId = localStorage.getItem('userId');
+            
+            // If not in localStorage, try cookies
+            if (!userId) {
+              const cookies = document.cookie.split(';');
+              for (const cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'userId') {
+                  userId = value;
+                  break;
+                }
+              }
+            }
+          }
+          
+          // Prepare headers with authentication if we have a user ID
+          const headers: HeadersInit = {};
+          if (userId) {
+            headers['Authorization'] = `Bearer ${userId}`;
+          }
+          
           // Fetch user credits
-          const creditsResponse = await fetch('/api/credits');
+          const creditsResponse = await fetch('/api/credits', { headers });
           const creditsData = await creditsResponse.json();
           setUserCredits(creditsData.credits);
 
           // Fetch user subscription
-          const subscriptionResponse = await fetch('/api/subscription');
+          const subscriptionResponse = await fetch('/api/subscription', { headers });
           const subscriptionData = await subscriptionResponse.json();
           setUserSubscription(subscriptionData.subscription);
         } catch (error) {

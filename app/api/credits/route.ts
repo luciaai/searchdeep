@@ -7,31 +7,76 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    // Get the authenticated user
+    // Get user ID from multiple possible sources
+    let userId: string | null = null;
+    
+    // 1. Try to get from Clerk auth session
     const session = await auth();
-    const userId = session?.userId;
+    userId = session?.userId;
+    
+    // 2. If not found, try to get from Authorization header (format: Bearer user_[id])
+    if (!userId) {
+      const authHeader = req.headers.get('Authorization');
+      if (authHeader && authHeader.startsWith('Bearer user_')) {
+        // Extract the user ID from the token
+        userId = authHeader.substring(7); // Remove 'Bearer ' prefix
+        console.log('Found userId in Authorization header:', userId);
+      }
+    }
+    
+    // 3. Try to get from cookies
+    if (!userId) {
+      const userIdCookie = req.cookies.get('userId');
+      if (userIdCookie) {
+        userId = userIdCookie.value;
+        console.log('Found userId in cookies:', userId);
+      }
+    }
     
     if (!userId) {
+      console.log('No user ID found in any authentication source');
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized', message: 'No valid authentication found' },
         { status: 401 }
       );
     }
 
-    // Find the user in our database
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
+    // Normalize the user ID format
+    let clerkId = userId;
+    let actualUserId = userId;
+    
+    // If the userId starts with 'user_', it's already in our database format
+    if (userId.startsWith('user_')) {
+      actualUserId = userId;
+      // Extract the Clerk ID part for lookup
+      clerkId = userId.substring(5); // Remove 'user_' prefix
+      console.log('Extracted clerkId from userId:', clerkId);
+    } else {
+      // If it's a Clerk ID, format it for our database
+      actualUserId = `user_${userId}`;
+    }
+    
+    console.log('Looking up user with clerkId:', clerkId, 'or id:', actualUserId);
+    
+    // Try to find the user by either clerkId or direct id
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { clerkId: clerkId },
+          { id: actualUserId }
+        ]
+      },
       select: { credits: true, id: true }
     });
 
     if (!user) {
+      console.log('User not found, creating new user with ID:', actualUserId);
       // Create a new user with starting credits only if they don't exist in the database
       // This should only happen for brand new users, not returning users
-      const combinedUserId = `user_${userId}`;
       const newUser = await prisma.user.create({
         data: {
-          id: combinedUserId,
-          clerkId: userId,
+          id: actualUserId,
+          clerkId: clerkId,
           credits: Number(process.env.STARTING_CREDITS || 5),
         }
       });
