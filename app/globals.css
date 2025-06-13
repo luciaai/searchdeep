@@ -45,6 +45,31 @@
   right: 0;
 }
 
+/* Mobile scrolling fixes */
+@media (max-width: 767px) {
+  /* Prevent unwanted scroll position changes when focusing or typing in inputs */
+  textarea, input {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Prevent iOS Safari from automatically zooming in on inputs */
+  input, textarea, select {
+    font-size: 16px;
+  }
+  
+  /* Improve touch behavior on mobile */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  /* Prevent content jumps during input focus */
+  .fixed-position-container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
 @layer utilities {
 
   /* Hide scrollbar for Chrome, Safari and Opera */
