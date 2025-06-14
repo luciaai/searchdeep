@@ -12,6 +12,14 @@ import StarRating from '@/components/star-rating';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function FeedbackPage() {
+  // Temporarily disable feedback in production
+  if (process.env.NEXT_PUBLIC_FEEDBACK_DISABLED === 'true') {
+    if (typeof window !== 'undefined') {
+      toast.info('Feedback is temporarily unavailable. Please email feedback to ziqsearch@gmail.com');
+      window.location.href = '/';
+    }
+    return null;
+  }
   const { isLoaded, isSignedIn, userId } = useAuth();
   const router = useRouter();
   
