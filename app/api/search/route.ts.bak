@@ -249,28 +249,113 @@ const deduplicateByDomainAndUrl = <T extends { url: string }>(items: T[]): T[] =
 
 // Modify the POST function to use the new handler
 export async function POST(req: Request) {
-    const { messages, model, group, user_id } = await req.json();
-    const { tools: activeTools, systemPrompt, toolInstructions, responseGuidelines } = await getGroupConfig(group);
-    const geo = geolocation(req);
+    try {
+        const { messages, model, group, user_id } = await req.json();
+        const { tools: activeTools, systemPrompt, toolInstructions, responseGuidelines } = await getGroupConfig(group);
+        const geo = geolocation(req);
 
-    console.log("Running with model: ", model.trim());
-    console.log("Group: ", group);
+        console.log("Running with model: ", model.trim());
+        console.log("Group: ", group);
 
-    // Check if user has enough credits
-    const { hasCredits } = await hasEnoughCredits();
-    if (!hasCredits) {
-        return new Response(
-            JSON.stringify({
-                error: "You don't have enough credits to perform this search.",
-                results: []
-            }),
-            { status: 403 }
-        );
+    // Check if user has enough credits and decrement them
+    // This is a critical section that must work properly in production
+    try {
+        console.log('Checking if user has enough credits...');
+        let hasCredits = false;
+        let error = null;
+        
+        try {
+            const result = await hasEnoughCredits();
+            hasCredits = result.hasCredits;
+            error = result.error;
+        } catch (authError) {
+            // Development fallback mode - provide temporary access
+            if (process.env.NODE_ENV === 'development') {
+                console.log('[SEARCH API] DEVELOPMENT MODE: Bypassing credit check');
+                hasCredits = true; // Allow search in development mode
+            } else {
+                error = 'Authentication failed: ' + (authError as Error).message;
+            }
+        }
+        
+        console.log('Credit check result:', hasCredits, error ? `Error: ${error}` : '');
+        
+        // If there's no error but user doesn't have enough credits
+        if (!error && !hasCredits) {
+            console.log('User does not have enough credits');
+            return new Response(
+                JSON.stringify({
+                    error: "You don't have enough credits to perform this search.",
+                    results: []
+                }),
+                { status: 403 }
+            );
+        }
+        
+        // DEVELOPMENT MODE ONLY: Allow searches with credit errors
+        if (error && process.env.NODE_ENV === 'development') {
+            console.warn('Development mode: Proceeding with search despite credit check error:', error);
+        }
+        // PRODUCTION: Block searches if credit check fails
+        else if (error) {
+            console.error('PRODUCTION: Blocking search due to credit check error:', error);
+            return new Response(
+                JSON.stringify({
+                    error: "Unable to verify credits. Please try again later.",
+                    results: []
+                }),
+                { status: 500 }
+            );
+        }
+        
+        // CRITICAL: Decrement user credits for this search
+        // This must succeed in production before allowing the search to proceed
+        // Deep search (extreme group) costs 1 credit, same as regular search for now
+        const creditCost = group === 'extreme' ? 1 : 1; // Future: change to group === 'extreme' ? 3 : 1;
+        console.log(`CRITICAL: Decrementing user credit (${creditCost} credit${creditCost > 1 ? 's' : ''}) for ${group} search...`);
+        try {
+            const updatedUser = await decrementCredit(creditCost);
+            console.log('Credit deduction SUCCESS. User:', updatedUser.id, 'New balance:', updatedUser.credits);
+        } catch (creditError) {
+            console.error('CRITICAL ERROR: Failed to decrement credit:', creditError);
+            
+            // DEVELOPMENT MODE ONLY: Allow searches even if credit deduction fails
+            if (process.env.NODE_ENV === 'development') {
+                console.warn('Development mode: Allowing search despite credit deduction failure');
+                // Log the full error for debugging in development
+                console.log('Credit deduction error details:', creditError);
+            } 
+            // PRODUCTION: Block searches if credit deduction fails
+            else {
+                console.error('PRODUCTION: Blocking search due to credit deduction failure');
+                return new Response(
+                    JSON.stringify({
+                        error: "Unable to process your search at this time. Please try again later.",
+                        results: []
+                    }),
+                    { status: 500 }
+                );
+            }
+        }
+    } catch (error) {
+        console.error('CRITICAL ERROR in credit handling:', error);
+        
+        // DEVELOPMENT MODE ONLY: Allow searches despite errors
+        if (process.env.NODE_ENV === 'development') {
+            console.warn('Development mode: Allowing search despite credit system error');
+        } 
+        // PRODUCTION: Block searches if there are credit system errors
+        else {
+            console.error('PRODUCTION: Blocking search due to credit system error');
+            return new Response(
+                JSON.stringify({
+                    error: "Unable to process your search at this time. Please try again later.",
+                    results: []
+                }),
+                { status: 500 }
+            );
+        }
     }
-
-    // Decrement user credits for this search
-    // This is already handled in logSearch, so we don't need to call it here
-    // await decrementCredit();
 
     if (group !== 'chat' && group !== 'buddy') {
         console.log("Running inside part 1");
@@ -2520,12 +2605,27 @@ export async function POST(req: Request) {
                     onError(event) {
                         console.log('Error: ', event.error);
                     },
-                });
+            });
 
-                result.mergeIntoDataStream(dataStream, {
-                    sendReasoning: true,
-                });
+                try {
+                    result.mergeIntoDataStream(dataStream, {
+                        sendReasoning: true,
+                    });
+                } catch (error) {
+                    console.error('Unhandled error in search API:', error);
+                    return new Response(
+                        JSON.stringify({
+                            error: "An unexpected error occurred. Please try again later.",
+                            results: []
+                        }),
+                        { status: 500 }
+                    );
+                }
             }
-        })
-    }
-}
+        });
+    } else {
+        console.log("Running inside part 2");
+        return createDataStreamResponse({
+        execute: async (dataStream) => {
+            try {
+                // ... rest of the code remains the same ...
