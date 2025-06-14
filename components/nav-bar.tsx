@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from '@/components/theme-toggle';
+import { toast } from 'sonner';
 
 export function NavBar() {
   const pathname = usePathname();
@@ -190,7 +191,9 @@ export function NavBar() {
             type="button"
             variant={"outline"}
             className="rounded-full bg-background hover:bg-muted/50 text-foreground backdrop-blur-sm group transition-all hover:scale-105 pointer-events-auto flex items-center transition-all duration-300 shadow-sm"
-            onClick={() => window.location.href = '/feedback'}
+            onClick={() => {
+              toast.info('Feedback is temporarily unavailable. Please email feedback to ziqsearch@gmail.com');
+            }}
           >
             <MessageSquare size={18} className="transition-all" />
             <span className="text-sm ml-2 opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto overflow-hidden transition-all duration-300 font-medium">
