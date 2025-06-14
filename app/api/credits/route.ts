@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma';
-import { addCredits } from '@/lib/user-credits';
+import { getOrCreateUser } from '@/lib/user-credits';
 
 // Prevent static generation for this route
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
-    // Get user ID from multiple possible sources
-    let userId: string | null = null;
-    
+    const user = await getOrCreateUser();
+    return NextResponse.json({ credits: user.credits });
+  } catch (error: any) {
+    console.error('Error fetching user credits:', error);
+    return NextResponse.json({ error: 'Failed to fetch user credits' }, { status: 500 });
     // 1. Try to get from Clerk auth session
     const session = await auth();
     userId = session?.userId;
