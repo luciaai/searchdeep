@@ -128,18 +128,6 @@ export function NavBar() {
               <span>About</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/privacy" className="flex items-center cursor-pointer">
-              <Info className="mr-2 h-4 w-4" />
-              <span>Privacy Policy</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/terms" className="flex items-center cursor-pointer">
-              <Info className="mr-2 h-4 w-4" />
-              <span>Terms of Service</span>
-            </Link>
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
