@@ -2,7 +2,6 @@ import { auth } from '@clerk/nextjs/server';
 import prisma from './prisma';
 import { getUserId } from './utils';
 import { SearchGroupId } from './utils';
-import { ensureFreeUserCredits } from './ensure-free-credits';
 
 // Environment variable for starting credits
 const STARTING_CREDITS = Number(process.env.STARTING_CREDITS || 5);
@@ -45,10 +44,7 @@ export async function getOrCreateUser() {
 
     // If user doesn't exist, create a new one
     if (!user) {
-      // Force the starting credits to be exactly 5, regardless of environment variables or schema defaults
-      const forcedStartingCredits = 5;
-      console.log(`Creating new user with clerkId ${clerkId} and forcing starting credits to ${forcedStartingCredits}`);
-      
+      console.log(`Creating new user with clerkId ${clerkId} and starting credits ${STARTING_CREDITS}`);
       user = await prisma.user.create({
         data: {
           id: combinedUserId,
@@ -56,7 +52,7 @@ export async function getOrCreateUser() {
           firstName: clerkUser.first_name || null,
           lastName: clerkUser.last_name || null,
           email: clerkUser.email_addresses?.[0]?.email_address || null,
-          credits: forcedStartingCredits, // Force to exactly 5
+          credits: STARTING_CREDITS,
           subscriptions: {
             create: []
           }
@@ -65,19 +61,6 @@ export async function getOrCreateUser() {
           subscriptions: true
         }
       });
-      
-      // Double-check that the user has exactly 5 credits
-      if (user.credits !== forcedStartingCredits) {
-        console.log(`WARNING: User ${combinedUserId} was created with ${user.credits} credits instead of ${forcedStartingCredits}. Fixing...`);
-        user = await prisma.user.update({
-          where: { id: combinedUserId },
-          data: { credits: forcedStartingCredits },
-          include: { subscriptions: true }
-        });
-        console.log(`Fixed: User ${combinedUserId} now has ${user.credits} credits`);
-      } else {
-        console.log(`Success: User ${combinedUserId} was created with ${user.credits} credits as expected`);
-      }
     } else {
       // Only update user information, but NEVER modify their credits here
       // This ensures credits don't reset when a user logs back in

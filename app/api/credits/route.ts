@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
-import { ensureFreeUserCredits } from '@/lib/ensure-free-credits';
 import { addCredits } from '@/lib/user-credits';
 
 // Prevent static generation for this route
@@ -79,29 +78,14 @@ export async function GET(req: NextRequest) {
       console.log('User not found, creating new user with ID:', singlePrefId);
       // Create a new user with starting credits only if they don't exist in the database
       // This should only happen for brand new users, not returning users
-      // Force the starting credits to be exactly 5, regardless of environment variables
-      const forcedStartingCredits = 5;
-      console.log(`Credits API: Creating new user with ID ${singlePrefId} and forcing starting credits to ${forcedStartingCredits}`);
-      
+      const startingCredits = Number(process.env.STARTING_CREDITS || 5);
       const newUser = await prisma.user.create({
         data: {
           id: singlePrefId,
           clerkId: clerkId,
-          credits: forcedStartingCredits, // Force to exactly 5
+          credits: startingCredits,
         }
       });
-      
-      // Double-check that the user has exactly 5 credits
-      if (newUser.credits !== forcedStartingCredits) {
-        console.log(`Credits API: WARNING: User ${singlePrefId} was created with ${newUser.credits} credits instead of ${forcedStartingCredits}. Fixing...`);
-        await prisma.user.update({
-          where: { id: singlePrefId },
-          data: { credits: forcedStartingCredits }
-        });
-        console.log(`Credits API: Fixed: User ${singlePrefId} now has ${forcedStartingCredits} credits`);
-      } else {
-        console.log(`Credits API: Success: User ${singlePrefId} was created with ${newUser.credits} credits as expected`);
-      }
       
       // Create a credit history record for the initial credits
       try {
@@ -109,7 +93,7 @@ export async function GET(req: NextRequest) {
           await (prisma as any).creditHistory.create({
             data: {
               userId: singlePrefId,
-              amount: forcedStartingCredits,
+              amount: startingCredits,
               reason: 'Initial credits for new user',
               createdAt: new Date(),
               updatedAt: new Date()
@@ -131,7 +115,6 @@ export async function GET(req: NextRequest) {
 
     // Simply return the user's current credits without modifying them
     return NextResponse.json({ credits: user.credits });
-
   } catch (error: any) {
     console.error('Error fetching user credits:', error);
     return NextResponse.json(
