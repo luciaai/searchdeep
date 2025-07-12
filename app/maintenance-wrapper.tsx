@@ -9,7 +9,7 @@ interface MaintenanceWrapperProps {
 }
 
 // Inner component that uses searchParams
-function MaintenanceContent({ children }: MaintenanceWrapperProps) {
+function MaintenanceContent({ children }: { children: React.ReactNode }) {
   const [showMaintenance, setShowMaintenance] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
@@ -67,7 +67,9 @@ export default function MaintenanceWrapper({ children }: MaintenanceWrapperProps
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     }>
-      <MaintenanceContent children={children} />
+      <MaintenanceContent>
+        {children}
+      </MaintenanceContent>
     </Suspense>
   );
 }
