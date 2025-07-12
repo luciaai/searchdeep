@@ -3,11 +3,9 @@ import prisma from '@/lib/prisma';
 
 // List of admin emails - add your email here
 const ADMIN_EMAILS = [
-  'admin@searchdeep.ai',
-  'lucia@searchdeep.ai',
-  'lucia.walker@searchdeep.ai',
-  'luciawalker@gmail.com',
-  'esawalk@gmail.com'
+  'esawalk@gmail.com',
+  'ziqsearch@gmail.com',
+  'lucia@healthiliving.com'
 ];
 
 /**
@@ -40,6 +38,12 @@ export async function isAdmin(): Promise<boolean> {
     // Check if the user's email is in the admin list
     const isUserAdmin = ADMIN_EMAILS.includes(user.email);
     console.log(`Admin check: User ${userId} with email ${user.email} is admin: ${isUserAdmin}`);
+    console.log(`Admin emails list: ${ADMIN_EMAILS.join(', ')}`);
+    
+    // If not an admin, log more details to help debug
+    if (!isUserAdmin) {
+      console.log(`Email ${user.email} not found in admin list. Available admin emails: ${ADMIN_EMAILS.join(', ')}`);
+    }
     
     return isUserAdmin;
   } catch (error) {
