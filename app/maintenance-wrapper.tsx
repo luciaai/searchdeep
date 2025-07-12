@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import MaintenancePage from './maintenance/page';
 
@@ -8,7 +8,8 @@ interface MaintenanceWrapperProps {
   children: React.ReactNode;
 }
 
-export default function MaintenanceWrapper({ children }: MaintenanceWrapperProps) {
+// Inner component that uses searchParams
+function MaintenanceContent({ children }: MaintenanceWrapperProps) {
   const [showMaintenance, setShowMaintenance] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
@@ -56,4 +57,17 @@ export default function MaintenanceWrapper({ children }: MaintenanceWrapperProps
   
   // Show maintenance page or actual content
   return showMaintenance ? <MaintenancePage /> : <>{children}</>;
+}
+
+// Wrapper component with Suspense boundary
+export default function MaintenanceWrapper({ children }: MaintenanceWrapperProps) {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    }>
+      <MaintenanceContent children={children} />
+    </Suspense>
+  );
 }
